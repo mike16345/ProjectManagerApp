@@ -1,0 +1,69 @@
+label {
+  font-weight: bold;
+}
+.form {
+  /* background-color: brown; */
+}
+.input-box {
+  /* background-color: aqua; */
+  display: flex;
+  flex-direction: column;
+  padding: 5px 15px;
+}
+.input-box input {
+  width: 97%;
+  padding: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  outline: none;
+}
+select {
+  cursor: pointer;
+}
+
+.drop-select {
+  width: 40%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.drop-select-priority {
+  width: 25%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.drop-select select {
+  background-color: #c7dbd4;
+  padding: 10px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+}
+.drop-select-priority select {
+  background-color: #c7dbd4;
+  padding: 10px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+}
+.drop-select-status {
+  height: fit-content;
+  margin-top: 10px;
+  background-color: #c7dbd4;
+  padding: 10px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+}
+
+.bottomHalf {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.btns {
+  padding: 20px 0px 0px 0px;
+  display: flex;
+  justify-content: space-around;
+}

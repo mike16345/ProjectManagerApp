@@ -1,0 +1,38 @@
+.tags {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 30%;
+}
+.issueForm {
+  height: 35vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.bottomHalf {
+  display: flex;
+  justify-content: space-between;
+}
+.issueForm input {
+  border: none;
+  outline: none;
+  font-size: 24px;
+}
+.issueForm label {
+  display: flex;
+  flex-direction: column;
+}
+.issueForm select {
+  background-color: rgb(219, 209, 209);
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 7px;
+  font-size: 16px;
+  border: none;
+}
+.btns {
+  display: flex;
+  width: 97%;
+  justify-content: space-around;
+}

@@ -1,0 +1,16 @@
+.wrapper {
+  display: flex;
+  max-width: fit-content;
+  justify-content: space-between;
+}
+.show-more {
+  cursor: pointer;
+  margin-left: 8px;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+}
+.btns {
+  display: flex;
+  justify-content: space-around;
+}

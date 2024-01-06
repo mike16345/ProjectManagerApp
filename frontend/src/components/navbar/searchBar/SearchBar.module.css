@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.searchBar {
+  border: none;
+  width: 250px;
+  border-radius: 7px;
+  padding: 10px;
+}
+.searchBtn {
+  background-color: var(--light);
+  border-radius: 3px;
+  height: 100%;
+  padding: 8px;
+}
+.searchBar:focus {
+  outline: none;
+}

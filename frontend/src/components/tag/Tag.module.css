@@ -1,0 +1,45 @@
+.tag {
+  background-color: rgba(97, 97, 228, 0.77);
+  color: white;
+  width: 20px;
+  height: auto;
+  text-align: center;
+  font-size: medium;
+  border-radius: 5px;
+}
+
+.priority-epic {
+  font-weight: bold;
+  background-color: rgb(245, 48, 48);
+  color: black;
+  border-radius: 7px;
+  padding: 3px 8px 3px 8px;
+}
+.priority-high {
+  font-weight: bold;
+  background-color: rgb(245, 219, 48);
+  color: black;
+  border-radius: 7px;
+  padding: 3px 8px 3px 8px;
+}
+.priority-low {
+  font-weight: bold;
+  background-color: rgb(48, 61, 245);
+  color: white;
+  border-radius: 7px;
+  padding: 3px 8px 3px 8px;
+}
+.priority-none {
+  font-weight: bold;
+  background-color: rgb(48, 245, 206);
+  color: black;
+  border-radius: 7px;
+  padding: 3px 8px 3px 8px;
+}
+.status {
+  font-weight: bold;
+  background-color: white;
+  color: black;
+  border-radius: 7px;
+  padding: 3px 8px 3px 8px;
+}

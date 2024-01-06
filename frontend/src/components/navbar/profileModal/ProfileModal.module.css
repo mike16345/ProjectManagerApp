@@ -1,0 +1,15 @@
+.profile {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileImage {
+  border-radius: 100px;
+  width: 50px;
+  height: 50px;
+}
+.profileImage:hover {
+  cursor: pointer;
+}
