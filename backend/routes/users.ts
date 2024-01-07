@@ -1,36 +1,30 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import express, { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { UserModel, genToken } from "../models/userModel";
+import { authToken } from "../auth/authToken";
+import { passwordModel } from "../models/passwordModel";
 
 const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
 
-const {
-  UserModel,
-  validateUser,
-  validateLogin,
-  genToken,
-} = require("../models/userModel");
+const router = express.Router();
 
-const { authToken } = require("../auth/authToken");
-const { passwordModel } = require("../models/passwordModel");
-
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   const data = await UserModel.find({});
   res.json(data);
 });
 
-router.get("/one/:email", async (req, res) => {
+router.get("/one/:email", async (req: Request, res: Response) => {
   const data = await UserModel.findOne({ email: req.params.email });
   res.json(data);
 });
 
-router.get("/emails", async (req, res) => {
+router.get("/emails", async (req: Request, res: Response) => {
   const data = await UserModel.find({}, { email: 1 });
   res.json(data);
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response) => {
   const isUserExist = await UserModel.findOne({ email: req.body.email });
 
   if (isUserExist) {
@@ -40,13 +34,14 @@ router.post("/register", async (req, res) => {
       isNew: false,
       status: 203,
       token: token,
-      error: "the email is alredy exist",
+      error: "the email is already exist",
     });
   } else {
     try {
       const user = new UserModel(req.body);
       await user.save();
       const oldUser = await UserModel.findOne({ email: req.body.email });
+      if (!oldUser) return;
       if (req.body.type === "local") {
         const password = await bcrypt.hash(req.body.password, 10);
         const newPassword = new passwordModel({
@@ -64,7 +59,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.put("/:idEdit", async (req, res) => {
+router.put("/:idEdit", async (req: Request, res: Response) => {
   try {
     const data = await UserModel.updateOne(
       { _id: req.params.idEdit },
@@ -76,7 +71,7 @@ router.put("/:idEdit", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await UserModel.findOne({ email }).lean();
@@ -86,6 +81,7 @@ router.post("/login", async (req, res) => {
   }
 
   const passwordObj = await passwordModel.findOne({ _id: user._id });
+  if (!passwordObj) return;
 
   if (await bcrypt.compare(password, passwordObj.password)) {
     const newToken = genToken(user._id);
@@ -96,7 +92,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/tokenLogin", authToken, async (req, res) => {
+router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
   const user = await UserModel.findOne(
     { _id: req.tokenData.id },
     { password: 0 }
@@ -104,4 +100,5 @@ router.get("/tokenLogin", authToken, async (req, res) => {
 
   res.json(user);
 });
-module.exports = router;
+
+export default router;

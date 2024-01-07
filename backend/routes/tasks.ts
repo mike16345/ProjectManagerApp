@@ -1,15 +1,15 @@
-const express = require("express");
+import express, { Request, Response } from "express";
+import { removeUserFromTasks } from "../services/taskService";
 const router = express.Router();
-const ts = require("../services/taskService");
 
-const { TaskModel, validateTask } = require("../models/taskModel");
+import { TaskModel, validateTask } from "../models/taskModel";
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   const data = await TaskModel.find({});
   res.json(data);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   const validBody = validateTask(req.body);
   if (validBody.error) {
     return res.status(400).json(validBody.error.details);
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:idEdit", async (req, res) => {
+router.put("/:idEdit", async (req: Request, res: Response) => {
   const validBody = validateTask(req.body);
   if (validBody.error) {
     return res.status(401).json(validBody.error.details);
@@ -39,25 +39,28 @@ router.put("/:idEdit", async (req, res) => {
   }
 });
 
-router.delete("/project/:id", async (req, res) => {
-  const data = await ts.removeUserFromTasks(req.params.id, req.body.email);
+router.delete("/project/:id", async (req: Request, res: Response) => {
+  const data = await removeUserFromTasks(
+    req.params.id,
+    (req.body as any).email
+  );
 
   res.send(data);
 });
 
-router.get("/byProjectId/:id", async (req, res) => {
+router.get("/byProjectId/:id", async (req: Request, res: Response) => {
   const allTasks = await TaskModel.find({ project_id: req.params.id });
   res.json(allTasks);
 });
 
-router.get("/byEmail/:email", async (req, res) => {
+router.get("/byEmail/:email", async (req: Request, res: Response) => {
   const allTasks = await TaskModel.find({ email: req.params.email });
   res.json(allTasks);
 });
 
-router.delete("/:idDel", async (req, res) => {
+router.delete("/:idDel", async (req: Request, res: Response) => {
   const data = await TaskModel.deleteOne({ task_id: req.params.idDel });
   res.json(data);
 });
 
-module.exports = router;
+export default router;

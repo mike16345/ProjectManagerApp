@@ -1,35 +1,45 @@
-const mongoose = require("mongoose");
-const Joi = require("joi");
-const express = require("express");
-const jwt = require("jsonwebtoken");
+import { Schema, Document } from "mongoose";
+import Joi from "joi";
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import { IUser } from "../interfaces";
 
 const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
 
-const userSchema = new mongoose.Schema({
+interface IGoogleUser extends Document, IUser {
+  googleId: string;
+}
+
+const userSchema: Schema<IGoogleUser> = new Schema({
   name: String,
   email: String,
   googleId: String,
-  projects: [],
+  projects: Array, // Adjust the type based on your actual data structure
   isAdmin: {
     type: Boolean,
     default: false,
   },
   date_created: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
-exports.googleUserModel = mongoose.model("google-user", userSchema);
+export const googleUserModel = mongoose.model<IGoogleUser>(
+  "google-user",
+  userSchema
+);
 
-exports.genToken = (id) => {
+export const genToken = (id: string): string => {
   const token = jwt.sign({ id: id }, JWT_SECRET, {
     expiresIn: "30d",
   });
   return token;
 };
 
-exports.validateUser = (reqBody) => {
+export const validateUser = (
+  reqBody: Record<string, any>
+): Joi.ValidationResult => {
   const joiSchema = Joi.object({
     name: Joi.string().min(2).max(100).required(),
     email: Joi.string().min(2).max(25).required().email(),
