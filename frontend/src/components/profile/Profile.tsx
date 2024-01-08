@@ -1,7 +1,15 @@
+import React, { FC, MouseEvent } from "react";
 import { Fragment } from "react";
 import classes from "./Profile.module.css";
 
-const Profile = (props) => {
+interface ProfileProps {
+  index: number;
+  name: string;
+  onClick?: (name: string) => void;
+  isList?: boolean;
+}
+
+const Profile: FC<ProfileProps> = (props) => {
   const colors = [
     "brown",
     "green",
@@ -16,16 +24,12 @@ const Profile = (props) => {
   const color = colors[props.index];
   const shortName = props.name?.substring(0, 2);
 
-  // const onCLickHandler = () => {
-  //   props.onClick(props.name, props._id)
-  // }
-
   return (
     <Fragment>
       <span
-        onClick={() => props.onClick && props.onClick(props.name)}
+        onClick={() => (props.onClick ? props.onClick(props.name) : () => {})}
         className={`${classes.profileCircle} ${classes[color]} ${
-          props.isList && classes["box-shadow"]
+          props.isList ? classes["box-shadow"] : ""
         }`}
       >
         {shortName}
