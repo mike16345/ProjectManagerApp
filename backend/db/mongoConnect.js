@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 main().catch((err) => console.log(err));
 
 async function main() {

@@ -1,9 +1,7 @@
-import { Schema } from "mongoose";
-import { ITask } from "../interfaces";
-import mongoose from "mongoose";
-import Joi from "joi";
+const mongoose = require("mongoose");
+const Joi = require("joi");
 
-const taskSchema: Schema<ITask> = new Schema({
+const taskSchema = new mongoose.Schema({
   text: String,
   email: String,
   task_id: Number,
@@ -12,9 +10,9 @@ const taskSchema: Schema<ITask> = new Schema({
   project_id: String,
 });
 
-export const TaskModel = mongoose.model("tasks", taskSchema);
+exports.TaskModel = mongoose.model("tasks", taskSchema);
 
-export const validateTask = (reqBody) => {
+exports.validateTask = (reqBody) => {
   const joiSchema = Joi.object({
     text: Joi.string().min(2).max(100).required(),
     email: Joi.string().min(2).max(100).required().email(),

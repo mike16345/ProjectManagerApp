@@ -1,23 +1,22 @@
-import express, { Request, Response } from "express";
+const express = require("express");
 const router = express.Router();
 
-import { ProjectsModel, validateProject } from "../models/projectModal";
-import { UserModel } from "../models/userModel";
+const { ProjectsModel, validateProject } = require("../models/projectModal");
+const { UserModel } = require("../models/userModel");
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   const data = await ProjectsModel.find();
   res.json(data);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req, res) => {
   const data = await ProjectsModel.findOne({ _id: req.params.id });
   res.json(data);
 });
 
-router.get("/perUser/:id", async (req: Request, res: Response) => {
+router.get("/perUser/:id", async (req, res) => {
   try {
     const user = await UserModel.findOne({ _id: req.params.id });
-    if (!user) return;
     const projects_ar = await Promise.all(
       user.projects.map(async (projectId) => {
         return await ProjectsModel.findOne({ _id: projectId });
@@ -29,7 +28,7 @@ router.get("/perUser/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req, res) => {
   const validBody = validateProject(req.body);
   if (validBody.error) {
     return res.status(401).json(validBody.error.details);
@@ -43,7 +42,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/addUser/:idEdit", async (req: Request, res: Response) => {
+router.put("/addUser/:idEdit", async (req, res) => {
   const validBody = validateProject(req.body);
   if (validBody.error) {
     return res.status(401).json(validBody.error.details);
@@ -59,4 +58,4 @@ router.put("/addUser/:idEdit", async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+module.exports = router;

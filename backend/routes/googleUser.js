@@ -1,38 +1,40 @@
-import express, { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { googleUserModel, genToken } from "../models/googleUserModel";
-import { authToken } from "../auth/authToken";
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
 
-const router = express.Router();
+const { googleUserModel, genToken } = require("../models/googleUserModel");
+const { authToken } = require("../auth/authToken");
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   const data = await googleUserModel.find({});
   res.json(data);
 });
 
-router.get("/one/:googleId", async (req: Request, res: Response) => {
+router.get("/one/:googleId", async (req, res) => {
   const data = await googleUserModel.findOne({ googleId: req.params.googleId });
+
   res.json(data);
 });
 
-router.get("/emails", async (req: Request, res: Response) => {
+router.get("/emails", async (req, res) => {
   const data = await googleUserModel.find({}, { email: 1 });
+
   res.json(data);
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/login", async (req, res) => {
   const isFoundUser = await googleUserModel.exists({
-    email: (req.body as any).user.email,
+    email: req.body.user.email,
   });
 
   try {
-    const newToken = genToken((req.body as any).user.googleId);
+    const newToken = genToken(req.body.user.googleId);
 
     if (!isFoundUser) {
-      const user = new googleUserModel((req.body as any).user);
+      const user = new googleUserModel(req.body.user);
       await user.save();
 
       return res.json({ isNew: true, status: "registered", data: newToken });
@@ -45,7 +47,11 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:idEdit", async (req: Request, res: Response) => {
+router.put("/:idEdit", async (req, res) => {
+  // const validBody = validateUser(req.body);
+  // if (validBody.error) {
+  //   return res.status(401).json(validBody.error.details);
+  // }
   try {
     const data = await googleUserModel.updateOne(
       { _id: req.params.idEdit },
@@ -57,12 +63,12 @@ router.put("/:idEdit", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
+router.get("/tokenLogin", authToken, async (req, res) => {
   const user = await googleUserModel.findOne({
-    googleId: (req as any).tokenData.id,
+    googleId: req.tokenData.id,
   });
 
   res.json(user);
 });
 
-export default router;
+module.exports = router;
