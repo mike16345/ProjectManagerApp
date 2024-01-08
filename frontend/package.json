@@ -1,40 +1,49 @@
 {
-  "name": "frontend",
+  "name": "project-manager-app",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 5170",
-    "start": "vite --host 0.0.0.0 --port 3000",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
   "dependencies": {
-    "@types/axios": "^0.14.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "axios": "^1.6.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zustand": "^4.4.7"
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.27.2",
+    "gapi-script": "^1.2.0",
+    "lodash.clonedeep": "^4.5.0",
+    "react": "^18.1.0",
+    "react-dnd": "^16.0.1",
+    "react-dom": "^18.1.0",
+    "react-google-login": "^5.2.2",
+    "react-scripts": "5.0.1",
+    "react-select-search": "^3.0.10",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.4.33",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@types/gapi": "^0.0.47",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "gapi": "^0.0.3",
-    "postcss": "^8.4.33",
-    "tailwindcss": "^3.4.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8",
-    "vite-plugin-pwa": "^0.16.7",
-    "vite-plugin-svgr": "3.3.0"
+    "react-router-dom": "^6.3.0"
   }
 }

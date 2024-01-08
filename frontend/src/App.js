@@ -12,7 +12,7 @@ import Navbar from "./components/navbar/Navbar";
 import ProjectOverview from "./components/pages/projectOverview/ProjectOverview";
 
 import "./App.css";
-// import WelcomePage from "./components/pages/welcomePage/"
+import WelcomePage from "./components/pages/welcomePage/WelcomePage";
 import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
 import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
 import { gapi } from "gapi-script";
@@ -26,7 +26,7 @@ function App() {
 
   const clientId = process.env.REACT_APP_CLIENT_ID;
 
-  const loginOnToken = async (isNew: boolean) => {
+  const loginOnToken = async (isNew) => {
     const token = localStorage.getItem("token-promger");
     console.log("log in on token");
 
