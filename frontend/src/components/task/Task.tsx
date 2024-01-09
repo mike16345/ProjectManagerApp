@@ -10,7 +10,7 @@ interface TaskProps {
   taskText: string;
   priority: string;
   isMyTasks?: boolean;
-  onUpdate?: (taskNumber: number, status: string) => void;
+  onUpdate?: (taskId: string, status: string) => void;
   assignee: string;
 }
 
@@ -34,7 +34,7 @@ const Task: FC<TaskProps> = (props) => {
           <Tag isMyTasks={props.isMyTasks}>{props.status}</Tag>
         )}
         {props.assignee !== "none@gmail.com" && (
-          <Profile name={props.assignee} index={}/>
+          <Profile name={props.assignee} index={0} />
         )}
       </footer>
     </div>

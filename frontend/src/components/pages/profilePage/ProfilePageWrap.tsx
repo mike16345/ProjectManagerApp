@@ -1,11 +1,17 @@
+import React from "react";
 import classes from "./ProfilePage.module.css";
 
-// gets props from Profile
+interface ProfilePageWrapProps {
+  onCloseProfile: () => void;
+}
 
-const ProfilePageWrap = (props) => {
-  const handler = (event) => {
+const ProfilePageWrap: React.FC<ProfilePageWrapProps> = (
+  props: ProfilePageWrapProps
+) => {
+  const handler = () => {
     props.onCloseProfile();
   };
+
   return (
     <div>
       <div className={classes.overlay} onClick={handler}></div>

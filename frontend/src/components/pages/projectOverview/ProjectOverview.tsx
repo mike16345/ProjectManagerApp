@@ -1,12 +1,9 @@
-import { useState, useEffect, useContext } from "react";
-import AppContext from "../../../context/Context";
-import { Fragment } from "react";
-import cloneDeep from "lodash.clonedeep";
-
+import React, { useState, useEffect, useContext, Fragment } from "react";
+import AppContext from "../../../context/context";
+import { cloneDeep } from "lodash";
 import ProjectWrapper from "../../projectWrapper/ProjectWrapper";
 import InputModal from "../../InputModal/InputModal";
 import TaskColumnWrapper from "./TaskColumnWrapper";
-
 import {
   postTask,
   putEditTask,
@@ -20,13 +17,14 @@ import {
 } from "../../../API/UserAPIcalls";
 import {
   updateProjectById,
-  removeAssigndUserFromTasks,
+  removeAssignedUserFromTasks,
 } from "../../../API/ProjectAPIcalls";
 
-let taskToChange = {};
+let taskToChange: any = {};
 
-// when pressing promgr logo and theres no current project - crashes
-const ProjectOverview = () => {
+interface ProjectOverviewProps {}
+
+const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const context = useContext(AppContext);
   const currentProject = context.currentProject;
   const emails = currentProject.users.map((user) => user.email);
@@ -37,13 +35,13 @@ const ProjectOverview = () => {
     codeReview: [],
     done: [],
   };
+
   const [users, setUsers] = useState(context.currentProject.users);
   const [taskArr, setTaskArr] = useState(allData);
-
   const [createIssueOpen, setCreateIssueOpen] = useState(false);
   const [editTask, setEditTask] = useState(false);
 
-  const filterToColumns = (tasks) => {
+  const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
     const filterTodo = tasks.filter((task) => task.status === "to do");
     const filterInProgress = tasks.filter(
@@ -57,11 +55,10 @@ const ProjectOverview = () => {
     cloned.inProgress = filterInProgress;
     cloned.codeReview = filterCodeReview;
     cloned.done = filterDone;
-
     setTaskArr(cloned);
   };
 
-  const getTasksFromAPI = async (id) => {
+  const getTasksFromAPI = async (id: string) => {
     const tasks = await getAllProjectTasks(id);
     filterToColumns(tasks);
   };
@@ -70,7 +67,7 @@ const ProjectOverview = () => {
     getTasksFromAPI(currentProject._id);
   }, [editTask, createIssueOpen]);
 
-  const onTaskClickHandler = (id, status) => {
+  const onTaskClickHandler = (id: string, status: string) => {
     const valuesTasks = Object.values(taskArr);
     valuesTasks.map((taskArrays) =>
       taskArrays.map((task) => {
@@ -82,7 +79,7 @@ const ProjectOverview = () => {
     setEditTask(true);
   };
 
-  const findUser = (email) => {
+  const findUser = (email: string) => {
     let found = false;
     currentProject.users.forEach((user) => {
       if (user.email.localeCompare(email) === 0) {
@@ -92,20 +89,19 @@ const ProjectOverview = () => {
     return found;
   };
 
-  const onAddUsertoProjectHandler = async (email) => {
+  const onAddUsertoProjectHandler = async (email: string) => {
     if (!findUser(email)) {
       const res = await getOneUser(email);
       const user = res.data;
       context.currentProject.users = [...context.currentProject.users, user];
       setUsers(context.currentProject.users);
       updateProjectById(context.currentProject);
-      // adding the project id to the user projects array
       user.projects = [...user.projects, currentProject._id];
       const userEdited = await editUser(user);
     }
   };
 
-  const onDeleteUserFromProjHandler = async (email) => {
+  const onDeleteUserFromProjHandler = async (email: string) => {
     const filtered = currentProject.users.filter(
       (user) => user.email !== email
     );
@@ -117,28 +113,26 @@ const ProjectOverview = () => {
     setUsers(filtered);
   };
 
-  const removeUserFromTasks = async (userEmail) => {
+  const removeUserFromTasks = async (userEmail: string) => {
     try {
-      await removeAssigndUserFromTasks(userEmail, currentProject._id);
+      await removeAssignedUserFromTasks(userEmail, currentProject._id);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const removeProjectFromUser = async (email) => {
-    let user = null;
-
+  const removeProjectFromUser = async (email: string) => {
+    let user: any = null;
     try {
       user = (await getOneUser(email)).data;
       const currentProjectId = currentProject._id;
-      const updatedUserProjects = user.projects.filter((project) => {
+      const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;
       });
       user.projects = [...updatedUserProjects];
     } catch (error) {
       console.log(error);
     }
-
     try {
       editUser(user);
     } catch (error) {
@@ -146,7 +140,7 @@ const ProjectOverview = () => {
     }
   };
 
-  const onCreateIssue = async (task) => {
+  const onCreateIssue = async (task: any) => {
     const res = await postTask(task);
     if (res.code === "ERR_BAD_REQUEST") {
       console.log(res.response.data[0].message);
@@ -155,7 +149,7 @@ const ProjectOverview = () => {
     console.log(taskArr);
   };
 
-  const onEditTask = async (task) => {
+  const onEditTask = async (task: any) => {
     const res = await putEditTask(task);
     if (res.code === "ERR_BAD_REQUEST") {
       console.log(res.response.data[0].message);
@@ -163,7 +157,7 @@ const ProjectOverview = () => {
     setEditTask(false);
   };
 
-  const onDeleteTask = async (id) => {
+  const onDeleteTask = async (id: string) => {
     const res = await deleteTask(id);
   };
 
@@ -203,7 +197,6 @@ const ProjectOverview = () => {
           isEditMode={true}
         />
       )}
-
       <ProjectWrapper
         deleteUser={onDeleteUserFromProjHandler}
         allUsers={context.userEmails}

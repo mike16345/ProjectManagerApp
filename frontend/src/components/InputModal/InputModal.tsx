@@ -1,52 +1,75 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "../modal/Modal";
 import Tag from "../tag/Tag";
 import Button from "../button/Button";
 import classes from "./InputModal.module.css";
 import AppContext from "../../context/Context";
 
-// gets props from project overview
-const InputModal = (props) => {
+interface InputModalProps {
+  onCloseModal: () => void;
+  usersList: string[];
+  isEditMode: boolean;
+  descValue?: string;
+  userSelected?: string;
+  prioritySelected?: string;
+  status?: string;
+  task_id?: string;
+  onCreateIssue: (task: {
+    text: string;
+    email: string;
+    priority: string;
+    task_id?: string;
+    project_id: string;
+    status: string;
+  }) => void;
+  delete: (taskId: string) => void;
+  okBtn: string;
+}
+
+const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
   const context = useContext(AppContext);
   const currentProject = context.currentProject;
 
   const emails = props.usersList;
   const priorities = ["none", "epic", "high", "low"];
 
-  let description = null;
-  let assignee = null;
-  let priority = null;
+  let description = "";
+  let assignee = "none@gmail.com";
+  let priority = priorities[0];
 
   if (props.isEditMode) {
-    description = props.descValue;
-    assignee = props.userSelected;
-    priority = props.prioritySelected;
-  } else {
-    description = "";
-    // should be changed later
-    assignee = "none@gmail.com";
-    priority = priorities[0];
+    description = props.descValue || "";
+    assignee = props.userSelected || "none@gmail.com";
+    priority = props.prioritySelected || priorities[0];
   }
 
-  const [descriptionState, setDescriptionState] = useState(description);
-  const [assigneeState, setAssigneeState] = useState(assignee);
-  const [priorityState, setPriorityState] = useState(priority);
-  const [statusState, setStatusState] = useState(props.status);
+  const [descriptionState, setDescriptionState] = useState<string>(description);
+  const [assigneeState, setAssigneeState] = useState<string>(assignee);
+  const [priorityState, setPriorityState] = useState<string>(priority);
+  const [statusState, setStatusState] = useState<string | undefined>(
+    props.status
+  );
 
-  const onChangeDescHandler = (event) => {
+  const onChangeDescHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDescriptionState(event.target.value);
   };
 
-  const onSelectEmailHandler = (event) => {
-    // fix the problem of getting null and cannot send cuz it is not an email
+  const onSelectEmailHandler = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const value = event.target.value;
-    if (value === "none") setAssigneeState("none@gmail.com");
-    else setAssigneeState(event.target.value);
+    setAssigneeState(value === "none" ? "none@gmail.com" : value);
   };
-  const onSelectPriorityHandler = (event) => {
+
+  const onSelectPriorityHandler = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPriorityState(event.target.value);
   };
-  const onSelectStatusHandler = (event) => {
+
+  const onSelectStatusHandler = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const statusSelected = event.target.value;
     setStatusState(statusSelected);
     if (props.status === "to do") {
@@ -54,13 +77,13 @@ const InputModal = (props) => {
     }
   };
 
-  const onSubmitingForm = (e) => {
+  const onSubmitingForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const task = {
       text: descriptionState,
       email: assigneeState,
       priority: priorityState,
-      task_id: props.task_id,
+      task_id: props.task_id || "",
       project_id: currentProject._id,
       status: !statusState ? "to do" : statusState,
     };
@@ -68,14 +91,14 @@ const InputModal = (props) => {
   };
 
   const onDeleteTask = () => {
-    props.delete(props.task_id);
+    props.delete(props.task_id || "");
   };
 
   const statusSelect = props.isEditMode ? (
     <select
       defaultValue={statusState}
       onChange={onSelectStatusHandler}
-      className={classes["drop-select-status"]}
+      className="drop-select-status"
     >
       <option value="to do">to do</option>
       <option value="in progress">in progress</option>
@@ -98,11 +121,9 @@ const InputModal = (props) => {
             onChange={onChangeDescHandler}
           />
         </div>
-        {/* ---------------------- */}
         <div className={classes.bottomHalf}>
-          {/* <Tag>{props.task_id}</Tag> */}
           {statusSelect}
-          <div className={classes["drop-select"]}>
+          <div className="drop-select">
             <label>Assign to: </label>
             <select
               defaultValue={props.userSelected}
@@ -110,44 +131,39 @@ const InputModal = (props) => {
               onChange={onSelectEmailHandler}
             >
               <option value="none">none</option>
-              {emails.map((name, index) => {
-                return (
-                  <option key={index} value={name}>
-                    {name}
-                  </option>
-                );
-              })}
+              {emails.map((name, index) => (
+                <option key={index} value={name}>
+                  {name}
+                </option>
+              ))}
             </select>
           </div>
-
-          <div className={classes["drop-select-priority"]}>
+          <div className="drop-select-priority">
             <label>priority:</label>
             <select
               defaultValue={props.prioritySelected}
               name="priority"
               onChange={onSelectPriorityHandler}
             >
-              {priorities.map((priority, index) => {
-                return (
-                  <option key={index} value={priority}>
-                    {priority}
-                  </option>
-                );
-              })}
+              {priorities.map((priority, index) => (
+                <option key={index} value={priority}>
+                  {priority}
+                </option>
+              ))}
             </select>
           </div>
         </div>
-        <div className={classes.btns}>
+        <div className="btns">
           <Button type="submit">{props.okBtn}</Button>
           {props.isEditMode ? (
-            <Button onClick={onDeleteTask}>Delete</Button>
+            <Button type="button" onClick={onDeleteTask}>
+              Delete
+            </Button>
           ) : null}
           <Button type="button" onClick={props.onCloseModal}>
             Cancel
           </Button>
         </div>
-
-        {/* ------------------------------- */}
       </form>
     </Modal>
   );

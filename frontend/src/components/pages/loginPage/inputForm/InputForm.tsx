@@ -1,35 +1,42 @@
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import Button from "../../../button/Button";
 import classes from "./InputForm.module.css";
-import InputWrap from "./InputWrap";
-import { useState } from "react";
 
-// gets props from login page
-const InputForm = (props) => {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [email, setEmail] = useState("");
+interface InputFormProps {
+  register?: boolean;
+  onLogin: (loginData: {
+    email: string;
+    name: string;
+    password: string;
+  }) => void;
+  actionName: string;
+}
 
-  const userNameChangeHandler = (event) => {
+const InputForm: React.FC<InputFormProps> = (props: InputFormProps) => {
+  const [userName, setUserName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+
+  const userNameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setUserName(event.target.value);
   };
-  const emailChangeHandler = (event) => {
+  const emailChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
-  const passwordChangeHandler = (event) => {
+  const passwordChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
-  const confirmChangeHandler = (event) => {
+  const confirmChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setConfirm(event.target.value);
   };
 
-  const validateConfirmPassword = () => {
-    // add if not the same show some feedback
+  const validateConfirmPassword = (): boolean => {
     if (!confirm) return true;
     return confirm === password;
   };
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validateConfirmPassword()) {
       console.log("not the same");
@@ -44,7 +51,7 @@ const InputForm = (props) => {
   };
 
   return (
-    <InputWrap>
+    <div>
       <form onSubmit={onSubmitHandler} className={classes.form}>
         <div className={classes.inputForm}>
           {props.register && (
@@ -100,7 +107,7 @@ const InputForm = (props) => {
           <Button type="submit">{props.actionName}</Button>
         </div>
       </form>
-    </InputWrap>
+    </div>
   );
 };
 

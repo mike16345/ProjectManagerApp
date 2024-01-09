@@ -1,12 +1,17 @@
-import { Fragment } from "react";
-import classes from "./WelcomePage.module.css";
+import React, { Fragment } from "react";
 
-const WelcomePage = (props) => {
+interface WelcomePageProps {
+  name: string;
+  isNew: boolean;
+}
+
+const WelcomePage: React.FC<WelcomePageProps> = (props) => {
   const { name, isNew } = props;
   const greeting = isNew ? "aboard" : "back";
+
   return (
     <Fragment>
-      <h2 className={classes.welcome}>
+      <h2 className="welcome">
         Welcome {greeting} {name}
       </h2>
     </Fragment>

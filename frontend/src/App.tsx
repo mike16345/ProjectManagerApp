@@ -5,14 +5,14 @@ import {
   getAllEmails,
   verifyTokenWithGoogle,
 } from "./API/UserAPIcalls";
-import AppContext from "./context/Context";
+import AppContext from "./context/context";
 
 import LoginPage from "./components/pages/loginPage/LoginPage";
 import Navbar from "./components/navbar/Navbar";
 import ProjectOverview from "./components/pages/projectOverview/ProjectOverview";
 
 import "./App.css";
-// import WelcomePage from "./components/pages/welcomePage/"
+import WelcomePage from "./components/pages/welcomePage/WelcomePage";
 import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
 import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
 import { gapi } from "gapi-script";
@@ -24,7 +24,7 @@ function App() {
   const context = useContext(AppContext);
   const [isLoggedIn, setIsLoggenIn] = useState(false);
 
-  const clientId = process.env.REACT_APP_CLIENT_ID;
+  // const clientId = process.env.REACT_APP_CLIENT_ID;
 
   const loginOnToken = async (isNew: boolean) => {
     const token = localStorage.getItem("token-promger");
@@ -48,11 +48,11 @@ function App() {
   };
 
   useEffect(() => {
-    const initClient = () => {
-      gapi.auth2.init({ clientId: clientId });
-      gapi.load("client:auth2", initClient);
-    };
-    loginOnToken(false, "");
+    // const initClient = () => {
+    //   gapi.auth2.init({ clientId: clientId });
+    //   gapi.load("client:auth2", initClient);
+    // };
+    // loginOnToken(false, "");
   }, []);
 
   const onLogOutHandler = () => {

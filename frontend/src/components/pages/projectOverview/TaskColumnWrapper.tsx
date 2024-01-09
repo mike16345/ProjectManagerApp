@@ -1,7 +1,18 @@
-import { Fragment } from "react";
-import TaskColumn from "./TaskCoulmn";
+import React, { Fragment } from "react";
+import TaskColumn from "./TaskColumn";
 
-const TaskColumnWrapper = (props) => {
+interface TaskColumnWrapperProps {
+  onUpdate: (id: string, status: string) => void;
+  openCreateIssueModal: () => void;
+  tasks: {
+    todo: any[];
+    inProgress: any[];
+    codeReview: any[];
+    done: any[];
+  };
+}
+
+const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = (props) => {
   return (
     <Fragment>
       <TaskColumn

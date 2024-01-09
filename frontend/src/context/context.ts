@@ -1,6 +1,11 @@
 import React from "react";
-
-const AppContext = React.createContext({
+import { Project, User } from "../interfaces";
+interface AppContextType {
+  userEmails: string[];
+  userLogged: User | null;
+  currentProject: Project;
+}
+const AppContext = React.createContext<AppContextType>({
   userEmails: [],
   userLogged: null,
   currentProject: {},

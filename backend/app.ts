@@ -24,7 +24,7 @@ app.use("/googleUsers", googleUserRouter);
 
 const server = http.createServer(app);
 
-const port = process.env.PORT || "3002";
+const port = "3002";
 
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

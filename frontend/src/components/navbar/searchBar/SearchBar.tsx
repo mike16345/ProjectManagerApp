@@ -1,24 +1,28 @@
-import { useState } from "react";
+import React, { useState, ChangeEvent, MouseEvent } from "react";
 import classes from "./SearchBar.module.css";
 
-const SearchBar = (props) => {
-  const [searchInput, setSearchInput] = useState("");
+interface SearchBarProps {
+  onInput: (input: string) => void;
+}
 
-  const searchInputHandler = (event) => {
+const SearchBar: React.FC<SearchBarProps> = (props) => {
+  const [searchInput, setSearchInput] = useState<string>("");
+
+  const searchInputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setSearchInput(event.target.value);
   };
 
-  const search = (e) => {
+  const search = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     props.onInput(searchInput);
   };
 
   return (
     <div className={classes.container}>
-      <div className="{classes.searchBar}">
+      <div className={classes.searchBar}>
         <input
-          className={classes.searchBar}
+          className={classes.searchBarInput}
           type="text"
           placeholder="Find a Project"
           onChange={searchInputHandler}

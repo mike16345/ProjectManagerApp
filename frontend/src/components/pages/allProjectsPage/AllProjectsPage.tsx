@@ -1,10 +1,13 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import classes from "./AllProjectPage.module.css";
-import { getAllProjects } from "../../../API/ProjectAPIcalls";
+import {
+  getAllProjects,
+  createProject,
+  getProjectsByUser,
+} from "../../../API/ProjectAPIcalls";
 import BoxRow from "../../boxRow/BoxRow";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import Button from "../../button/Button";
-import { createProject, getProjectsByUser } from "../../../API/ProjectAPIcalls";
 import Modal from "../../modal/Modal";
 import AppContext from "../../../context/Context";
 
@@ -26,12 +29,8 @@ const AllProjectPage = (props) => {
     const projects = await getProjectsByUser(context.userLogged);
     setMyProjects(projects);
   };
-  useEffect(() => {
-    fetchAllProjects();
-    fetchUsersProject();
-  }, []);
 
-  const onChangeINputHandler = (event) => {
+  const onChangeInputHandler = (event) => {
     setProjectName(event.target.value);
   };
 
@@ -42,6 +41,11 @@ const AllProjectPage = (props) => {
     setOpenModal(false);
   };
 
+  useEffect(() => {
+    fetchAllProjects();
+    fetchUsersProject();
+  }, []);
+
   return (
     <Fragment>
       {openModal && (
@@ -51,8 +55,8 @@ const AllProjectPage = (props) => {
             onSubmit={onCreateProjectHandler}
           >
             <div className={classes.input}>
-              <label htmlFor="projectName">project name:</label>
-              <input type="text" onChange={onChangeINputHandler} />
+              <label htmlFor="projectName">Project name:</label>
+              <input type="text" onChange={onChangeInputHandler} />
             </div>
             <div className={classes.btns}>
               <Button type="submit">Save</Button>
@@ -68,37 +72,28 @@ const AllProjectPage = (props) => {
           Add project
         </Button>
       )}
-      {myProjects.length > 0 ? (
+
+      {myProjects.length > 0 && (
         <div>
-          <h2 className={classes.title}>My pojects:</h2>
+          <h2 className={classes.title}>My projects:</h2>
           <BoxRow>
             {myProjects.map((project, index) => (
-              <ProjectPreviewBox
-                key={index}
-                projectId={project.id}
-                name={project.name}
-                proj={project}
-              />
+              <ProjectPreviewBox key={index} project={project} />
             ))}
           </BoxRow>
         </div>
-      ) : null}
+      )}
 
-      {allProjects.length > 0 ? (
+      {allProjects.length > 0 && (
         <div>
           <h2 className={classes.title}>All projects:</h2>
           <BoxRow>
             {allProjects.map((project, index) => (
-              <ProjectPreviewBox
-                key={index}
-                projectId={project.id}
-                name={project.name}
-                proj={project}
-              />
+              <ProjectPreviewBox key={index} project={project} />
             ))}
           </BoxRow>
         </div>
-      ) : null}
+      )}
     </Fragment>
   );
 };

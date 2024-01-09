@@ -1,19 +1,23 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../../../context/Context";
 import classes from "./AllProjectPage.module.css";
 
-const ProjectPreviewBox = (props) => {
+const ProjectPreviewBox = ({ name, proj }) => {
   const context = useContext(AppContext);
   const navigate = useNavigate();
 
   const onProjectClickHandler = () => {
-    context.currentProject = props.proj;
+    context.currentProject = proj;
     navigate("/project_overview");
   };
+
   return (
-    <div onClick={onProjectClickHandler} className={classes.container}>
-      <h2>{props.name}</h2>
+    <div
+      onClick={onProjectClickHandler}
+      className={`${classes.container} ${classes.clickable}`}
+    >
+      <h2>{name}</h2>
     </div>
   );
 };

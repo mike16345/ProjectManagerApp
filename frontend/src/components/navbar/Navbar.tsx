@@ -1,21 +1,19 @@
-import { useContext } from "react";
-import AppContext from "../../context/Context";
-import ProfileModal from "./profileModal/ProfileModal";
-import classes from "./Navbar.module.css";
-import logo from "../../logo.png";
-import SearchBar from "./searchBar/SearchBar";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import Swal from "sweetalert2";
+import AppContext from "../../context/context";
+import ProfileModal from "./profileModal/ProfileModal";
+import SearchBar from "./searchBar/SearchBar";
+// import logo from "../../logo.png";
+import { getProjectsByUser } from "../../API/ProjectAPIcalls";
+import classes from "./Navbar.module.css";
 
-// gets props from app
 const Navbar = (props) => {
   const navigate = useNavigate();
   const context = useContext(AppContext);
-  const currentProject = context.currentProject;
 
   const onLogoClickHandler = () => {
-    if (currentProject._id) {
+    if (context.currentProject?._id) {
       navigate("project_overview");
     }
   };
@@ -34,11 +32,9 @@ const Navbar = (props) => {
 
   const onSearchHandler = async (inputValue) => {
     const projects = await projectByUser();
-
     const currentFound = projects.find(
       (project) => project.name === inputValue
     );
-
     context.currentProject = currentFound ? currentFound : null;
 
     if (context.currentProject) {
@@ -46,7 +42,7 @@ const Navbar = (props) => {
     } else {
       Swal.fire({
         icon: "error",
-        text: "no project with this name",
+        text: "No project with this name",
         timer: 750,
       });
     }
@@ -66,10 +62,10 @@ const Navbar = (props) => {
         id="navbarBasicExample"
         className={`navbar-menu ${classes.logoContainer}`}
       >
-        <img src={logo} />
+        <img src={""} alt="Logo" />
         <div className="navbar-start">
           <a
-            className="navbar-item has-text-white-ter	"
+            className="navbar-item has-text-white-ter"
             onClick={onLogoClickHandler}
           >
             Home
@@ -77,7 +73,7 @@ const Navbar = (props) => {
 
           {props.loggedIn && (
             <a
-              className="navbar-item has-text-white-ter	"
+              className="navbar-item has-text-white-ter"
               onClick={onMyTaskClickHandler}
             >
               My Tasks
@@ -85,7 +81,7 @@ const Navbar = (props) => {
           )}
           {props.loggedIn && (
             <a
-              className="navbar-item has-text-white-ter	"
+              className="navbar-item has-text-white-ter"
               onClick={onProjectsClickHandler}
             >
               Projects
@@ -94,10 +90,10 @@ const Navbar = (props) => {
         </div>
 
         <div className="navbar-end">
-          <div className="navbar-item has-text-white-ter	">
+          <div className="navbar-item has-text-white-ter">
             {props.loggedIn && <SearchBar onInput={onSearchHandler} />}
           </div>
-          <div className="navbar-item has-text-white-ter	">
+          <div className="navbar-item has-text-white-ter">
             {props.loggedIn && (
               <ProfileModal logOut={logOut}>Profile</ProfileModal>
             )}

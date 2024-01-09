@@ -1,30 +1,32 @@
+import React, { useState } from "react";
 import Card from "../../card/Card";
 import InputForm from "./inputForm/InputForm";
-import classes from "./inputForm/InputForm.module.css";
 import Swal from "sweetalert2";
-
 import {
   loginHandler,
   registerHandler,
   signInWithGoogle,
 } from "../../../API/UserAPIcalls";
-import { useState } from "react";
-
-import { GoogleLogin } from "react-google-login";
-
+import {
+  GoogleLogin,
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
 import ErrorModal from "../../errorModal/ErrorModal";
 
-let errorMsg = "";
-// gets props from app
-const LoginPage = (props) => {
-  const onRegisterHandler = async (user) => {
+interface LoginPageProps {
+  loginOnToken: (isNew: boolean) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = (props) => {
+  const onRegisterHandler = async (user: any) => {
     user.type = "local";
     const response = await registerHandler(user);
     localStorage.setItem("token-promger", response.token);
     props.loginOnToken(response.isNew);
   };
 
-  const onLoginHandler = async (userDetails) => {
+  const onLoginHandler = async (userDetails: any) => {
     const response = await loginHandler(userDetails);
     const data = response.data.data;
     if (response.data.status === "ok") {
@@ -39,13 +41,15 @@ const LoginPage = (props) => {
     }
   };
 
-  const clientId = process.env.REACT_APP_CLIENT_ID;
+  const clientId = "";
 
-  const onSuccess = async (res) => {
+  const onSuccess = async (
+    res: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
     const user = {
-      name: res.profileObj.name,
-      googleId: res.profileObj.googleId,
-      email: res.profileObj.email,
+      name: res.profileObj?.name || "",
+      googleId: res.profileObj?.googleId || "",
+      email: res.profileObj?.email || "",
       type: "other",
     };
 
@@ -54,13 +58,13 @@ const LoginPage = (props) => {
     if (response.status === "registered") {
       localStorage.setItem("token-promger", response.token);
       props.loginOnToken(response.isNew);
-    } else if (response.response.status === 401) {
+    } else if (response.response?.status === 401) {
       localStorage.setItem("token-promger", response.response.data.token);
       props.loginOnToken(response.response.isNew);
     }
   };
 
-  const onFailure = (err) => {
+  const onFailure = (err: any) => {
     console.log("failed:", err);
   };
 
@@ -74,7 +78,7 @@ const LoginPage = (props) => {
         cookiePolicy={"single_host_origin"}
         isSignedIn={false}
       />
-      <div className={classes.page}>
+      <div className="page">
         <Card>
           <InputForm
             onLogin={onRegisterHandler}
@@ -82,7 +86,7 @@ const LoginPage = (props) => {
             actionName="Register"
           />
         </Card>
-        <div className={classes.divider}></div>
+        <div className="divider"></div>
         <Card>
           <InputForm onLogin={onLoginHandler} actionName="Log-in" />
         </Card>
