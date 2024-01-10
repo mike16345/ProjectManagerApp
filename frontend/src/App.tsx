@@ -17,12 +17,11 @@ import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
 import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
 import { gapi } from "gapi-script";
 
-let userInfo = {};
-
 function App() {
   const navigate = useNavigate();
   const context = useContext(AppContext);
-  const [isLoggedIn, setIsLoggenIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  let userInfo = {};
 
   // const clientId = process.env.REACT_APP_CLIENT_ID;
 
@@ -35,7 +34,7 @@ function App() {
 
       userInfo = response.data;
       userInfo.isNew = isNew;
-      setIsLoggenIn(true);
+      setIsLoggedIn(true);
       context.userLogged = userInfo;
       navigate("welcome");
       const timer = setTimeout(() => {
@@ -58,12 +57,12 @@ function App() {
   const onLogOutHandler = () => {
     console.log("logging out");
     localStorage.removeItem("token-promger");
-    setIsLoggenIn(false);
+    setIsLoggedIn(false);
     navigate("/");
   };
 
   const onLogInHandler = () => {
-    setIsLoggenIn(true);
+    setIsLoggedIn(true);
   };
 
   const saveAllEmails = async () => {

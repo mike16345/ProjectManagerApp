@@ -9,13 +9,15 @@ import BoxRow from "../../boxRow/BoxRow";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import Button from "../../button/Button";
 import Modal from "../../modal/Modal";
-import AppContext from "../../../context/Context";
+import AppContext from "../../../context/context";
+import { Project } from "../../../interfaces";
+import { When } from "react-if";
 
 const AllProjectPage = (props) => {
   const context = useContext(AppContext);
   const userLoggedProjects = context.userLogged && context.userLogged.projects;
 
-  const [allProjects, setAllProjects] = useState([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [myProjects, setMyProjects] = useState(userLoggedProjects);
   const [openModal, setOpenModal] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -26,11 +28,12 @@ const AllProjectPage = (props) => {
   };
 
   const fetchUsersProject = async () => {
+    if (!context.userLogged) return;
     const projects = await getProjectsByUser(context.userLogged);
     setMyProjects(projects);
   };
 
-  const onChangeInputHandler = (event) => {
+  const onChangeInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setProjectName(event.target.value);
   };
 
@@ -42,14 +45,14 @@ const AllProjectPage = (props) => {
   };
 
   useEffect(() => {
-    fetchAllProjects();
-    fetchUsersProject();
+    // fetchAllProjects();
+    // fetchUsersProject();
   }, []);
 
   return (
     <Fragment>
       {openModal && (
-        <Modal>
+        <Modal onClose={() => setOpenModal(false)}>
           <form
             className={classes.addProjectModal}
             onSubmit={onCreateProjectHandler}
@@ -67,22 +70,22 @@ const AllProjectPage = (props) => {
           </form>
         </Modal>
       )}
-      {context.userLogged.isAdmin && (
-        <Button style="margin" onClick={() => setOpenModal(true)}>
+      <When condition={context.userLogged && context.userLogged.isAdmin}>
+        <Button type="button" style="margin" onClick={() => setOpenModal(true)}>
           Add project
         </Button>
-      )}
+      </When>
 
-      {myProjects.length > 0 && (
+      <When condition={myProjects && myProjects.length > 0}>
         <div>
           <h2 className={classes.title}>My projects:</h2>
           <BoxRow>
-            {myProjects.map((project, index) => (
+            {myProjects!.map((project, index) => (
               <ProjectPreviewBox key={index} project={project} />
             ))}
           </BoxRow>
         </div>
-      )}
+      </When>
 
       {allProjects.length > 0 && (
         <div>

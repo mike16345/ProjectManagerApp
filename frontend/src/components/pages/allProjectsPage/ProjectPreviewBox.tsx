@@ -1,14 +1,22 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AppContext from "../../../context/Context";
+import AppContext from "../../../context/context";
 import classes from "./AllProjectPage.module.css";
+import { Project } from "../../../interfaces";
 
-const ProjectPreviewBox = ({ name, proj }) => {
+interface IProjectPreviewBox {
+  projectName: string;
+  project: Project;
+}
+const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
+  projectName,
+  project,
+}) => {
   const context = useContext(AppContext);
   const navigate = useNavigate();
 
   const onProjectClickHandler = () => {
-    context.currentProject = proj;
+    context.currentProject = project;
     navigate("/project_overview");
   };
 
@@ -17,7 +25,7 @@ const ProjectPreviewBox = ({ name, proj }) => {
       onClick={onProjectClickHandler}
       className={`${classes.container} ${classes.clickable}`}
     >
-      <h2>{name}</h2>
+      <h2>{projectName}</h2>
     </div>
   );
 };
