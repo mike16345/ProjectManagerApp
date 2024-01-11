@@ -3,12 +3,12 @@ import { Project, User } from "../interfaces";
 interface AppContextType {
   userEmails: string[];
   userLogged: User | null;
-  currentProject: Project;
+  currentProject: Project | null;
 }
 const AppContext = React.createContext<AppContextType>({
   userEmails: [],
   userLogged: null,
-  currentProject: {},
+  currentProject: null,
 });
 
 export default AppContext;

@@ -3,13 +3,13 @@ import { Fragment } from "react";
 import classes from "./Profile.module.css";
 
 interface ProfileProps {
-  index: number;
-  name: string;
+  index?: number;
+  name?: string;
   onClick?: (name: string) => void;
   isList?: boolean;
 }
 
-const Profile: FC<ProfileProps> = (props) => {
+const Profile: FC<ProfileProps> = ({ index, onClick, isList, name }) => {
   const colors = [
     "brown",
     "green",
@@ -21,15 +21,15 @@ const Profile: FC<ProfileProps> = (props) => {
     "chocolate",
   ];
 
-  const color = colors[props.index];
-  const shortName = props.name?.substring(0, 2);
+  const color = colors[index || 0];
+  const shortName = name?.substring(0, 2);
 
   return (
     <Fragment>
       <span
-        onClick={() => (props.onClick ? props.onClick(props.name) : () => {})}
+        onClick={() => (onClick ? onClick(name || "") : () => {})}
         className={`${classes.profileCircle} ${classes[color]} ${
-          props.isList ? classes["box-shadow"] : ""
+          isList ? classes["box-shadow"] : ""
         }`}
       >
         {shortName}

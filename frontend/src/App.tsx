@@ -1,10 +1,6 @@
 import { useEffect, useState, Fragment, useContext } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import {
-  verifyToken,
-  getAllEmails,
-  verifyTokenWithGoogle,
-} from "./API/UserAPIcalls";
+import { verifyToken, getAllEmails } from "./API/UserAPIcalls";
 import AppContext from "./context/context";
 
 import LoginPage from "./components/pages/loginPage/LoginPage";
@@ -15,12 +11,14 @@ import "./App.css";
 import WelcomePage from "./components/pages/welcomePage/WelcomePage";
 import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
 import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
-import { gapi } from "gapi-script";
+import { useUsersStore } from "./store/usersStore";
+import { When } from "react-if";
 
 function App() {
   const navigate = useNavigate();
   const context = useContext(AppContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { activeUser } = useUsersStore();
   let userInfo = {};
 
   // const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -28,22 +26,20 @@ function App() {
   const loginOnToken = async (isNew: boolean) => {
     const token = localStorage.getItem("token-promger");
     console.log("log in on token");
+    if (!token) return;
 
-    if (token) {
-      const response = await verifyToken(token);
+    const response = await verifyToken(token);
+    userInfo = response.data;
+    userInfo.isNew = isNew;
+    context.userLogged = userInfo;
 
-      userInfo = response.data;
-      userInfo.isNew = isNew;
-      setIsLoggedIn(true);
-      context.userLogged = userInfo;
-      navigate("welcome");
-      const timer = setTimeout(() => {
-        navigate("allProjects");
-      }, 800);
-      return () => clearTimeout(timer);
-    } else {
-      console.log("token not available");
-    }
+    setIsLoggedIn(true);
+    navigate("welcome");
+
+    const timer = setTimeout(() => {
+      navigate("allProjects");
+    }, 800);
+    return () => clearTimeout(timer);
   };
 
   useEffect(() => {
@@ -55,7 +51,6 @@ function App() {
   }, []);
 
   const onLogOutHandler = () => {
-    console.log("logging out");
     localStorage.removeItem("token-promger");
     setIsLoggedIn(false);
     navigate("/");
@@ -76,18 +71,20 @@ function App() {
   return (
     <Fragment>
       <AppContext.Provider value={context}>
-        <Navbar
-          logOut={onLogOutHandler}
-          userInfo={userInfo}
-          loggedIn={isLoggedIn}
-        />
+        <When condition={isLoggedIn}>
+          <Navbar
+            logOut={onLogOutHandler}
+            userInfo={userInfo}
+            loggedIn={isLoggedIn}
+          />
+        </When>
         <Routes>
           <Route
             index
             element={
               <LoginPage
-                loginOnToken={loginOnToken}
                 isLoggedIn={isLoggedIn}
+                loginOnToken={loginOnToken}
                 onLogin={onLogInHandler}
               />
             }

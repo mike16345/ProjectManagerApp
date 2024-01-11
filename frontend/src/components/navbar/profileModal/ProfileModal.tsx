@@ -3,6 +3,7 @@ import ProfilePage from "../../pages/profilePage/ProfilePage";
 // import logo from "../../../testProfile.jpg";
 import Profile from "../../profile/Profile";
 import AppContext from "../../../context/context";
+import { When } from "react-if";
 
 interface ProfileModalProps {
   logOut: () => void;
@@ -13,7 +14,7 @@ const ProfileModal: React.FC<ProfileModalProps> = (
 ) => {
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const context = useContext(AppContext);
-  const email = context.userLogged.email;
+  const email = context.userLogged?.email;
 
   const profileClickHandler = () => {
     if (showProfileModal) {
@@ -34,15 +35,15 @@ const ProfileModal: React.FC<ProfileModalProps> = (
     <>
       <div>
         <div className="profile">
-          <Profile onClick={profileClickHandler} name={email} />
+          <Profile onClick={profileClickHandler} name={email || ""} />
         </div>
-        {showProfileModal && (
+        <When condition={showProfileModal}>
           <ProfilePage
             logOut={logOut}
             onCloseProfile={onCloseProfileHandler}
             imageSrc={logo}
           />
-        )}
+        </When>
       </div>
     </>
   );

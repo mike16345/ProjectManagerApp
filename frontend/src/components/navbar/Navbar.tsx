@@ -7,8 +7,13 @@ import SearchBar from "./searchBar/SearchBar";
 // import logo from "../../logo.png";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import classes from "./Navbar.module.css";
+import { When } from "react-if";
 
-const Navbar = (props) => {
+interface INavbar {
+  isLoggedIn: boolean;
+  onLogOutHandler: () => void;
+}
+const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   const navigate = useNavigate();
   const context = useContext(AppContext);
 
@@ -27,11 +32,14 @@ const Navbar = (props) => {
   };
 
   const projectByUser = async () => {
+    if (!context.userLogged) return;
     return await getProjectsByUser(context.userLogged);
   };
 
-  const onSearchHandler = async (inputValue) => {
+  const onSearchHandler = async (inputValue: string) => {
     const projects = await projectByUser();
+    if (!projects) return;
+    // Find project
     const currentFound = projects.find(
       (project) => project.name === inputValue
     );
@@ -48,10 +56,6 @@ const Navbar = (props) => {
     }
   };
 
-  const logOut = () => {
-    props.logOut();
-  };
-
   return (
     <nav
       className={`navbar ${classes.navbar}`}
@@ -60,44 +64,36 @@ const Navbar = (props) => {
     >
       <div
         id="navbarBasicExample"
-        className={`navbar-menu ${classes.logoContainer}`}
+        className={`navbar-menu ${classes.logoContainer} flex gap-4`}
       >
         <img src={""} alt="Logo" />
         <div className="navbar-start">
-          <a
-            className="navbar-item has-text-white-ter"
-            onClick={onLogoClickHandler}
-          >
+          <a className="" onClick={onLogoClickHandler}>
             Home
           </a>
 
-          {props.loggedIn && (
-            <a
-              className="navbar-item has-text-white-ter"
-              onClick={onMyTaskClickHandler}
-            >
+          <When condition={isLoggedIn}>
+            <a className=" font-bold " onClick={onMyTaskClickHandler}>
               My Tasks
             </a>
-          )}
-          {props.loggedIn && (
             <a
               className="navbar-item has-text-white-ter"
               onClick={onProjectsClickHandler}
             >
               Projects
             </a>
-          )}
+          </When>
         </div>
 
         <div className="navbar-end">
-          <div className="navbar-item has-text-white-ter">
-            {props.loggedIn && <SearchBar onInput={onSearchHandler} />}
-          </div>
-          <div className="navbar-item has-text-white-ter">
-            {props.loggedIn && (
-              <ProfileModal logOut={logOut}>Profile</ProfileModal>
-            )}
-          </div>
+          <When condition={isLoggedIn}>
+            <div className="navbar-item has-text-white-ter">
+              <SearchBar onInput={onSearchHandler} />
+            </div>
+            <div className="navbar-item has-text-white-ter">
+              <ProfileModal logOut={onLogOutHandler} />
+            </div>
+          </When>
         </div>
       </div>
     </nav>

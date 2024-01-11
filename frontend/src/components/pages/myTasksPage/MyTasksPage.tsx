@@ -3,7 +3,7 @@ import classes from "./MyTasksPage.module.css";
 import { getTasksByEmail } from "../../../API/TaskAPIcalls";
 import Task from "../../task/Task";
 import BoxRow from "../../boxRow/BoxRow";
-import AppContext from "../../../context/Context";
+import AppContext from "../../../context/context";
 
 import {
   getAllProjects,
@@ -46,6 +46,7 @@ const MyTasksPage: React.FC = (props) => {
                 .filter((task) => task.project_id === project._id)
                 .map((task, index) => (
                   <Task
+                    taskNumber={task.project_id}
                     style={"third"}
                     key={index}
                     taskText={task.text}

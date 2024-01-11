@@ -3,14 +3,21 @@ import axios from "axios";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import { User } from "../../../interfaces";
+import { useUsersStore } from "../../../store/usersStore";
 
+interface IGoogleLogin {
+  onSuccessHandler: (user: User) => void;
+}
 const GoogleLogin = () => {
   const [user, setUser] = useState<TokenResponse | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
+  const { activeUser, setActiveUser } = useUsersStore();
+
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => {
+    onSuccess: (codeResponse: TokenResponse) => {
+      console.log("code response:", codeResponse);
+
       setUser(codeResponse);
-      console.log(codeResponse);
     },
     onError: (error) => console.log("Login Failed:", error),
   });

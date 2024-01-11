@@ -27,6 +27,7 @@ import {
 import { FaUserAlt, FaLock } from "react-icons/fa";
 
 import GoogleLogin from "./GoogleLogin";
+import { GoogleLoginResponse } from "react-google-login";
 
 interface LoginPageProps {
   isLoggedIn: boolean;
@@ -65,30 +66,27 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowClick = () => setShowPassword(!showPassword);
-  // const onSuccess = async (
-  //   res: GoogleLoginResponse | GoogleLoginResponseOffline
-  // ) => {
-  //   const user = {
-  //     name: res.profileObj?.name || "",
-  //     googleId: res.profileObj?.googleId || "",
-  //     email: res.profileObj?.email || "",
-  //     type: "other",
-  //   };
 
-  //   const response = await registerHandler(user);
+  const onSuccess = async (
+    res: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    const user = {
+      name: res.profileObj?.name || "",
+      googleId: res.profileObj?.googleId || "",
+      email: res.profileObj?.email || "",
+      type: "other",
+    };3
 
-  //   if (response.status === "registered") {
-  //     localStorage.setItem("token-promger", response.token);
-  //     loginOnToken(response.isNew);
-  //   } else if (response?.status === "401") {
-  //     localStorage.setItem("token-promger", response.data.token);
-  //     loginOnToken(response.response.isNew);
-  //   }
-  // };
+    const response = await registerHandler(user);
 
-  // const onFailure = (err: any) => {
-  //   console.log("failed:", err);
-  // };
+    if (response.status === "registered") {
+      localStorage.setItem("token-promger", response.token);
+      loginOnToken(response.isNew);
+    } else if (response?.status === "401") {
+      localStorage.setItem("token-promger", response.data.token);
+      loginOnToken(response.response.isNew);
+    }
+  };
 
   return (
     <Flex
@@ -121,7 +119,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
                     pointerEvents="none"
                     children={<CFaUserAlt color="gray.300" />}
                   />
-                  <Input type="email" placeholder="email address" />
+                  <Input type="email" placeholder="Email Address" />
                 </InputGroup>
               </FormControl>
               <FormControl>
@@ -142,11 +140,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
                   </InputRightElement>
                 </InputGroup>
                 <FormHelperText textAlign="right">
-                  <Link>forgot password?</Link>
+                  <Link>Forgot Password?</Link>
                 </FormHelperText>
               </FormControl>
               <Button
-                borderRadius={0}
+                borderRadius={5}
                 type="submit"
                 variant="solid"
                 colorScheme="teal"
