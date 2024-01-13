@@ -2,7 +2,6 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import classes from "./MyTasksPage.module.css";
 import { getTasksByEmail } from "../../../API/TaskAPIcalls";
 import Task from "../../task/Task";
-import BoxRow from "../../boxRow/BoxRow";
 import AppContext from "../../../context/context";
 
 import {
@@ -41,7 +40,7 @@ const MyTasksPage: React.FC = (props) => {
         {projects.map((project, index) => (
           <div key={index}>
             <h2 className={classes.title}>{project.name}</h2>
-            <BoxRow>
+            <>
               {tasks
                 .filter((task) => task.project_id === project._id)
                 .map((task, index) => (
@@ -56,7 +55,7 @@ const MyTasksPage: React.FC = (props) => {
                     isMyTasks={true}
                   />
                 ))}
-            </BoxRow>
+            </>
           </div>
         ))}
       </div>

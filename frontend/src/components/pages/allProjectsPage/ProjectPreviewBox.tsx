@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../../../context/context";
-import classes from "./AllProjectPage.module.css";
 import { Project } from "../../../interfaces";
 
 interface IProjectPreviewBox {
@@ -21,10 +20,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   };
 
   return (
-    <div
-      onClick={onProjectClickHandler}
-      className={`${classes.container} ${classes.clickable}`}
-    >
+    <div onClick={onProjectClickHandler} className={``}>
       <h2>{projectName}</h2>
     </div>
   );

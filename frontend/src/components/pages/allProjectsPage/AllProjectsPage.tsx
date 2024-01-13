@@ -1,11 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
-import classes from "./AllProjectPage.module.css";
 import {
   getAllProjects,
   createProject,
   getProjectsByUser,
 } from "../../../API/ProjectAPIcalls";
-import BoxRow from "../../boxRow/BoxRow";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import Button from "../../button/Button";
 import Modal from "../../modal/Modal";
@@ -39,8 +37,7 @@ const AllProjectPage = () => {
     setProjectName(e.target.value);
   };
 
-  const onCreateProjectHandler = async (e) => {
-    e.preventDefault();
+  const onCreateProjectHandler = async () => {
     const project = await createProject(projectName);
     setAllProjects([...allProjects, project]);
     setOpenModal(false);
@@ -55,15 +52,12 @@ const AllProjectPage = () => {
     <Fragment>
       <When condition={openModal}>
         <Modal onClose={() => setOpenModal(false)}>
-          <form
-            className={classes.addProjectModal}
-            onSubmit={onCreateProjectHandler}
-          >
-            <div className={classes.input}>
+          <form className=" addproject" onSubmit={onCreateProjectHandler}>
+            <div className={""}>
               <label htmlFor="projectName">Project name:</label>
               <input type="text" onChange={onChangeInputHandler} />
             </div>
-            <div className={classes.btns}>
+            <div className=" ">
               <Button type="submit">Save</Button>
               <Button onClick={() => setOpenModal(false)}>Cancel</Button>
             </div>
@@ -78,8 +72,8 @@ const AllProjectPage = () => {
 
       <When condition={activeUser && activeUser.projects.length > 0}>
         <div>
-          <h2 className={classes.title}>My projects:</h2>
-          <BoxRow>
+          <h2 className=" ">My projects:</h2>
+          <div>
             {myProjects!.map((project, index) => (
               <ProjectPreviewBox
                 projectName={project.name}
@@ -87,12 +81,12 @@ const AllProjectPage = () => {
                 project={project}
               />
             ))}
-          </BoxRow>
+          </div>
         </div>
         <div>
           <div>
-            <h2 className={classes.title}>All projects:</h2>
-            <BoxRow>
+            <h2 className="">All projects:</h2>
+            <div className=" flex gap-2 ">
               {allProjects.map((project, index) => (
                 <ProjectPreviewBox
                   projectName={project.name}
@@ -100,7 +94,7 @@ const AllProjectPage = () => {
                   project={project}
                 />
               ))}
-            </BoxRow>
+            </div>
           </div>
         </div>
       </When>

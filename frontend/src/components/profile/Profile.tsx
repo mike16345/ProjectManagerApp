@@ -1,6 +1,5 @@
-import React, { FC, MouseEvent } from "react";
+import React, { FC } from "react";
 import { Fragment } from "react";
-import classes from "./Profile.module.css";
 
 interface ProfileProps {
   index?: number;
@@ -10,30 +9,18 @@ interface ProfileProps {
 }
 
 const Profile: FC<ProfileProps> = ({ index, onClick, isList, name }) => {
-  const colors = [
-    "brown",
-    "green",
-    "yellow",
-    "red",
-    "grey",
-    "black",
-    "lightBlue",
-    "chocolate",
-  ];
-
-  const color = colors[index || 0];
-  const shortName = name?.substring(0, 2);
-
+  const shortName = name?.substring(0, 2).toUpperCase();
+  const handleClick = () => {
+    if (onClick) onClick(name || "");
+  };
   return (
     <Fragment>
-      <span
-        onClick={() => (onClick ? onClick(name || "") : () => {})}
-        className={`${classes.profileCircle} ${classes[color]} ${
-          isList ? classes["box-shadow"] : ""
-        }`}
+      <div
+        onClick={handleClick}
+        className="rounded-full bg-red-500 cursor-pointer hover:scale-105   filter-shadow w-10 h-10 font-bold text-center flex justify-center items-center "
       >
         {shortName}
-      </span>
+      </div>
     </Fragment>
   );
 };

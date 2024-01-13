@@ -62,7 +62,7 @@ function App() {
         <Navbar onLogOutHandler={onLogOutHandler} isLoggedIn={isLoggedIn} />
       </When>
       <Routes>
-        <Route index element={<LoginPage loginOnToken={loginOnToken} />} />
+        <Route path="/" element={<LoginPage loginOnToken={loginOnToken} />} />
         <Route
           path="welcome"
           element={
@@ -77,7 +77,7 @@ function App() {
           element={isLoggedIn && <ProjectOverview />}
         />
         <Route path="myTasks" element={isLoggedIn && <MyTasksPage />} />
-        <Route path="allProjects" element={<AllProjectPage />} />
+        <Route path="allProjects" element={isLoggedIn && <AllProjectPage />} />
       </Routes>
     </Fragment>
   );

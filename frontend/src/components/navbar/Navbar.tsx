@@ -2,11 +2,10 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import AppContext from "../../context/context";
-import ProfileModal from "./profileModal/ProfileModal";
-import SearchBar from "./searchBar/SearchBar";
+import ProfileModal from "./ProfileModal";
+import SearchBar from "./SearchBar";
 // import logo from "../../logo.png";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
-import classes from "./Navbar.module.css";
 import { When } from "react-if";
 
 interface INavbar {
@@ -57,46 +56,37 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   };
 
   return (
-    <nav
-      className={`navbar ${classes.navbar}`}
-      role="navigation"
-      aria-label="main navigation"
-    >
-      <div
-        id="navbarBasicExample"
-        className={`navbar-menu ${classes.logoContainer} flex gap-4`}
+    <div className={` flex bg-indigo-600 p-2  items-center justify-between   `}>
+      <button className="border rounded-full w-14 h-14 text-center ">
+        Logo
+      </button>
+      <button
+        className="text-white hover:scale-105"
+        onClick={onLogoClickHandler}
       >
-        <img src={""} alt="Logo" />
-        <div className="navbar-start">
-          <a className="" onClick={onLogoClickHandler}>
-            Home
-          </a>
+        Home
+      </button>
 
-          <When condition={isLoggedIn}>
-            <a className=" font-bold " onClick={onMyTaskClickHandler}>
-              My Tasks
-            </a>
-            <a
-              className="navbar-item has-text-white-ter"
-              onClick={onProjectsClickHandler}
-            >
-              Projects
-            </a>
-          </When>
-        </div>
+      <When condition={isLoggedIn}>
+        <button
+          className=" text-white hover:scale-105"
+          onClick={onMyTaskClickHandler}
+        >
+          My Tasks
+        </button>
+        <button
+          className=" text-white hover:scale-105"
+          onClick={onProjectsClickHandler}
+        >
+          Projects
+        </button>
+      </When>
 
-        <div className="navbar-end">
-          <When condition={isLoggedIn}>
-            <div className="navbar-item has-text-white-ter">
-              <SearchBar onInput={onSearchHandler} />
-            </div>
-            <div className="navbar-item has-text-white-ter">
-              <ProfileModal logOut={onLogOutHandler} />
-            </div>
-          </When>
-        </div>
-      </div>
-    </nav>
+      <When condition={isLoggedIn}>
+        <SearchBar onInput={onSearchHandler} />
+        <ProfileModal logOut={onLogOutHandler} />
+      </When>
+    </div>
   );
 };
 
