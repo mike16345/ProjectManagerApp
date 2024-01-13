@@ -8,7 +8,6 @@ interface WelcomePageProps {
 const WelcomePage: React.FC<WelcomePageProps> = (props) => {
   const { name, isNew } = props;
   const greeting = isNew ? "aboard" : "back";
-
   return (
     <Fragment>
       <h2 className="welcome">

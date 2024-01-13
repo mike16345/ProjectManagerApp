@@ -24,14 +24,14 @@ const userSchema: Schema<IUserDocument> = new Schema({
 
 export const UserModel = mongoose.model("users", userSchema);
 
-export const genToken = (id) => {
+export const genToken = (id: string) => {
   const token = jwt.sign({ id: id }, JWT_SECRET, {
     expiresIn: "30d",
   });
   return token;
 };
 
-export const validateLogin = (reqBody) => {
+export const validateLogin = (reqBody: any) => {
   const joiSchema = Joi.object({
     email: Joi.string().min(2).max(25).required().email(),
   });

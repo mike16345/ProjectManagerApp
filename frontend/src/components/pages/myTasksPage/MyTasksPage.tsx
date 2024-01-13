@@ -36,7 +36,7 @@ const MyTasksPage: React.FC = (props) => {
 
   return (
     <Fragment>
-      <h2 className={classes.title}>my tasks </h2>
+      <h2 className={classes.title}>My tasks</h2>
       <div>
         {projects.map((project, index) => (
           <div key={index}>

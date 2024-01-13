@@ -1,6 +1,6 @@
+import { googleUserModel } from "./../models/googleUserModel";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { UserModel, genToken } from "../models/userModel";
 import { authToken } from "../auth/authToken";
 import { passwordModel } from "../models/passwordModel";
@@ -25,37 +25,31 @@ router.get("/emails", async (req: Request, res: Response) => {
 });
 
 router.post("/register", async (req: Request, res: Response) => {
-  const isUserExist = await UserModel.findOne({ email: req.body.email });
+  const existingUser = await UserModel.findOne({ email: req.body.email });
+  console.log("req body:", req.body);
+  if (existingUser) {
+    const token = genToken(existingUser._id);
+    return res.json({ isNew: false, status: "existing_user", data: token });
+  }
 
-  if (isUserExist) {
-    const token = genToken(isUserExist._id);
-
-    return res.status(401).json({
-      isNew: false,
-      status: 203,
-      token: token,
-      error: "the email is already exist",
-    });
-  } else {
-    try {
-      const user = new UserModel(req.body);
-      await user.save();
-      const oldUser = await UserModel.findOne({ email: req.body.email });
-      if (!oldUser) return;
-      if (req.body.type === "local") {
-        const password = await bcrypt.hash(req.body.password, 10);
-        const newPassword = new passwordModel({
-          _id: oldUser._id,
-          password: password,
-        });
-        await newPassword.save();
-      }
-      const newToken = genToken(user._id);
-
-      return res.json({ isNew: true, status: "registered", data: newToken });
-    } catch (error) {
-      res.status(400).json({ error: "did not work" });
+  try {
+    const user = new UserModel(req.body);
+    await user.save();
+    const oldUser = await UserModel.findOne({ email: req.body.email });
+    if (!oldUser) return;
+    if (req.body.type === "local") {
+      const password = await bcrypt.hash(req.body.password, 10);
+      const newPassword = new passwordModel({
+        _id: oldUser._id,
+        password: password,
+      });
+      await newPassword.save();
     }
+    const newToken = genToken(user._id);
+
+    return res.json({ isNew: true, status: "registered", data: newToken });
+  } catch (error) {
+    res.status(400).json({ error: "did not work" });
   }
 });
 
@@ -81,6 +75,7 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 
   const passwordObj = await passwordModel.findOne({ _id: user._id });
+
   if (!passwordObj) return;
 
   if (await bcrypt.compare(password, passwordObj.password)) {

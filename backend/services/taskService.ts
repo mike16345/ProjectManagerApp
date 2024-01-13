@@ -1,6 +1,9 @@
 const { TaskModel } = require("../models/taskModel");
 
-export const removeUserFromTasks = async (projectId, userEmail) => {
+export const removeUserFromTasks = async (
+  projectId: string,
+  userEmail: string
+) => {
   let tasks = await TaskModel.updateMany(
     { project_id: projectId, email: userEmail },
     { $set: { email: "none@gmail.com" } }

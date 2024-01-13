@@ -38,11 +38,7 @@ const ProfileModal: React.FC<ProfileModalProps> = (
           <Profile onClick={profileClickHandler} name={email || ""} />
         </div>
         <When condition={showProfileModal}>
-          <ProfilePage
-            logOut={logOut}
-            onCloseProfile={onCloseProfileHandler}
-            imageSrc={logo}
-          />
+          <ProfilePage logOut={logOut} onCloseProfile={onCloseProfileHandler} />
         </When>
       </div>
     </>

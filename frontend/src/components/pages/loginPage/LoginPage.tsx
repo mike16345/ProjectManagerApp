@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import Card from "../../card/Card";
-import InputForm from "./inputForm/InputForm";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import {
   loginHandler,
@@ -19,7 +17,6 @@ import {
   Link,
   Avatar,
   FormControl,
-  FormHelperText,
   InputRightElement,
   chakra,
 } from "@chakra-ui/react";
@@ -27,24 +24,46 @@ import {
 import { FaUserAlt, FaLock } from "react-icons/fa";
 
 import GoogleLogin from "./GoogleLogin";
-import { GoogleLoginResponse } from "react-google-login";
+import { When } from "react-if";
+import { GoogleUser } from "../../../interfaces";
 
 interface LoginPageProps {
-  isLoggedIn: boolean;
-  onLogin: () => void;
   loginOnToken: (isNew: boolean) => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
-  const onRegisterHandler = async (user: any) => {
+interface Input {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  type: string;
+}
+const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
+  const CFaUserAlt = chakra(FaUserAlt);
+  const CFaLock = chakra(FaLock);
+
+  const [registerInput, setRegisterInput] = useState<Input>({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    type: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [register, setRegister] = useState(false);
+
+  const onRegisterHandler = async (user: Input) => {
     user.type = "local";
     const response = await registerHandler(user);
+    console.log("Register response:", response);
     if (!response.token) return;
     localStorage.setItem("token-promger", response.token);
     loginOnToken(response.isNew);
   };
 
   const onLoginHandler = async (userDetails: any) => {
+    console.log("user details:", userDetails);
     const response = await loginHandler(userDetails);
     const data = response.data.data;
     if (response.data.status === "ok") {
@@ -59,34 +78,60 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
     }
   };
 
-  const clientId = "";
-  const CFaUserAlt = chakra(FaUserAlt);
-  const CFaLock = chakra(FaLock);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setRegisterInput({ ...registerInput, [name]: value });
+  };
 
-  const [showPassword, setShowPassword] = useState(false);
+  const handleSubmit = (e: FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (register) {
+      if (!validateConfirmPassword()) {
+        // Alert passwords dont match
+        console.log("not the same");
+      } else {
+        onRegisterHandler(registerInput);
+      }
+    } else {
+      onLoginHandler(registerInput);
+    }
+  };
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
-  const onSuccess = async (
-    res: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
-    const user = {
-      name: res.profileObj?.name || "",
-      googleId: res.profileObj?.googleId || "",
-      email: res.profileObj?.email || "",
-      type: "other",
-    };3
+  const validateConfirmPassword = (): boolean => {
+    return registerInput.password === registerInput.confirmPassword;
+  };
 
-    const response = await registerHandler(user);
+  const onGoogleLoginSuccess = async (user: GoogleUser) => {
+    const googleUser = {
+      name: user.name || "",
+      googleId: user.id || "",
+      email: user.email || "",
+      picture: user.picture,
+      isVerified: user.verified_email,
+      type: "googleUser",
+    };
 
-    if (response.status === "registered") {
-      localStorage.setItem("token-promger", response.token);
+    const response = await registerHandler(googleUser);
+    if (response.token) localStorage.setItem("token-promger", response.token);
+
+    if (
+      response.status === "registered" ||
+      response.status === "existing_user"
+    ) {
       loginOnToken(response.isNew);
-    } else if (response?.status === "401") {
-      localStorage.setItem("token-promger", response.data.token);
-      loginOnToken(response.response.isNew);
     }
   };
+
+  useEffect(() => {
+    setRegisterInput({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      username: "",
+    } as Input);
+  }, [register]);
 
   return (
     <Flex
@@ -113,13 +158,38 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
               backgroundColor="whiteAlpha.900"
               boxShadow="md"
             >
+              <When condition={register}>
+                <FormControl>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      children={<CFaUserAlt color="gray.300" />}
+                    />
+                    <Input
+                      name="username"
+                      value={registerInput.username}
+                      onChange={handleChange}
+                      required
+                      type="text"
+                      placeholder="Username"
+                    />
+                  </InputGroup>
+                </FormControl>
+              </When>
               <FormControl>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
                     children={<CFaUserAlt color="gray.300" />}
                   />
-                  <Input type="email" placeholder="Email Address" />
+                  <Input
+                    name="email"
+                    required
+                    value={registerInput.email}
+                    onChange={handleChange}
+                    type="email"
+                    placeholder="Email Address"
+                  />
                 </InputGroup>
               </FormControl>
               <FormControl>
@@ -130,6 +200,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
                     children={<CFaLock color="gray.300" />}
                   />
                   <Input
+                    name="password"
+                    required
+                    value={registerInput.password}
+                    onChange={handleChange}
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                   />
@@ -139,28 +213,53 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken, isLoggedIn }) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-                <FormHelperText textAlign="right">
-                  <Link>Forgot Password?</Link>
-                </FormHelperText>
               </FormControl>
+              <When condition={register}>
+                <FormControl>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      color="gray.300"
+                      children={<CFaLock color="gray.300" />}
+                    />
+                    <Input
+                      required
+                      value={registerInput.confirmPassword}
+                      name="confirmPassword"
+                      onChange={handleChange}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm Password"
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                        {showPassword ? "Hide" : "Show"}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                </FormControl>
+              </When>
               <Button
+                onClick={handleSubmit}
                 borderRadius={5}
                 type="submit"
                 variant="solid"
                 colorScheme="teal"
                 width="full"
               >
-                Login
+                {register ? "Register" : "Login"}
               </Button>
-              <GoogleLogin />
+              <GoogleLogin onSuccessHandler={onGoogleLoginSuccess} />
             </Stack>
           </form>
         </Box>
       </Stack>
       <Box>
-        New to us?{" "}
-        <Link color="teal.500" href="#">
-          Sign Up
+        New to us?
+        <Link
+          color="teal.500"
+          onClick={() => setRegister((register) => !register)}
+        >
+          {!register ? "Register" : "Login"}
         </Link>
       </Box>
     </Flex>

@@ -2,24 +2,25 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
-import { User } from "../../../interfaces";
-import { useUsersStore } from "../../../store/usersStore";
+import { GoogleUser, User } from "../../../interfaces";
 
 interface IGoogleLogin {
-  onSuccessHandler: (user: User) => void;
+  onSuccessHandler: (user: GoogleUser) => void;
 }
-const GoogleLogin = () => {
+const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   const [user, setUser] = useState<TokenResponse | null>(null);
-  const [profile, setProfile] = useState<User | null>(null);
-  const { activeUser, setActiveUser } = useUsersStore();
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse: TokenResponse) => {
       console.log("code response:", codeResponse);
-
       setUser(codeResponse);
+
+      // Successful login alert
     },
-    onError: (error) => console.log("Login Failed:", error),
+    onError: (error) => {
+      //TODO: Add Login error alert
+      console.log("Login Failed:", error);
+    },
   });
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const GoogleLogin = () => {
           }
         )
         .then((res) => {
-          setProfile(res.data);
+          onSuccessHandler(res.data);
         })
         .catch((err) => console.log(err));
     }

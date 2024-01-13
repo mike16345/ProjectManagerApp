@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import SelectSearch, { Option, Item } from "react-select-search";
+
 import "./SearchSelect.module.css";
 
 interface Workshop {
@@ -9,7 +10,7 @@ interface Workshop {
 }
 
 const SearchSelect: React.FC = () => {
-  const searchInput = useRef<SelectSearch | null>(null);
+  // const searchInput = useRef<SelectSearch | null>(null);
 
   const options: Workshop[] = [
     {

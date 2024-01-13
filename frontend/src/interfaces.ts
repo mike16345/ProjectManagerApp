@@ -1,6 +1,8 @@
 export interface Project {
   _id: string;
+  name: string;
 }
+
 export interface Task {
   text: string;
   email: string;
@@ -21,4 +23,10 @@ export interface User {
   dateCreated: Date;
 }
 
+export interface GoogleUser extends User {
+  id: string;
+  locale: string;
+  picture: string;
+  verified_email: boolean;
+}
 export interface Task {}

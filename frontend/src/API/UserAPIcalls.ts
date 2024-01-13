@@ -1,10 +1,13 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const APIaddress = "http://localhost:3002";
 
 interface User {
   _id: string;
   email: string;
+  password: string;
+  type: string;
+  username: string;
 }
 
 interface AuthResponse {
@@ -31,7 +34,7 @@ export const loginHandler = async (userDetails: any): Promise<AuthResponse> => {
   }
 };
 
-export const registerHandler = async (user: User): Promise<AuthResponse> => {
+export const registerHandler = async (user: any): Promise<AuthResponse> => {
   try {
     const res: AxiosResponse = await axios.post(
       `${APIaddress}/users/register`,
@@ -42,10 +45,10 @@ export const registerHandler = async (user: User): Promise<AuthResponse> => {
       isNew: res.data.isNew,
       status: res.data.status,
       token: res.data.data,
-    };
+    } as AuthResponse;
   } catch (error) {
     // Add error alert
-    console.error(error);
+    console.log("error:", error);
     throw error;
   }
 };

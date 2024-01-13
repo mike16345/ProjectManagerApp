@@ -14,7 +14,7 @@ const taskSchema: Schema<ITask> = new Schema({
 
 export const TaskModel = mongoose.model("tasks", taskSchema);
 
-export const validateTask = (reqBody) => {
+export const validateTask = (reqBody: any) => {
   const joiSchema = Joi.object({
     text: Joi.string().min(2).max(100).required(),
     email: Joi.string().min(2).max(100).required().email(),

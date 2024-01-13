@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import classes from "./AllProjectPage.module.css";
 import {
   getAllProjects,
@@ -9,49 +9,51 @@ import BoxRow from "../../boxRow/BoxRow";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import Button from "../../button/Button";
 import Modal from "../../modal/Modal";
-import AppContext from "../../../context/context";
 import { Project } from "../../../interfaces";
 import { When } from "react-if";
+import { useUsersStore } from "../../../store/usersStore";
 
-const AllProjectPage = (props) => {
-  const context = useContext(AppContext);
-  const userLoggedProjects = context.userLogged && context.userLogged.projects;
-
+const AllProjectPage = () => {
+  const { activeUser } = useUsersStore();
   const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [myProjects, setMyProjects] = useState(userLoggedProjects);
+  const [myProjects, setMyProjects] = useState(
+    activeUser && activeUser.projects
+  );
   const [openModal, setOpenModal] = useState(false);
   const [projectName, setProjectName] = useState("");
 
   const fetchAllProjects = async () => {
-    const res = await getAllProjects();
-    setAllProjects(res);
+    const projects = await getAllProjects();
+    setAllProjects(projects);
   };
 
   const fetchUsersProject = async () => {
-    if (!context.userLogged) return;
-    const projects = await getProjectsByUser(context.userLogged);
+    if (!activeUser) return;
+
+    const projects = await getProjectsByUser(activeUser);
+    console.log("projects:", projects);
     setMyProjects(projects);
   };
 
-  const onChangeInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
+  const onChangeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProjectName(e.target.value);
   };
 
-  const onCreateProjectHandler = async (event) => {
-    event.preventDefault();
+  const onCreateProjectHandler = async (e) => {
+    e.preventDefault();
     const project = await createProject(projectName);
     setAllProjects([...allProjects, project]);
     setOpenModal(false);
   };
 
   useEffect(() => {
-    // fetchAllProjects();
-    // fetchUsersProject();
+    fetchAllProjects();
+    fetchUsersProject();
   }, []);
 
   return (
     <Fragment>
-      {openModal && (
+      <When condition={openModal}>
         <Modal onClose={() => setOpenModal(false)}>
           <form
             className={classes.addProjectModal}
@@ -63,40 +65,45 @@ const AllProjectPage = (props) => {
             </div>
             <div className={classes.btns}>
               <Button type="submit">Save</Button>
-              <Button type="button" onClick={() => setOpenModal(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setOpenModal(false)}>Cancel</Button>
             </div>
           </form>
         </Modal>
-      )}
-      <When condition={context.userLogged && context.userLogged.isAdmin}>
-        <Button type="button" style="margin" onClick={() => setOpenModal(true)}>
+      </When>
+      <When condition={activeUser && activeUser.isAdmin}>
+        <Button style="margin" onClick={() => setOpenModal(true)}>
           Add project
         </Button>
       </When>
 
-      <When condition={myProjects && myProjects.length > 0}>
+      <When condition={activeUser && activeUser.projects.length > 0}>
         <div>
           <h2 className={classes.title}>My projects:</h2>
           <BoxRow>
             {myProjects!.map((project, index) => (
-              <ProjectPreviewBox key={index} project={project} />
+              <ProjectPreviewBox
+                projectName={project.name}
+                key={index}
+                project={project}
+              />
             ))}
           </BoxRow>
+        </div>
+        <div>
+          <div>
+            <h2 className={classes.title}>All projects:</h2>
+            <BoxRow>
+              {allProjects.map((project, index) => (
+                <ProjectPreviewBox
+                  projectName={project.name}
+                  key={index}
+                  project={project}
+                />
+              ))}
+            </BoxRow>
+          </div>
         </div>
       </When>
-
-      {allProjects.length > 0 && (
-        <div>
-          <h2 className={classes.title}>All projects:</h2>
-          <BoxRow>
-            {allProjects.map((project, index) => (
-              <ProjectPreviewBox key={index} project={project} />
-            ))}
-          </BoxRow>
-        </div>
-      )}
     </Fragment>
   );
 };

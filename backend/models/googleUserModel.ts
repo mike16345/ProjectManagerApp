@@ -10,11 +10,11 @@ interface IGoogleUser extends Document, IUser {
   googleId: string;
 }
 
-const userSchema: Schema<IGoogleUser> = new Schema({
+const googleUserSchema: Schema<IGoogleUser> = new Schema({
   name: String,
   email: String,
   googleId: String,
-  projects: Array, // Adjust the type based on your actual data structure
+  projects: Array,
   isAdmin: {
     type: Boolean,
     default: false,
@@ -27,7 +27,7 @@ const userSchema: Schema<IGoogleUser> = new Schema({
 
 export const googleUserModel = mongoose.model<IGoogleUser>(
   "google-user",
-  userSchema
+  googleUserSchema
 );
 
 export const genToken = (id: string): string => {

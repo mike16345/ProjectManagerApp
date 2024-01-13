@@ -1,6 +1,4 @@
 import express, { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { googleUserModel, genToken } from "../models/googleUserModel";
 import { authToken } from "../auth/authToken";
 
