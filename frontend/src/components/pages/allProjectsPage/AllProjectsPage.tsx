@@ -1,11 +1,10 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getAllProjects,
   createProject,
   getProjectsByUser,
 } from "../../../API/ProjectAPIcalls";
 import ProjectPreviewBox from "./ProjectPreviewBox";
-import Button from "../../button/Button";
 import Modal from "../../modal/Modal";
 import { Project } from "../../../interfaces";
 import { When } from "react-if";
@@ -49,31 +48,52 @@ const AllProjectPage = () => {
   }, []);
 
   return (
-    <Fragment>
+    <div className="  flex flex-col gap-6 m-8 ">
       <When condition={openModal}>
         <Modal onClose={() => setOpenModal(false)}>
-          <form className=" addproject" onSubmit={onCreateProjectHandler}>
-            <div className={""}>
+          <form
+            className=" flex flex-col items-center justify-center gap-4"
+            onSubmit={onCreateProjectHandler}
+          >
+            <div className={"flex flex-col gap-1"}>
               <label htmlFor="projectName">Project name:</label>
-              <input type="text" onChange={onChangeInputHandler} />
+              <input
+                className=" border-2 border-black rounded p-2 "
+                placeholder="Project Name"
+                type="text"
+                onChange={onChangeInputHandler}
+              />
             </div>
-            <div className=" ">
-              <Button type="submit">Save</Button>
-              <Button onClick={() => setOpenModal(false)}>Cancel</Button>
+            <div className=" flex gap-4">
+              <button
+                className=" border p-2 bg-indigo-500 text-white font-bold rounded-lg w-24 h-12 "
+                type="submit"
+              >
+                Save
+              </button>
+              <button
+                className=" border p-2 bg-indigo-500 text-white font-bold rounded-lg w-24 h-12 "
+                onClick={() => setOpenModal(false)}
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </Modal>
       </When>
       <When condition={activeUser && activeUser.isAdmin}>
-        <Button style="margin" onClick={() => setOpenModal(true)}>
+        <button
+          className=" border rounded-lg p-2 bg-indigo-500 text-white font-extrabold hover:scale-105 w-32 h-12 "
+          onClick={() => setOpenModal(true)}
+        >
           Add project
-        </Button>
+        </button>
       </When>
 
       <When condition={activeUser && activeUser.projects.length > 0}>
-        <div>
+        <div className="">
           <h2 className=" ">My projects:</h2>
-          <div>
+          <div className=" border p-2">
             {myProjects!.map((project, index) => (
               <ProjectPreviewBox
                 projectName={project.name}
@@ -98,7 +118,7 @@ const AllProjectPage = () => {
           </div>
         </div>
       </When>
-    </Fragment>
+    </div>
   );
 };
 

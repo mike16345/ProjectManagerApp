@@ -20,7 +20,10 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   };
 
   return (
-    <div onClick={onProjectClickHandler} className={``}>
+    <div
+      onClick={onProjectClickHandler}
+      className={` border-2 border-black rounded-lg p-2  cursor-pointer hover:scale-105 w-20 `}
+    >
       <h2>{projectName}</h2>
     </div>
   );

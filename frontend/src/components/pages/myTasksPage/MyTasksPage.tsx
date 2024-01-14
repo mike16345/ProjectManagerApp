@@ -34,8 +34,8 @@ const MyTasksPage: React.FC = (props) => {
   }, []);
 
   return (
-    <Fragment>
-      <h2 className={classes.title}>My tasks</h2>
+    <div className=" flex items-center justify-start m-4">
+      <div className=" text-xl font-bold ">My Tasks</div>
       <div>
         {projects.map((project, index) => (
           <div key={index}>
@@ -59,7 +59,7 @@ const MyTasksPage: React.FC = (props) => {
           </div>
         ))}
       </div>
-    </Fragment>
+    </div>
   );
 };
 
