@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment, useContext } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { verifyToken, getAllEmails } from "./API/UserAPIcalls";
 import LoginPage from "./components/pages/loginPage/LoginPage";
@@ -19,11 +19,9 @@ function App() {
 
   const loginOnToken = async (isNew: boolean) => {
     const token = localStorage.getItem("token-promger");
-    console.log("logging in on token:", token);
     if (!token) return;
 
     const response = await verifyToken(token);
-
     response.data.isNew = isNew;
 
     setIsNewUser(isNew);
@@ -48,8 +46,7 @@ function App() {
 
   const saveAllEmails = async () => {
     const emails = await getAllEmails();
-    if (!emails) return;
-    setUserEmails(emails);
+    if (emails) setUserEmails(emails);
   };
 
   useEffect(() => {

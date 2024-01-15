@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 interface WelcomePageProps {
   name: string;
@@ -9,11 +9,11 @@ const WelcomePage: React.FC<WelcomePageProps> = (props) => {
   const { name, isNew } = props;
   const greeting = isNew ? "aboard" : "back";
   return (
-    <Fragment>
-      <h2 className="welcome">
+    <div className="w-full h-full text-5xl font-bold text-center flex items-center justify-center">
+      <div>
         Welcome {greeting} {name}
-      </h2>
-    </Fragment>
+      </div>
+    </div>
   );
 };
 
