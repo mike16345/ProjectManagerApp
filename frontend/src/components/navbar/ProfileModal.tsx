@@ -21,19 +21,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ logOut }) => {
   };
 
   return (
-    <>
-      <div>
-        <div className="">
-          <Profile
-            onClick={profileClickHandler}
-            name={activeUser?.email || ""}
-          />
-        </div>
-        <When condition={showProfileModal}>
-          <ProfilePage logOut={logOut} onCloseProfile={onCloseProfileHandler} />
-        </When>
-      </div>
-    </>
+    <div>
+      <Profile onClick={profileClickHandler} name={activeUser?.email || ""} />
+      <When condition={showProfileModal}>
+        <ProfilePage logOut={logOut} onCloseProfile={onCloseProfileHandler} />
+      </When>
+    </div>
   );
 };
 

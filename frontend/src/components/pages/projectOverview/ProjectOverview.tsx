@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext, Fragment } from "react";
-import AppContext from "../../../context/context";
+import React, { useState, useEffect } from "react";
 import { cloneDeep } from "lodash";
 import ProjectWrapper from "../../projectWrapper/ProjectWrapper";
 import InputModal from "../../InputModal/InputModal";
@@ -19,38 +18,48 @@ import {
   updateProjectById,
   removeAssignedUserFromTasks,
 } from "../../../API/ProjectAPIcalls";
+import { useProjectsStore } from "../../../store/projectsStore";
+import { TaskStatus } from "../../../enums/TaskStatus";
+import { Task } from "../../../interfaces";
+import { useUsersStore } from "../../../store/usersStore";
+import { When } from "react-if";
 
 let taskToChange: any = {};
 
 interface ProjectOverviewProps {}
-
+interface AllTasks {
+  todo: Task[];
+  inProgress: Task[];
+  codeReview: Task[];
+  done: Task[];
+}
 const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
-  const context = useContext(AppContext);
-  const currentProject = context.currentProject;
-  const emails = currentProject.users.map((user) => user.email);
-
-  const allData = {
+  const { activeProject } = useProjectsStore();
+  const projectUsersEmails = activeProject?.users.map((user) => user.email);
+  const { userEmails } = useUsersStore();
+  const allTasks: AllTasks = {
     todo: [],
     inProgress: [],
     codeReview: [],
     done: [],
   };
 
-  const [users, setUsers] = useState(context.currentProject.users);
-  const [taskArr, setTaskArr] = useState(allData);
+  const [taskArr, setTaskArr] = useState(allTasks);
   const [createIssueOpen, setCreateIssueOpen] = useState(false);
-  const [editTask, setEditTask] = useState(false);
-
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [editTaskOpen, setEditTaskOpen] = useState(false);
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
-    const filterTodo = tasks.filter((task) => task.status === "to do");
+    const filterTodo = tasks.filter((task) => task.status === TaskStatus.TODO);
+
     const filterInProgress = tasks.filter(
-      (task) => task.status === "in progress"
+      (task) => task.status === TaskStatus.IN_PROGRESS
     );
     const filterCodeReview = tasks.filter(
-      (task) => task.status === "code review"
+      (task) => task.status === TaskStatus.CODE_REVIEW
     );
-    const filterDone = tasks.filter((task) => task.status === "done");
+    const filterDone = tasks.filter((task) => task.status === TaskStatus.DONE);
+
     cloned.todo = filterTodo;
     cloned.inProgress = filterInProgress;
     cloned.codeReview = filterCodeReview;
@@ -64,58 +73,62 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   useEffect(() => {
-    getTasksFromAPI(currentProject._id);
-  }, [editTask, createIssueOpen]);
+    if (!activeProject) return;
+    getTasksFromAPI(activeProject._id);
+  }, [editTaskOpen, createIssueOpen]);
 
   const onTaskClickHandler = (id: string, status: string) => {
     const valuesTasks = Object.values(taskArr);
+
     valuesTasks.map((taskArrays) =>
-      taskArrays.map((task) => {
+      taskArrays.map((task: Task) => {
         if (task.task_id === id) {
-          taskToChange = task;
+          setTaskToEdit(task);
         }
       })
     );
-    setEditTask(true);
+    setEditTaskOpen(true);
   };
 
   const findUser = (email: string) => {
-    let found = false;
-    currentProject.users.forEach((user) => {
+    if (!activeProject) return false;
+
+    activeProject.users.forEach((user) => {
       if (user.email.localeCompare(email) === 0) {
-        found = true;
+        return true;
       }
     });
-    return found;
+
+    return false;
   };
 
   const onAddUsertoProjectHandler = async (email: string) => {
+    const foundUser = findUser(email);
+    if (foundUser || !activeProject) return;
     if (!findUser(email)) {
       const res = await getOneUser(email);
       const user = res.data;
-      context.currentProject.users = [...context.currentProject.users, user];
-      setUsers(context.currentProject.users);
-      updateProjectById(context.currentProject);
-      user.projects = [...user.projects, currentProject._id];
+      activeProject.users = [...activeProject.users, user];
+      updateProjectById(activeProject);
+      user.projects = [...user.projects, activeProject._id];
       const userEdited = await editUser(user);
     }
   };
 
   const onDeleteUserFromProjHandler = async (email: string) => {
-    const filtered = currentProject.users.filter(
-      (user) => user.email !== email
-    );
-    currentProject.users = filtered;
-    updateProjectById(currentProject);
+    if (!activeProject) return;
+    const filtered = activeProject.users.filter((user) => user.email !== email);
+    activeProject.users = filtered;
+    updateProjectById(activeProject);
     removeProjectFromUser(email);
     await removeUserFromTasks(email);
-    getTasksFromAPI(currentProject._id);
-    setUsers(filtered);
+    getTasksFromAPI(activeProject._id);
   };
 
   const removeUserFromTasks = async (userEmail: string) => {
+    if (!activeProject) return;
     try {
-      await removeAssignedUserFromTasks(userEmail, currentProject._id);
+      await removeAssignedUserFromTasks(userEmail, activeProject._id);
     } catch (error) {
       console.log(error);
     }
@@ -125,7 +138,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     let user: any = null;
     try {
       user = (await getOneUser(email)).data;
-      const currentProjectId = currentProject._id;
+      const currentProjectId = activeProject?._id;
       const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;
       });
@@ -133,6 +146,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     } catch (error) {
       console.log(error);
     }
+
     try {
       editUser(user);
     } catch (error) {
@@ -140,10 +154,12 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     }
   };
 
-  const onCreateIssue = async (task: any) => {
+  const onCreateIssue = async (task: Task) => {
+    console.log("task", task);
     const res = await postTask(task);
-    if (res.code === "ERR_BAD_REQUEST") {
-      console.log(res.response.data[0].message);
+    console.log("res", res);
+    if (res.request === "ERR_BAD_REQUEST") {
+      console.log(res.data[0].message);
     }
     setCreateIssueOpen(false);
     console.log(taskArr);
@@ -151,66 +167,48 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const onEditTask = async (task: any) => {
     const res = await putEditTask(task);
-    if (res.code === "ERR_BAD_REQUEST") {
-      console.log(res.response.data[0].message);
+    if (res.request === "ERR_BAD_REQUEST") {
+      console.log(res.data[0].message);
     }
-    setEditTask(false);
+    setEditTaskOpen(false);
   };
 
   const onDeleteTask = async (id: string) => {
     const res = await deleteTask(id);
   };
 
-  const onCloseModalHandler = () => {
-    setCreateIssueOpen(false);
-  };
-
-  const openModalHandler = () => {
-    setCreateIssueOpen(true);
-  };
-
   return (
-    <Fragment>
-      {createIssueOpen && (
+    <div>
+      <When condition={createIssueOpen}>
         <InputModal
-          usersList={emails}
-          okBtn="Submit"
-          task_id={Date.now().valueOf()}
-          onCreateIssue={onCreateIssue}
-          onCloseModal={onCloseModalHandler}
-          isEditMode={false}
+          usersList={projectUsersEmails || []}
+          confirmButtonText={editTaskOpen ? "Save Changes" : "Submit"}
+          onCreateTask={editTaskOpen ? onEditTask : onCreateIssue}
+          onCloseModal={() => setCreateIssueOpen(false)}
+          isEditMode={editTaskOpen}
         />
-      )}
-      {editTask && (
-        <InputModal
-          usersList={emails}
-          task={taskToChange}
-          descValue={taskToChange.text}
-          userSelected={taskToChange.email}
-          prioritySelected={taskToChange.priority}
-          okBtn="Save changes"
-          task_id={taskToChange.task_id}
-          status={taskToChange.status}
-          onCreateIssue={onEditTask}
-          onCloseModal={() => setEditTask(false)}
-          delete={onDeleteTask}
-          isEditMode={true}
-        />
-      )}
+      </When>
+      {/* <InputModal
+        usersList={projectUsersEmails || []}
+        taskToEdit={taskToEdit}
+        confirmButtonText="Save changes"
+        onCreateTask={onEditTask}
+        onCloseModal={() => setEditTaskOpen(false)}
+        deleteTask={onDeleteTask}
+        isEditMode={true}
+      /> */}
       <ProjectWrapper
         deleteUser={onDeleteUserFromProjHandler}
-        allUsers={context.userEmails}
-        usersList={emails}
-        currentProject={currentProject}
+        usersList={projectUsersEmails || []}
         addUser={onAddUsertoProjectHandler}
       >
         <TaskColumnWrapper
           onUpdate={onTaskClickHandler}
-          openCreateIssueModal={openModalHandler}
+          openCreateIssueModal={() => setCreateIssueOpen(true)}
           tasks={taskArr}
         />
       </ProjectWrapper>
-    </Fragment>
+    </div>
   );
 };
 

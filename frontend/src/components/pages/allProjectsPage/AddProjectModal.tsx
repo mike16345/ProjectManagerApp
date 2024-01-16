@@ -25,7 +25,7 @@ const AddProjectModal: React.FC = () => {
     setAllProjects([...allProjects, project]);
   };
 
-  const [dateRange, setDateRange] = useState<Date[]>([new Date(), new Date()]);
+  const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
 
   return (

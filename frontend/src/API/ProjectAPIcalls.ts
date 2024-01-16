@@ -1,23 +1,11 @@
 import axios, { AxiosResponse } from "axios";
+import { Project } from "../interfaces";
 
 const APIaddress = "http://localhost:3002";
-
-// Define types for the data returned from the API
-interface Project {
-  _id: string;
-  name: string;
-  users: string[];
-}
 
 // Define types for the parameters used in the functions
 interface User {
   _id: string;
-}
-
-interface UpdateProject {
-  _id: string;
-  name: string;
-  users: string[];
 }
 
 // Use async/await properly and add type annotations
@@ -44,9 +32,7 @@ export const getProjectsByUser = async (user: User): Promise<Project[]> => {
 };
 
 // Improve the updateProjectById function
-export const updateProjectById = async (
-  project: UpdateProject
-): Promise<void> => {
+export const updateProjectById = async (project: Project): Promise<void> => {
   try {
     await axios.put(`${APIaddress}/projects/addUser/${project._id}`, {
       name: project.name,

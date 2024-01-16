@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   return (
-    <Fragment>
+    <div className=" w-full h-full">
       <When condition={isLoggedIn}>
         <Navbar onLogOutHandler={onLogOutHandler} isLoggedIn={isLoggedIn} />
       </When>
@@ -76,7 +76,7 @@ function App() {
         <Route path="myTasks" element={isLoggedIn && <MyTasksPage />} />
         <Route path="allProjects" element={isLoggedIn && <AllProjectPage />} />
       </Routes>
-    </Fragment>
+    </div>
   );
 }
 

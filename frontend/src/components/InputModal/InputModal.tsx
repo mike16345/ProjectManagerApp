@@ -1,79 +1,69 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Modal from "../modal/Modal";
 import Tag from "../tag/Tag";
 import Button from "../button/Button";
 import classes from "./InputModal.module.css";
-import AppContext from "../../context/Context";
+import { TaskStatus } from "../../enums/TaskStatus";
+import { useProjectsStore } from "../../store/projectsStore";
+import { useUsersStore } from "../../store/usersStore";
+import { Task } from "../../interfaces";
+import { Priority } from "../../enums/Priority";
+import { deleteTask } from "../../API/TaskAPIcalls";
 
 interface InputModalProps {
   onCloseModal: () => void;
+  taskToEdit?: Task | null;
   usersList: string[];
   isEditMode: boolean;
-  descValue?: string;
-  userSelected?: string;
-  prioritySelected?: string;
-  status?: string;
-  task_id?: string;
-  onCreateIssue: (task: {
-    text: string;
-    email: string;
-    priority: string;
-    task_id?: string;
-    project_id: string;
-    status: string;
-  }) => void;
-  delete: (taskId: string) => void;
-  okBtn: string;
+  confirmButtonText: string;
+  onCreateTask: (task: Task) => void;
+  deleteTask?: (taskId: string) => void;
 }
 
-const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
-  const context = useContext(AppContext);
-  const currentProject = context.currentProject;
+const InputModal: React.FC<InputModalProps> = ({
+  onCloseModal,
+  onCreateTask,
+  usersList,
+  taskToEdit,
+  isEditMode,
+  confirmButtonText,
+}) => {
+  const { activeProject } = useProjectsStore();
+  const { activeUser } = useUsersStore();
+  const DEFAULT_EMAIL = "none@gmail.com";
 
-  const emails = props.usersList;
-  const priorities = ["none", "epic", "high", "low"];
+  const [descriptionState, setDescriptionState] = useState<string>(
+    taskToEdit?.text || ""
+  );
+  const [assignee, setAssignee] = useState<string>(
+    taskToEdit?.email || DEFAULT_EMAIL
+  );
 
-  let description = "";
-  let assignee = "none@gmail.com";
-  let priority = priorities[0];
-
-  if (props.isEditMode) {
-    description = props.descValue || "";
-    assignee = props.userSelected || "none@gmail.com";
-    priority = props.prioritySelected || priorities[0];
-  }
-
-  const [descriptionState, setDescriptionState] = useState<string>(description);
-  const [assigneeState, setAssigneeState] = useState<string>(assignee);
-  const [priorityState, setPriorityState] = useState<string>(priority);
-  const [statusState, setStatusState] = useState<string | undefined>(
-    props.status
+  const [selectedPriority, setSelectedPriority] = useState<Priority>(
+    Priority.NONE
+  );
+  const [statusState, setStatusState] = useState<TaskStatus>(
+    taskToEdit?.status || TaskStatus.TODO
   );
 
   const onChangeDescHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDescriptionState(event.target.value);
   };
 
-  const onSelectEmailHandler = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = event.target.value;
-    setAssigneeState(value === "none" ? "none@gmail.com" : value);
+  const onSelectEmailHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setAssignee(value === "none" ? DEFAULT_EMAIL : value);
   };
 
-  const onSelectPriorityHandler = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setPriorityState(event.target.value);
+  const onSelectPriorityHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPriority(e.target.value);
   };
 
-  const onSelectStatusHandler = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const statusSelected = event.target.value;
+  const onSelectStatusHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const statusSelected = e.target.value;
     setStatusState(statusSelected);
-    if (props.status === "to do") {
-      setAssigneeState(context.userLogged.email);
+    if (taskToEdit?.status === TaskStatus.TODO) {
+      setAssignee(activeUser!.email);
     }
   };
 
@@ -81,34 +71,34 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
     e.preventDefault();
     const task = {
       text: descriptionState,
-      email: assigneeState,
-      priority: priorityState,
-      task_id: props.task_id || "",
-      project_id: currentProject._id,
-      status: !statusState ? "to do" : statusState,
+      email: assignee,
+      priority: selectedPriority,
+      task_id: taskToEdit?.task_id || Date.now().valueOf(),
+      project_id: activeProject?._id || "",
+      status: !statusState ? TaskStatus.TODO : statusState,
     };
-    props.onCreateIssue(task);
+    onCreateTask(task);
   };
 
   const onDeleteTask = () => {
-    props.delete(props.task_id || "");
+    deleteTask(taskToEdit?.task_id || "");
   };
 
-  const statusSelect = props.isEditMode ? (
+  const statusSelect = isEditMode ? (
     <select
       defaultValue={statusState}
       onChange={onSelectStatusHandler}
       className="drop-select-status"
     >
-      <option value="to do">to do</option>
-      <option value="in progress">in progress</option>
-      <option value="code review">code review</option>
-      <option value="done">done</option>
+      <option value={TaskStatus.TODO}>{TaskStatus.TODO}</option>
+      <option value={TaskStatus.IN_PROGRESS}>{TaskStatus.IN_PROGRESS}</option>
+      <option value={TaskStatus.CODE_REVIEW}>{TaskStatus.CODE_REVIEW}</option>
+      <option value={TaskStatus.DONE}>{TaskStatus.DONE}</option>
     </select>
   ) : null;
 
   return (
-    <Modal onClose={props.onCloseModal}>
+    <Modal onClose={onCloseModal}>
       <form onSubmit={onSubmitingForm} className={classes.form}>
         <div className={classes["input-box"]}>
           <label>Description</label>
@@ -126,12 +116,12 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
           <div className="drop-select">
             <label>Assign to: </label>
             <select
-              defaultValue={props.userSelected}
+              defaultValue={taskToEdit?.email}
               name="assignee"
               onChange={onSelectEmailHandler}
             >
               <option value="none">none</option>
-              {emails.map((name, index) => (
+              {usersList.map((name, index) => (
                 <option key={index} value={name}>
                   {name}
                 </option>
@@ -141,11 +131,11 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
           <div className="drop-select-priority">
             <label>priority:</label>
             <select
-              defaultValue={props.prioritySelected}
-              name="priority"
+              defaultValue={selectedPriority}
+              name="Priority"
               onChange={onSelectPriorityHandler}
             >
-              {priorities.map((priority, index) => (
+              {Object.values(Priority).map((priority, index) => (
                 <option key={index} value={priority}>
                   {priority}
                 </option>
@@ -154,15 +144,9 @@ const InputModal: React.FC<InputModalProps> = (props: InputModalProps) => {
           </div>
         </div>
         <div className="btns">
-          <Button type="submit">{props.okBtn}</Button>
-          {props.isEditMode ? (
-            <Button type="button" onClick={onDeleteTask}>
-              Delete
-            </Button>
-          ) : null}
-          <Button type="button" onClick={props.onCloseModal}>
-            Cancel
-          </Button>
+          <Button type="submit">{confirmButtonText}</Button>
+          {isEditMode ? <Button onClick={onDeleteTask}>Delete</Button> : null}
+          <Button onClick={onCloseModal}>Cancel</Button>
         </div>
       </form>
     </Modal>

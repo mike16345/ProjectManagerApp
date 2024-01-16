@@ -4,7 +4,9 @@ import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ChakraProvider } from "@chakra-ui/react";
 
-const root = createRoot(document.getElementById("root")!);
+const domNode = document.getElementById("root") as HTMLElement;
+const root = createRoot(domNode);
+
 root.render(
   <BrowserRouter>
     <GoogleOAuthProvider

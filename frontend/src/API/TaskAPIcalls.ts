@@ -1,14 +1,8 @@
 import axios, { AxiosResponse } from "axios";
+import { Task } from "../interfaces";
 
 const APIaddress = "http://localhost:3002";
 
-// Define types for the data returned from the API
-interface Task {
-  task_id: string;
-  // Define other properties of a task as needed
-}
-
-// Use async/await properly and add type annotations
 export const getAllTasks = async (): Promise<Task[]> => {
   try {
     const res: AxiosResponse<Task[]> = await axios.get(`${APIaddress}/tasks`);

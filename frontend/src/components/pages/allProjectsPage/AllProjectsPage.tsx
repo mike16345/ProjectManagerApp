@@ -15,9 +15,7 @@ import AddProjectModal from "./AddProjectModal";
 const AllProjectPage = () => {
   const { activeUser } = useUsersStore();
   const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [myProjects, setMyProjects] = useState(
-    activeUser && activeUser.projects
-  );
+  const [myProjects, setMyProjects] = useState<Project[]>([]);
 
   const MySwal = withReactContent(Swal);
 
@@ -28,17 +26,16 @@ const AllProjectPage = () => {
 
   const fetchUsersProject = async () => {
     if (!activeUser) return;
-
     const projects = await getProjectsByUser(activeUser);
-    console.log("projects:", projects);
     setMyProjects(projects);
   };
+
   const handleAddNewProject = () => {
     MySwal.fire({
-      title: "Add new project",
-      width: 600,
+      title: "Create New Project",
       html: <AddProjectModal />,
-      showCancelButton: true,
+      showCancelButton: false,
+      showConfirmButton: false,
       confirmButtonColor: "green",
       cancelButtonText: "Cancel",
       confirmButtonText: "Save",
@@ -64,15 +61,11 @@ const AllProjectPage = () => {
       </When>
 
       <When condition={activeUser && activeUser.projects.length > 0}>
-        <div className="">
-          <h2 className=" ">My projects:</h2>
+        <div className="w-full h-full">
+          <div className=" text-2xl font-bold ">My Projects:</div>
           <div className=" border border-black rounded  p-2 flex gap-2 bg-indigo-100">
             {myProjects!.map((project, index) => (
-              <ProjectPreviewBox
-                projectName={project.name}
-                key={index}
-                project={project}
-              />
+              <ProjectPreviewBox key={index} project={project} />
             ))}
           </div>
         </div>
@@ -81,11 +74,7 @@ const AllProjectPage = () => {
             <h2 className="">All projects:</h2>
             <div className=" flex gap-2 ">
               {allProjects.map((project, index) => (
-                <ProjectPreviewBox
-                  projectName={project.name}
-                  key={index}
-                  project={project}
-                />
+                <ProjectPreviewBox key={index} project={project} />
               ))}
             </div>
           </div>

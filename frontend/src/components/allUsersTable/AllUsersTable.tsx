@@ -3,6 +3,7 @@ import Button from "../button/Button";
 import Modal from "../modal/Modal";
 import Profile from "../profile/Profile";
 import AppContext from "../../context/Context";
+import { useUsersStore } from "../../store/usersStore";
 
 interface Props {
   usersList: string[];
@@ -10,19 +11,17 @@ interface Props {
 }
 
 const AllUsersTable: React.FC<Props> = (props: Props) => {
-  const context = useContext(AppContext);
-
   const [showAll, setShowAll] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [userToDelete, setUserToDelete] = useState<string>("");
-
+  const { activeUser } = useUsersStore();
   const removeUserHandler = () => {
     setShowModal(false);
     props.deleteUser(userToDelete);
   };
 
   const clickOnUserHandler = (email: string) => {
-    if (!context.userLogged.isAdmin) return;
+    if (!activeUser || !activeUser.isAdmin) return;
     setUserToDelete(email);
     setShowModal(true);
   };
@@ -32,23 +31,13 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
       <div className="flex max-w-max justify-between">
         {showAll
           ? props.usersList.map((name: string, index: number) => (
-              <p key={index}>
-                <Profile
-                  onClick={() => clickOnUserHandler(name)}
-                  index={index}
-                  name={name}
-                  isList={true}
-                />
-              </p>
+              <div key={index}>
+                <Profile onClick={() => clickOnUserHandler(name)} name={name} />
+              </div>
             ))
           : props.usersList.slice(0, 5).map((name: string, index: number) => (
               <p key={index}>
-                <Profile
-                  onClick={() => clickOnUserHandler(name)}
-                  index={index}
-                  name={name}
-                  isList={true}
-                />
+                <Profile onClick={() => clickOnUserHandler(name)} name={name} />
               </p>
             ))}
         {props.usersList.length > 5 && (
@@ -61,7 +50,7 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
         )}
       </div>
       {showModal && (
-        <Modal>
+        <Modal onClose={() => {}}>
           <h2>{`Would you like to remove "${userToDelete}" from this project?`}</h2>
           <div className="flex justify-around">
             <Button onClick={removeUserHandler} type="submit">

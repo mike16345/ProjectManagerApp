@@ -69,7 +69,8 @@ body {
 #root {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;  
   -webkit-touch-callout: none;
   /* iOS Safari */
   -webkit-user-select: none;
@@ -83,6 +84,9 @@ body {
   user-select: none;
   /* Non-prefixed version, currently
                                       supported by Chrome, Edge, Opera and Firefox */
+}
+* {
+  outline: 1px red !important;
 }
 .leaflet-container {
   z-index: 0;

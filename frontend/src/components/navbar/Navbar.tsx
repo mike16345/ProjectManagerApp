@@ -56,7 +56,9 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   };
 
   return (
-    <div className={` flex bg-indigo-600 p-2  items-center justify-between   `}>
+    <div
+      className={` flex  bg-indigo-600 p-2  items-center justify-between    `}
+    >
       <button className="border rounded-full w-12 h-12  text-center ">
         Logo
       </button>
