@@ -2,10 +2,10 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
-import { GoogleUser, User } from "../../../interfaces";
+import { IGoogleUser, IUser } from "../../../interfaces";
 
 interface IGoogleLogin {
-  onSuccessHandler: (user: GoogleUser) => void;
+  onSuccessHandler: (user: IGoogleUser) => void;
 }
 const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   const [user, setUser] = useState<TokenResponse | null>(null);

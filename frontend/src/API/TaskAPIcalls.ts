@@ -57,7 +57,7 @@ export const putEditTask = async (task: Task): Promise<AxiosResponse> => {
   }
 };
 
-export const deleteTask = async (id: string): Promise<AxiosResponse> => {
+export const deleteTask = async (id: number): Promise<AxiosResponse> => {
   try {
     const res: AxiosResponse = await axios.delete(`${APIaddress}/tasks/${id}`);
     return res;

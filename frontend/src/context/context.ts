@@ -1,9 +1,9 @@
 import React from "react";
-import { Project, User } from "../interfaces";
+import { IProject, IUser } from "../interfaces";
 interface AppContextType {
   userEmails: string[];
-  userLogged: User | null;
-  currentProject: Project | null;
+  userLogged: IUser | null;
+  currentProject: IProject | null;
 }
 const AppContext = React.createContext<AppContextType>({
   userEmails: [],

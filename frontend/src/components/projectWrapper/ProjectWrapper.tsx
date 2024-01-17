@@ -28,12 +28,16 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   };
 
   return (
-    <div>
-      <div className={classes["project-desc"]}>
-        <h2>{activeProject?.name || "No Name"}</h2>
-        <h3>People working on this project:</h3>
-        <div className={classes.users}>
-          <AllUsersTable deleteUser={deleteUser} usersList={usersList} />
+    <div className="w-full">
+      <div className=" flex flex-col gap-2 mt-12 ml-12 ">
+        <div className=" text-3xl font-bold">
+          {activeProject?.name || "No Name"}
+        </div>
+        <div className=" flex justify-between">
+          <div className=" flex flex-col gap-1">
+            <h3>People working on this project:</h3>
+            <AllUsersTable deleteUser={deleteUser} usersList={usersList} />
+          </div>
           <div>
             <h3>Add users to the project</h3>
             <select className={classes.select} onChange={addUserHandler}>
@@ -47,8 +51,8 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           </div>
         </div>
       </div>
-      <div className={classes.wrap}>
-        <div className={classes.projectWrapper}>{children}</div>
+      <div className=" flex items-center justify-start ">
+        <div className="">{children}</div>
       </div>
     </div>
   );

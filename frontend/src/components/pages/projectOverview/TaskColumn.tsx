@@ -1,46 +1,38 @@
 import React from "react";
 import Task from "../../task/Task";
+import { IoMdAdd } from "react-icons/io";
+import { ITask } from "../../../interfaces";
 
 interface TaskColumnProps {
   header: string;
-  tasks: any[]; // Update the type according to your task structure
-  onUpdate: (id: string, status: string) => void;
-  openCreateIssueModal: () => void;
+  tasks: ITask[];
+  onTaskClickHandler: (task: ITask) => void;
+  onAddTaskClickHandler: () => void;
 }
 
-const TaskColumn: React.FC<TaskColumnProps> = (props) => {
-  const onTaskUpdateHandler = (id: string, status: string) => {
-    props.onUpdate(id, status);
-  };
-
-  const createIssueHandler = () => {
-    props.openCreateIssueModal();
-  };
-
+const TaskColumn: React.FC<TaskColumnProps> = ({
+  onTaskClickHandler,
+  onAddTaskClickHandler,
+  header,
+  tasks,
+}) => {
   return (
     <div className="column">
-      <header className="header">
-        {props.tasks.length > 0
-          ? `${props.header} ${props.tasks.length} issues`
-          : props.header}
-        {props.header === "To do" && (
-          <button className="addIssueBtn" onClick={createIssueHandler}>
-            +
-          </button>
-        )}
-      </header>
+      <div className=" flex gap-2 items-center">
+        <div className=" bg-red-300 rounded p-[2px] cursor-pointer">
+          {header}
+        </div>
+        <div>{tasks.length}</div>
+        <button
+          className=" text-center hover:bg-gray-300/50 hover:rounded"
+          onClick={onAddTaskClickHandler}
+        >
+          <IoMdAdd size={20} />
+        </button>
+      </div>
       <div className="column-body">
-        {props.tasks.map((task, index) => (
-          <Task
-            onUpdate={onTaskUpdateHandler}
-            key={index}
-            taskText={task.text}
-            taskNumber={task.task_id}
-            priority={task.priority}
-            db_id={task._id}
-            assignee={task.email}
-            status={task.status}
-          />
+        {tasks.map((task, index) => (
+          <Task setTaskToEdit={onTaskClickHandler} key={index} task={task} />
         ))}
       </div>
     </div>

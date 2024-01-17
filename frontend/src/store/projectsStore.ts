@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { Project } from "../interfaces";
+import { IProject } from "../interfaces";
 
 interface IProjectsStore {
-  activeProject: Project | null;
-  projects: Project[];
-  setProjects: (projects: Project[]) => void;
-  setActiveProject: (project: Project) => void;
+  activeProject: IProject | null;
+  projects: IProject[];
+  setProjects: (projects: IProject[]) => void;
+  setActiveProject: (project: IProject) => void;
 }
 
 export const useProjectsStore = create<IProjectsStore>((set, get) => ({

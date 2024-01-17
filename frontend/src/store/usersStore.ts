@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { User } from "../interfaces";
+import { IUser } from "../interfaces";
 
 interface IUsersStore {
-  users: User[];
-  activeUser: User | null;
+  users: IUser[];
+  activeUser: IUser | null;
   userEmails: string[];
-  setActiveUser: (user: User) => void;
+  setActiveUser: (user: IUser) => void;
   setUserEmails: (emails: string[]) => void;
 }
 

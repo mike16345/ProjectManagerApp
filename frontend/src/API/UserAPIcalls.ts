@@ -1,14 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { IUser } from "../interfaces";
 
 const APIaddress = "http://localhost:3002";
-
-interface User {
-  _id: string;
-  email: string;
-  password: string;
-  type: string;
-  username: string;
-}
 
 interface AuthResponse {
   isNew: boolean;
@@ -117,7 +110,7 @@ export const getOneUser = async (email: string): Promise<AxiosResponse> => {
   }
 };
 
-export const editUser = async (user: User): Promise<User> => {
+export const editUser = async (user: IUser): Promise<IUser> => {
   try {
     const res: AxiosResponse = await axios.put(
       `${APIaddress}/users/${user._id}`,
@@ -129,7 +122,7 @@ export const editUser = async (user: User): Promise<User> => {
   }
 };
 
-export const editUserByEmail = async (user: User): Promise<User> => {
+export const editUserByEmail = async (user: IUser): Promise<IUser> => {
   try {
     const res: AxiosResponse = await axios.put(
       `${APIaddress}/users/one/${user.email}`,
@@ -142,7 +135,7 @@ export const editUserByEmail = async (user: User): Promise<User> => {
   }
 };
 
-export const signInWithGoogle = async (user: User): Promise<any> => {
+export const signInWithGoogle = async (user: IUser): Promise<any> => {
   const res: AxiosResponse = await axios.post(
     `${APIaddress}/googleUsers/login`,
     { user }

@@ -1,50 +1,30 @@
-import React, { FC, MouseEvent } from "react";
+import { FC } from "react";
 import Profile from "../profile/Profile";
 import Tag from "../tag/Tag";
 import classes from "./Task.module.css";
 import { When } from "react-if";
+import { ITask } from "../../interfaces";
 
 interface TaskProps {
-  taskNumber: string;
-  status: string;
-  style: string;
-  taskText: string;
-  priority: string;
+  task: ITask;
   isMyTasks?: boolean;
-  onUpdate?: (taskId: string, status: string) => void;
-  assignee: string;
+  setTaskToEdit: (task: ITask) => void;
 }
 
-const Task: FC<TaskProps> = ({
-  taskNumber,
-  status,
-  style,
-  taskText,
-  priority,
-  isMyTasks,
-  onUpdate,
-  assignee,
-}) => {
-  const onTaskClickHandler = (event: MouseEvent) => {
-    event.stopPropagation();
-    if (onUpdate) {
-      onUpdate(taskNumber, status);
-    }
-  };
-
+const Task: FC<TaskProps> = ({ style, isMyTasks, task, setTaskToEdit }) => {
   return (
     <div
-      onClick={onUpdate ? onTaskClickHandler : undefined}
+      onClick={() => setTaskToEdit(task)}
       className={`${classes.taskContainer} ${classes[style]}`}
     >
-      <p className={classes.text}>{taskText}</p>
+      <div className={classes.text}>{task.text}</div>
       <footer className={classes.footer}>
-        <Tag>{priority}</Tag>
+        <Tag>{task.priority}</Tag>
         <When condition={isMyTasks}>
-          <Tag isMyTasks={isMyTasks}>{status}</Tag>
+          <Tag isMyTasks={isMyTasks}>{task.status}</Tag>
         </When>
-        <When condition={assignee !== "none@gmail.com"}>
-          <Profile name={assignee} index={0} />
+        <When condition={task.email !== "none@gmail.com"}>
+          <Profile name={task.email} />
         </When>
       </footer>
     </div>

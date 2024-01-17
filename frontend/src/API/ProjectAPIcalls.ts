@@ -1,17 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { Project } from "../interfaces";
+import { IProject, IUser } from "../interfaces";
 
 const APIaddress = "http://localhost:3002";
 
-// Define types for the parameters used in the functions
-interface User {
-  _id: string;
-}
-
 // Use async/await properly and add type annotations
-export const getAllProjects = async (): Promise<Project[]> => {
+export const getAllProjects = async (): Promise<IProject[]> => {
   try {
-    const res: AxiosResponse<Project[]> = await axios.get(
+    const res: AxiosResponse<IProject[]> = await axios.get(
       `${APIaddress}/projects`
     );
     return res.data;
@@ -20,9 +15,9 @@ export const getAllProjects = async (): Promise<Project[]> => {
   }
 };
 
-export const getProjectsByUser = async (user: User): Promise<Project[]> => {
+export const getProjectsByUser = async (user: IUser): Promise<IProject[]> => {
   try {
-    const res: AxiosResponse<Project[]> = await axios.get(
+    const res: AxiosResponse<IProject[]> = await axios.get(
       `${APIaddress}/projects/perUser/${user._id}`
     );
     return res.data;
@@ -32,7 +27,7 @@ export const getProjectsByUser = async (user: User): Promise<Project[]> => {
 };
 
 // Improve the updateProjectById function
-export const updateProjectById = async (project: Project): Promise<void> => {
+export const updateProjectById = async (project: IProject): Promise<void> => {
   try {
     await axios.put(`${APIaddress}/projects/addUser/${project._id}`, {
       name: project.name,
@@ -45,9 +40,9 @@ export const updateProjectById = async (project: Project): Promise<void> => {
   }
 };
 
-export const createProject = async (name: string): Promise<Project> => {
+export const createProject = async (name: string): Promise<IProject> => {
   try {
-    const res: AxiosResponse<Project> = await axios.post(
+    const res: AxiosResponse<IProject> = await axios.post(
       `${APIaddress}/projects`,
       { name }
     );

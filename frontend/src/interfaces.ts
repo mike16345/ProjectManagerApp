@@ -1,14 +1,14 @@
 import { Priority } from "./enums/Priority";
 import { TaskStatus } from "./enums/TaskStatus";
 
-export interface Project {
+export interface IProject {
   _id: string;
   name: string;
-  users: User[];
+  users: IUser[];
   date_created?: Date;
 }
 
-export interface Task {
+export interface ITask {
   text: string;
   email: string;
   task_id: number;
@@ -17,8 +17,8 @@ export interface Task {
   project_id: string;
 }
 
-export interface Admin extends User {}
-export interface User {
+export interface IAdmin extends IUser {}
+export interface IUser {
   _id: string;
   name: string;
   email: string;
@@ -28,9 +28,16 @@ export interface User {
   dateCreated: Date;
 }
 
-export interface GoogleUser extends User {
+export interface IGoogleUser extends IUser {
   id: string;
   locale: string;
   picture: string;
   verified_email: boolean;
+}
+
+export interface IAllTasks {
+  [TaskStatus.TODO]: ITask[];
+  [TaskStatus.IN_PROGRESS]: ITask[];
+  [TaskStatus.CODE_REVIEW]: ITask[];
+  [TaskStatus.DONE]: ITask[];
 }

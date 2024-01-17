@@ -8,24 +8,23 @@ import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
 import { Task } from "../../interfaces";
 import { Priority } from "../../enums/Priority";
-import { deleteTask } from "../../API/TaskAPIcalls";
+import { When } from "react-if";
 
 interface InputModalProps {
   onCloseModal: () => void;
   taskToEdit?: Task | null;
   usersList: string[];
-  isEditMode: boolean;
   confirmButtonText: string;
   onCreateTask: (task: Task) => void;
-  deleteTask?: (taskId: string) => void;
+  handleDeleteTask: (taskId: number) => void;
 }
 
 const InputModal: React.FC<InputModalProps> = ({
   onCloseModal,
   onCreateTask,
+  handleDeleteTask,
   usersList,
   taskToEdit,
-  isEditMode,
   confirmButtonText,
 }) => {
   const { activeProject } = useProjectsStore();
@@ -81,10 +80,11 @@ const InputModal: React.FC<InputModalProps> = ({
   };
 
   const onDeleteTask = () => {
-    deleteTask(taskToEdit?.task_id || "");
+    if (!taskToEdit) return;
+    handleDeleteTask(taskToEdit?.task_id);
   };
 
-  const statusSelect = isEditMode ? (
+  const statusSelect = taskToEdit ? (
     <select
       defaultValue={statusState}
       onChange={onSelectStatusHandler}
@@ -116,6 +116,7 @@ const InputModal: React.FC<InputModalProps> = ({
           <div className="drop-select">
             <label>Assign to: </label>
             <select
+              className=" border w-32"
               defaultValue={taskToEdit?.email}
               name="assignee"
               onChange={onSelectEmailHandler}
@@ -129,7 +130,7 @@ const InputModal: React.FC<InputModalProps> = ({
             </select>
           </div>
           <div className="drop-select-priority">
-            <label>priority:</label>
+            <label>Priority:</label>
             <select
               defaultValue={selectedPriority}
               name="Priority"
@@ -145,7 +146,9 @@ const InputModal: React.FC<InputModalProps> = ({
         </div>
         <div className="btns">
           <Button type="submit">{confirmButtonText}</Button>
-          {isEditMode ? <Button onClick={onDeleteTask}>Delete</Button> : null}
+          <When condition={taskToEdit != null}>
+            <Button onClick={onDeleteTask}>Delete</Button>
+          </When>
           <Button onClick={onCloseModal}>Cancel</Button>
         </div>
       </form>

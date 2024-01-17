@@ -1,46 +1,33 @@
-import React, { Fragment } from "react";
+import React from "react";
 import TaskColumn from "./TaskColumn";
+import { IAllTasks, ITask } from "../../../interfaces";
+import { TaskStatus } from "../../../enums/TaskStatus";
 
 interface TaskColumnWrapperProps {
-  onUpdate: (id: string, status: string) => void;
-  openCreateIssueModal: () => void;
-  tasks: {
-    todo: any[];
-    inProgress: any[];
-    codeReview: any[];
-    done: any[];
-  };
+  handleAddNewTask: (taskTypeToAdd: TaskStatus) => void;
+  onTaskClickHandler: (task: ITask) => void;
+  tasks: IAllTasks;
 }
 
-const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = (props) => {
+const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = ({
+  onTaskClickHandler,
+  handleAddNewTask,
+  tasks,
+}) => {
   return (
-    <Fragment>
-      <TaskColumn
-        onUpdate={props.onUpdate}
-        openCreateIssueModal={props.openCreateIssueModal}
-        tasks={props.tasks.todo}
-        header="To do"
-      />
-
-      <TaskColumn
-        onUpdate={props.onUpdate}
-        openCreateIssueModal={props.openCreateIssueModal}
-        tasks={props.tasks.inProgress}
-        header="In progress"
-      />
-      <TaskColumn
-        onUpdate={props.onUpdate}
-        openCreateIssueModal={props.openCreateIssueModal}
-        tasks={props.tasks.codeReview}
-        header="Code review"
-      />
-      <TaskColumn
-        onUpdate={props.onUpdate}
-        openCreateIssueModal={props.openCreateIssueModal}
-        tasks={props.tasks.done}
-        header="Done"
-      />
-    </Fragment>
+    <div className=" flex justify-around w-full">
+      {Object.values(TaskStatus).map((status) => {
+        return (
+          <TaskColumn
+            key={status}
+            header={status}
+            onAddTaskClickHandler={() => handleAddNewTask(status)}
+            onTaskClickHandler={onTaskClickHandler}
+            tasks={tasks[status]}
+          />
+        );
+      })}
+    </div>
   );
 };
 

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { Project } from "../../../interfaces";
+import { IProject } from "../../../interfaces";
 import { useProjectsStore } from "../../../store/projectsStore";
 
 interface IProjectPreviewBox {
-  project: Project;
+  project: IProject;
 }
 const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({ project }) => {
   const navigate = useNavigate();

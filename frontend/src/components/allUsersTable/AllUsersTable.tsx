@@ -1,8 +1,7 @@
-import React, { Fragment, useState, useContext } from "react";
+import React, { Fragment, useState } from "react";
 import Button from "../button/Button";
 import Modal from "../modal/Modal";
 import Profile from "../profile/Profile";
-import AppContext from "../../context/Context";
 import { useUsersStore } from "../../store/usersStore";
 
 interface Props {
@@ -27,8 +26,8 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
   };
 
   return (
-    <Fragment>
-      <div className="flex max-w-max justify-between">
+    <div>
+      <div className="flex gap-1 ">
         {showAll
           ? props.usersList.map((name: string, index: number) => (
               <div key={index}>
@@ -36,9 +35,9 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
               </div>
             ))
           : props.usersList.slice(0, 5).map((name: string, index: number) => (
-              <p key={index}>
+              <div key={index}>
                 <Profile onClick={() => clickOnUserHandler(name)} name={name} />
-              </p>
+              </div>
             ))}
         {props.usersList.length > 5 && (
           <span
@@ -62,7 +61,7 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
           </div>
         </Modal>
       )}
-    </Fragment>
+    </div>
   );
 };
 

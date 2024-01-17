@@ -5,7 +5,7 @@ import {
   getProjectsByUser,
 } from "../../../API/ProjectAPIcalls";
 import ProjectPreviewBox from "./ProjectPreviewBox";
-import { Project } from "../../../interfaces";
+import { IProject } from "../../../interfaces";
 import { When } from "react-if";
 import { useUsersStore } from "../../../store/usersStore";
 import Swal from "sweetalert2";
@@ -14,8 +14,8 @@ import AddProjectModal from "./AddProjectModal";
 
 const AllProjectPage = () => {
   const { activeUser } = useUsersStore();
-  const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [myProjects, setMyProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<IProject[]>([]);
+  const [myProjects, setMyProjects] = useState<IProject[]>([]);
 
   const MySwal = withReactContent(Swal);
 
