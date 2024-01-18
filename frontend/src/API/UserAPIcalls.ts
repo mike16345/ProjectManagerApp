@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { IUser } from "../interfaces";
+import { IEmail } from "../store/usersStore";
 
 const APIaddress = "http://localhost:3002";
 
@@ -79,16 +80,16 @@ export const verifyTokenWithGoogle = async (
   }
 };
 
-export const getAllEmails = async (): Promise<string[]> => {
+export const getAllEmails = async (): Promise<IEmail[]> => {
   try {
     const res: AxiosResponse = await axios.get(`${APIaddress}/users/emails`);
 
-    let users: string[] = res.data;
+    let users: IEmail[] = res.data;
 
     const googleRes: AxiosResponse = await axios.get(
       `${APIaddress}/googleUsers/emails`
     );
-    const googleUsers: string[] = googleRes.data;
+    const googleUsers: IEmail[] = googleRes.data;
 
     users = [...users, ...googleUsers];
 

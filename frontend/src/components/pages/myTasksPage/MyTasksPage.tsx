@@ -1,22 +1,21 @@
-import React, {  useContext, useEffect, useState } from "react";
-import classes from "./MyTasksPage.module.css";
+import React, { useEffect, useState } from "react";
 import { getTasksByEmail } from "../../../API/TaskAPIcalls";
 import Task from "../../task/Task";
-import AppContext from "../../../context/context";
 
 import {
   getAllProjects,
   getProjectsByUser,
 } from "../../../API/ProjectAPIcalls";
+import { useUsersStore } from "../../../store/usersStore";
+import { ITask } from "../../../interfaces";
 
 const MyTasksPage: React.FC = (props) => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const context = useContext(AppContext);
-
+  const { activeUser } = useUsersStore();
   const fetchMyProjects = async () => {
-    if (!context.userLogged) return;
-    const res = await getProjectsByUser(context.userLogged);
+    if (!activeUser) return;
+    const res = await getProjectsByUser(activeUser);
     setProjects(res);
   };
 
@@ -27,35 +26,31 @@ const MyTasksPage: React.FC = (props) => {
 
   useEffect(() => {
     fetchMyProjects();
-    if (!context.userLogged) return;
-    const email = context.userLogged.email;
-
-    getUsersTasks(email);
+    if (!activeUser) return;
+    getUsersTasks(activeUser.email);
   }, []);
 
   return (
-    <div className=" flex items-center justify-start m-4">
+    <div className=" flex flex-col  justify-start m-4">
       <div className=" text-xl font-bold ">My Tasks</div>
-      <div>
+      <div className="">
         {projects.map((project, index) => (
           <div key={index}>
-            <h2 className={classes.title}>{project.name}</h2>
-            <>
-              {tasks
-                .filter((task) => task.project_id === project._id)
-                .map((task, index) => (
-                  <Task
-                    taskNumber={task.project_id}
-                    style={"third"}
-                    key={index}
-                    taskText={task.text}
-                    assignee={task.email}
-                    priority={task.priority}
-                    status={task.status}
-                    isMyTasks={true}
-                  />
-                ))}
-            </>
+            <div className=" flex flex-col">
+              <h2 className="">{project.name}</h2>
+              <div className=" flex gap-6 border p-2">
+                {tasks
+                  .filter((task) => task.project_id === project._id)
+                  .map((task, index) => (
+                    <Task
+                      task={task}
+                      setTaskToEdit={(task: ITask) => {}}
+                      key={index}
+                      isMyTasks={true}
+                    />
+                  ))}
+              </div>
+            </div>
           </div>
         ))}
       </div>

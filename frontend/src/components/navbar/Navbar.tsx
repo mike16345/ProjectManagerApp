@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import AppContext from "../../context/context";
 import ProfileModal from "./ProfileModal";
 import SearchBar from "./SearchBar";
 // import logo from "../../logo.png";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
+import { useProjectsStore } from "../../store/projectsStore";
+import { useUsersStore } from "../../store/usersStore";
 
 interface INavbar {
   isLoggedIn: boolean;
@@ -14,10 +15,11 @@ interface INavbar {
 }
 const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   const navigate = useNavigate();
-  const context = useContext(AppContext);
+  const { activeProject, setActiveProject } = useProjectsStore();
+  const { activeUser } = useUsersStore();
 
   const onLogoClickHandler = () => {
-    if (context.currentProject?._id) {
+    if (activeProject?._id) {
       navigate("project_overview");
     }
   };
@@ -31,20 +33,20 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   };
 
   const projectByUser = async () => {
-    if (!context.userLogged) return;
-    return await getProjectsByUser(context.userLogged);
+    if (!activeUser) return;
+    return await getProjectsByUser(activeUser);
   };
 
   const onSearchHandler = async (inputValue: string) => {
     const projects = await projectByUser();
     if (!projects) return;
-    // Find project
+
     const currentFound = projects.find(
       (project) => project.name === inputValue
     );
-    context.currentProject = currentFound ? currentFound : null;
 
-    if (context.currentProject) {
+    if (currentFound) {
+      setActiveProject(currentFound);
       navigate("/project_overview");
     } else {
       Swal.fire({
@@ -57,9 +59,12 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
 
   return (
     <div
-      className={` flex  bg-indigo-600 p-2  items-center justify-between    `}
+      className={` flex bg-indigo-600 p-2 items-center justify-between sticky top-0 z-10   `}
     >
-      <button className="border rounded-full w-12 h-12  text-center ">
+      <button
+        onClick={onLogoClickHandler}
+        className="border rounded-full w-12 h-12  text-center "
+      >
         Logo
       </button>
       <button

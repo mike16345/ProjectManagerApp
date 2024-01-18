@@ -15,18 +15,20 @@ const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = ({
   tasks,
 }) => {
   return (
-    <div className=" flex justify-around w-full">
-      {Object.values(TaskStatus).map((status) => {
-        return (
-          <TaskColumn
-            key={status}
-            header={status}
-            onAddTaskClickHandler={() => handleAddNewTask(status)}
-            onTaskClickHandler={onTaskClickHandler}
-            tasks={tasks[status]}
-          />
-        );
-      })}
+    <div className=" flex justify-start p-2 ">
+      <div className=" flex gap-24">
+        {Object.values(TaskStatus).map((status) => {
+          return (
+            <TaskColumn
+              key={status}
+              header={status}
+              onAddTaskClickHandler={() => handleAddNewTask(status)}
+              onTaskClickHandler={onTaskClickHandler}
+              tasks={tasks[status]}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

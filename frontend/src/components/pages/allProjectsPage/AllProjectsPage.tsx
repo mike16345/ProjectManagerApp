@@ -61,10 +61,10 @@ const AllProjectPage = () => {
       </When>
 
       <When condition={activeUser && activeUser.projects.length > 0}>
-        <div className="w-full h-full">
+        <div className="w-full h-full ">
           <div className=" text-2xl font-bold ">My Projects:</div>
           <div className=" border border-black rounded  p-2 flex gap-2 bg-indigo-100">
-            {myProjects!.map((project, index) => (
+            {myProjects.map((project, index) => (
               <ProjectPreviewBox key={index} project={project} />
             ))}
           </div>

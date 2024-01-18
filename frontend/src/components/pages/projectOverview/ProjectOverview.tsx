@@ -177,7 +177,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     setTaskToEdit(null);
   };
   return (
-    <div className=" w-full">
+    <div className="w-full p-4">
       <ProjectWrapper
         deleteUser={onDeleteUserFromProjHandler}
         usersList={projectUsersEmails || []}

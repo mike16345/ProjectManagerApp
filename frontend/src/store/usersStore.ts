@@ -1,12 +1,16 @@
 import { create } from "zustand";
 import { IUser } from "../interfaces";
 
+export interface IEmail {
+  email: string;
+  _id: string;
+}
 interface IUsersStore {
   users: IUser[];
   activeUser: IUser | null;
-  userEmails: string[];
+  userEmails: IEmail[];
   setActiveUser: (user: IUser) => void;
-  setUserEmails: (emails: string[]) => void;
+  setUserEmails: (emails: IEmail[]) => void;
 }
 
 export const useUsersStore = create<IUsersStore>((set, get) => ({

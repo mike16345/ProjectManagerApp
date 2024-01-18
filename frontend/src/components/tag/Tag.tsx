@@ -1,21 +1,14 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import classes from "./Tag.module.css";
+import { Priority } from "../../enums/Priority";
 
 interface TagProps {
-  isMyTasks?: boolean;
-  children: React.ReactNode;
+  priority: Priority;
+  isMyTasks: boolean;
 }
 //Props from test modal
-const Tag: FC<TagProps> = (props) => {
-  return (
-    <p
-      className={`${classes[`priority-${props.children}`]} ${
-        props.isMyTasks ? classes.status : ""
-      }`}
-    >
-      {props.children}
-    </p>
-  );
+const Tag: FC<TagProps> = ({ priority, isMyTasks }) => {
+  return <p className={` ${isMyTasks ? classes.status : ""}`}>{priority}</p>;
 };
 
 export default Tag;

@@ -17,12 +17,12 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   tasks,
 }) => {
   return (
-    <div className="column">
+    <div className="flex flex-col gap-2">
       <div className=" flex gap-2 items-center">
         <div className=" bg-red-300 rounded p-[2px] cursor-pointer">
           {header}
         </div>
-        <div>{tasks.length}</div>
+        <span className="font-semibold">{tasks.length}</span>
         <button
           className=" text-center hover:bg-gray-300/50 hover:rounded"
           onClick={onAddTaskClickHandler}
@@ -30,9 +30,14 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
           <IoMdAdd size={20} />
         </button>
       </div>
-      <div className="column-body">
+      <div className="flex flex-col gap-2">
         {tasks.map((task, index) => (
-          <Task setTaskToEdit={onTaskClickHandler} key={index} task={task} />
+          <Task
+            isMyTasks={false}
+            setTaskToEdit={onTaskClickHandler}
+            key={index}
+            task={task}
+          />
         ))}
       </div>
     </div>

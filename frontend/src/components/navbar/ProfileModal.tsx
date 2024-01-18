@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import ProfilePage from "../profile/ProfilePage";
 import Profile from "../profile/Profile";
 import { When } from "react-if";

@@ -7,26 +7,23 @@ import { ITask } from "../../interfaces";
 
 interface TaskProps {
   task: ITask;
-  isMyTasks?: boolean;
   setTaskToEdit: (task: ITask) => void;
+  isMyTasks: boolean;
 }
 
-const Task: FC<TaskProps> = ({ style, isMyTasks, task, setTaskToEdit }) => {
+const Task: FC<TaskProps> = ({ isMyTasks, task, setTaskToEdit }) => {
   return (
     <div
       onClick={() => setTaskToEdit(task)}
-      className={`${classes.taskContainer} ${classes[style]}`}
+      className={` border rounded p-2 flex flex-col gap-2 w-36 cursor-pointer scale-105`}
     >
-      <div className={classes.text}>{task.text}</div>
-      <footer className={classes.footer}>
-        <Tag>{task.priority}</Tag>
-        <When condition={isMyTasks}>
-          <Tag isMyTasks={isMyTasks}>{task.status}</Tag>
-        </When>
+      <div className="  self-start">{task.text}</div>
+      <div className=" flex items-center justify-between">
+        <Tag isMyTasks={isMyTasks} priority={task.priority} />
         <When condition={task.email !== "none@gmail.com"}>
-          <Profile name={task.email} />
+          <Profile width=" w-7" height="h-7" name={task.email} />
         </When>
-      </footer>
+      </div>
     </div>
   );
 };
