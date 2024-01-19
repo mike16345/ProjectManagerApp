@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import AllUsersTable from "../allUsersTable/AllUsersTable";
+import AllUsersTable from "../AllUsersTable/AllUsersTable";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
 

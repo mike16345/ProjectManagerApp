@@ -1,6 +1,6 @@
 import React, { MutableRefObject } from "react";
 import { useNavigate } from "react-router-dom";
-import Profile from "./Profile";
+import { Profile } from "./Profile";
 import { useUsersStore } from "../../store/usersStore";
 import { useClickAway } from "@uidotdev/usehooks";
 

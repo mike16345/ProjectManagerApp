@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getTasksByEmail } from "../../../API/TaskAPIcalls";
-import Task from "../../task/Task";
+import Task from "../../Task/Task";
 
 import {
   getAllProjects,
@@ -9,7 +9,7 @@ import {
 import { useUsersStore } from "../../../store/usersStore";
 import { ITask } from "../../../interfaces";
 
-const MyTasksPage: React.FC = (props) => {
+const MyTasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const { activeUser } = useUsersStore();

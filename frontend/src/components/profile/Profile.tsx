@@ -7,7 +7,7 @@ interface ProfileProps {
   onClick?: (name: string) => void;
 }
 
-const Profile: FC<ProfileProps> = ({ onClick, width, height, name }) => {
+export const Profile: FC<ProfileProps> = ({ onClick, width, height, name }) => {
   const shortName = name?.substring(0, 2).toUpperCase();
   const handleClick = () => {
     if (onClick) onClick(name || "");
@@ -23,5 +23,3 @@ const Profile: FC<ProfileProps> = ({ onClick, width, height, name }) => {
     </div>
   );
 };
-
-export default Profile;

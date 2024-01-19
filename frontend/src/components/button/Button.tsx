@@ -1,14 +1,12 @@
-import React, { FC, ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
 interface ButtonProps {
   type?: "submit" | "reset";
   onClick?: () => void;
-  style?: string;
   children: ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ type, onClick, style, children }) => {
-  const margin = style;
+const Button: FC<ButtonProps> = ({ type, onClick, children }) => {
   return (
     <button
       type={type || "button"}

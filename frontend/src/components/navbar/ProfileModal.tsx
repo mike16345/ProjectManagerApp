@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ProfilePage from "../profile/ProfilePage";
-import Profile from "../profile/Profile";
+import ProfilePage from "../Profile/ProfilePage";
+import { Profile } from "../Profile/Profile";
 import { When } from "react-if";
 import { useUsersStore } from "../../store/usersStore";
 

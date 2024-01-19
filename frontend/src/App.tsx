@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { verifyToken, getAllEmails } from "./API/UserAPIcalls";
-import LoginPage from "./components/pages/loginPage/LoginPage";
-import Navbar from "./components/navbar/Navbar";
-import ProjectOverview from "./components/pages/projectOverview/ProjectOverview";
+import LoginPage from "./components/Pages/LoginPage/LoginPage";
+import Navbar from "./components/Navbar/Navbar";
+import ProjectOverview from "./components/Pages/Project/ProjectOverview";
 import WelcomePage from "./components/pages/welcomePage/WelcomePage";
-import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
-import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
+import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
+import AllProjectPage from "./components/Pages/AllProjectsPage/AllProjectsPage";
 import { useUsersStore } from "./store/usersStore";
 import { When } from "react-if";
 import "./App.css";
@@ -54,7 +54,7 @@ function App() {
   }, []);
 
   return (
-    <div className=" w-full h-full">
+    <div className="w-full h-full">
       <When condition={isLoggedIn}>
         <Navbar onLogOutHandler={onLogOutHandler} isLoggedIn={isLoggedIn} />
       </When>

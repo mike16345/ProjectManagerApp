@@ -1,7 +1,7 @@
 import React from "react";
 import TaskColumn from "./TaskColumn";
-import { IAllTasks, ITask } from "../../../interfaces";
-import { TaskStatus } from "../../../enums/TaskStatus";
+import { IAllTasks, ITask } from "../../interfaces";
+import { TaskStatus } from "../../enums/TaskStatus";
 
 interface TaskColumnWrapperProps {
   handleAddNewTask: (taskTypeToAdd: TaskStatus) => void;

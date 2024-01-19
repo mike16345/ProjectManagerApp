@@ -1,5 +1,4 @@
 import { FC } from "react";
-import classes from "./Tag.module.css";
 import { Priority } from "../../enums/Priority";
 
 interface TagProps {
@@ -8,7 +7,7 @@ interface TagProps {
 }
 //Props from test modal
 const Tag: FC<TagProps> = ({ priority, isMyTasks }) => {
-  return <p className={` ${isMyTasks ? classes.status : ""}`}>{priority}</p>;
+  return <p className={` font-bold `}>{priority}</p>;
 };
 
 export default Tag;

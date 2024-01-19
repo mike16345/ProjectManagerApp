@@ -1,7 +1,7 @@
 import React from "react";
-import Task from "../../task/Task";
+import Task from "./Task";
 import { IoMdAdd } from "react-icons/io";
-import { ITask } from "../../../interfaces";
+import { ITask } from "../../interfaces";
 
 interface TaskColumnProps {
   header: string;

@@ -1,7 +1,7 @@
-import React, { Fragment, useState } from "react";
-import Button from "../button/Button";
-import Modal from "../modal/Modal";
-import Profile from "../profile/Profile";
+import React, { useState } from "react";
+import Button from "../Button/Button";
+import Modal from "../Modal/Modal";
+import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
 
 interface Props {

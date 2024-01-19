@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { cloneDeep } from "lodash";
 import ProjectWrapper from "../../projectWrapper/ProjectWrapper";
-import InputModal from "../../InputModal/InputModal";
-import TaskColumnWrapper from "./TaskColumnWrapper";
+import TaskColumnWrapper from "../../Task/TaskColumnWrapper";
 import {
   postTask,
   putEditTask,
@@ -22,7 +21,7 @@ import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask } from "../../../interfaces";
 import { When } from "react-if";
-import CreateTask from "../../task/CreateTask";
+import CreateTask from "../../Task/CreateTask";
 
 interface ProjectOverviewProps {}
 

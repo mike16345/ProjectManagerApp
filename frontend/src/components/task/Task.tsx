@@ -1,9 +1,8 @@
 import { FC } from "react";
-import Profile from "../profile/Profile";
 import Tag from "../tag/Tag";
-import classes from "./Task.module.css";
 import { When } from "react-if";
 import { ITask } from "../../interfaces";
+import { Profile } from "../Profile/Profile";
 
 interface TaskProps {
   task: ITask;

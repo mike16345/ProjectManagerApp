@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Modal from "../modal/Modal";
+import Modal from "../Modal/Modal";
 import Tag from "../tag/Tag";
-import Button from "../button/Button";
+import Button from "../Button/Button";
 import classes from "./InputModal.module.css";
 import { TaskStatus } from "../../enums/TaskStatus";
 import { useProjectsStore } from "../../store/projectsStore";
