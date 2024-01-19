@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import ProfileModal from "./ProfileModal";
 import SearchBar from "./SearchBar";
-// import logo from "../../logo.png";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";

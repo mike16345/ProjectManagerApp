@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { cloneDeep } from "lodash";
-import ProjectWrapper from "../../projectWrapper/ProjectWrapper";
+import ProjectWrapper from "../../ProjectWrapper/ProjectWrapper";
 import TaskColumnWrapper from "../../Task/TaskColumnWrapper";
 import {
   postTask,

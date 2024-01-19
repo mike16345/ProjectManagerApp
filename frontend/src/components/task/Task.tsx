@@ -1,5 +1,5 @@
 import { FC } from "react";
-import Tag from "../tag/Tag";
+import Tag from "../Tag/Tag";
 import { When } from "react-if";
 import { ITask } from "../../interfaces";
 import { Profile } from "../Profile/Profile";
