@@ -1,4 +1,4 @@
-import { TaskModel } from "./../models/taskModel";
+import { TaskModel } from "../models/taskModel";
 
 export const removeUserFromTasks = async (
   projectId: string,

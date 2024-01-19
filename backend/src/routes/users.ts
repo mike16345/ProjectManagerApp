@@ -1,4 +1,4 @@
-import { googleUserModel } from "./../models/googleUserModel";
+import { googleUserModel } from "../models/googleUserModel";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { UserModel, genToken } from "../models/userModel";

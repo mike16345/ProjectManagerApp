@@ -3,7 +3,6 @@ import { IProject, IUser } from "../interfaces";
 
 const APIaddress = "http://localhost:3002";
 
-// Use async/await properly and add type annotations
 export const getAllProjects = async (): Promise<IProject[]> => {
   try {
     const res: AxiosResponse<IProject[]> = await axios.get(

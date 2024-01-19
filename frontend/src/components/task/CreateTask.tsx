@@ -15,11 +15,11 @@ interface InputModalProps {
   taskToEdit?: ITask | null;
   usersList: string[];
   confirmButtonText: string;
-  onCreateTask: (task: Task) => void;
+  onCreateTask: (task: ITask) => void;
   handleDeleteTask: (taskId: number) => void;
 }
 
-const InputModal: React.FC<InputModalProps> = ({
+const CreateTask: React.FC<InputModalProps> = ({
   onCloseModal,
   onCreateTask,
   handleDeleteTask,
@@ -60,7 +60,7 @@ const InputModal: React.FC<InputModalProps> = ({
 
   const onSelectStatusHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const statusSelected = e.target.value;
-    setStatusState(statusSelected as TaskStatus);
+    setStatusState(statusSelected);
     if (taskToEdit?.status === TaskStatus.TODO) {
       setAssignee(activeUser!.email);
     }
@@ -156,4 +156,4 @@ const InputModal: React.FC<InputModalProps> = ({
   );
 };
 
-export default InputModal;
+export default CreateTask;

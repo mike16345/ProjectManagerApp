@@ -25,7 +25,7 @@ import { FaUserAlt, FaLock } from "react-icons/fa";
 
 import GoogleLogin from "./GoogleLogin";
 import { When } from "react-if";
-import { GoogleUser } from "../../../interfaces";
+import { IGoogleUser } from "../../../interfaces";
 
 interface LoginPageProps {
   loginOnToken: (isNew: boolean) => void;
@@ -56,14 +56,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
   const onRegisterHandler = async (user: Input) => {
     user.type = "local";
     const response = await registerHandler(user);
-    console.log("Register response:", response);
     if (!response.token) return;
     localStorage.setItem("token-promger", response.token);
     loginOnToken(response.isNew);
   };
 
   const onLoginHandler = async (userDetails: any) => {
-    console.log("user details:", userDetails);
     const response = await loginHandler(userDetails);
     const data = response.data.data;
     if (response.data.status === "ok") {
@@ -103,7 +101,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
     return registerInput.password === registerInput.confirmPassword;
   };
 
-  const onGoogleLoginSuccess = async (user: GoogleUser) => {
+  const onGoogleLoginSuccess = async (user: IGoogleUser) => {
     const googleUser = {
       name: user.name || "",
       googleId: user.id || "",

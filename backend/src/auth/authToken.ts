@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
-  
+
 interface TokenData {
   id: string;
 }
@@ -19,7 +19,7 @@ export const authToken = (
   const token = req.header("x-api-key") as string | undefined;
 
   if (!token) {
-    res.status(401).json({ msg: "no token" });
+    return res.status(401).json({ msg: "no token" });
   }
 
   try {

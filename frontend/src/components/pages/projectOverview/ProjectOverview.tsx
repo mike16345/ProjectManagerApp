@@ -21,8 +21,8 @@ import {
 import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask } from "../../../interfaces";
-import { useUsersStore } from "../../../store/usersStore";
 import { When } from "react-if";
+import CreateTask from "../../task/CreateTask";
 
 interface ProjectOverviewProps {}
 
@@ -38,7 +38,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
-  const [createIssueOpen, setCreateIssueOpen] = useState(false);
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
 
   const filterToColumns = (tasks: any[]) => {
@@ -68,11 +68,11 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   useEffect(() => {
     if (!activeProject) return;
     getTasksFromAPI(activeProject._id);
-  }, [createIssueOpen]);
+  }, [isCreatingTask]);
 
   const onTaskClickHandler = (task: ITask) => {
     setTaskToEdit(task);
-    setCreateIssueOpen(true);
+    setIsCreatingTask(true);
   };
 
   const findUser = (email: string) => {
@@ -146,7 +146,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (res.request === "ERR_BAD_REQUEST") {
       console.log(res.data[0].message);
     }
-    setCreateIssueOpen(false);
+    setIsCreatingTask(false);
   };
 
   const onEditTask = async (task: any) => {
@@ -163,17 +163,17 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       //Add Successfully deleted the task alert
       console.log("successfully deleted task");
     }
-    setCreateIssueOpen(false);
+    setIsCreatingTask(false);
     setTaskToEdit(null);
   };
 
   const handleAddNewTask = (taskTypeToAdd: TaskStatus) => {
     setTaskTypeToAdd(taskTypeToAdd);
-    setCreateIssueOpen(true);
+    setIsCreatingTask(true);
   };
 
   const handleCancelAddTask = () => {
-    setCreateIssueOpen(false);
+    setIsCreatingTask(false);
     setTaskToEdit(null);
   };
   return (
@@ -189,8 +189,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
           tasks={taskArr}
         />
       </ProjectWrapper>
-      <When condition={createIssueOpen}>
-        <InputModal
+      <When condition={isCreatingTask}>
+        <CreateTask
           usersList={projectUsersEmails || []}
           confirmButtonText={taskToEdit ? "Save Changes" : "Submit"}
           onCreateTask={taskToEdit ? onEditTask : onCreateIssue}
