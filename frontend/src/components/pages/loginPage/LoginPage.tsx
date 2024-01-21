@@ -259,19 +259,5 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
     </Flex>
   );
 };
-{
-  /* <div className="page">
-        <Card>
-          <InputForm
-            onLogin={onRegisterHandler}
-            register={true}
-            actionName="Register"
-          />
-        </Card>
-        <div className="divider"></div>
-        <Card>
-          <InputForm onLogin={onLoginHandler} actionName="Log-in" />
-        </Card>
-      </div> */
-}
+
 export default LoginPage;
