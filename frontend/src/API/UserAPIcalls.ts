@@ -23,7 +23,6 @@ export const loginHandler = async (userDetails: any): Promise<AuthResponse> => {
       data: await res.data,
     };
   } catch (error) {
-    // Add No such user alert/ Register
     throw error;
   }
 };
@@ -41,8 +40,6 @@ export const registerHandler = async (user: any): Promise<AuthResponse> => {
       token: res.data.data,
     } as AuthResponse;
   } catch (error) {
-    // Add error alert
-    console.log("error:", error);
     throw error;
   }
 };
@@ -57,8 +54,6 @@ export const verifyToken = async (token: string): Promise<AxiosResponse> => {
     );
     return res;
   } catch (error) {
-    // Add Error alert
-    console.error(error);
     throw error;
   }
 };

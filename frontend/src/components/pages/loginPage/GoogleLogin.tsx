@@ -3,23 +3,30 @@ import axios from "axios";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import { IGoogleUser, IUser } from "../../../interfaces";
+import { useToast } from "@chakra-ui/react";
 
 interface IGoogleLogin {
   onSuccessHandler: (user: IGoogleUser) => void;
 }
 const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   const [user, setUser] = useState<TokenResponse | null>(null);
-
+  const toast = useToast();
   const login = useGoogleLogin({
     onSuccess: (codeResponse: TokenResponse) => {
-      console.log("code response:", codeResponse);
       setUser(codeResponse);
-
-      // Successful login alert
+      toast({
+        title: "Login Successful",
+        description: "Login Successful",
+        position:"top-right",
+        status: "success",
+      });
     },
     onError: (error) => {
-      //TODO: Add Login error alert
-      console.log("Login Failed:", error);
+      toast({
+        title: "Login Failed",
+        description: "Failed to login. Check credentials.",
+        status: "error",
+      });
     },
   });
 

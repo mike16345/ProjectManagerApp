@@ -1,22 +1,23 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import ProfileModal from "./ProfileModal";
 import SearchBar from "./SearchBar";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
-import { Button, Flex, Heading } from "@chakra-ui/react";
+import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
 
 interface INavbar {
   isLoggedIn: boolean;
   onLogOutHandler: () => void;
 }
 const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
-  const navigate = useNavigate();
-  const { activeProject, setActiveProject } = useProjectsStore();
+  const { activeProject, projects, setActiveProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
+
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const onLogoClickHandler = () => {
     if (activeProject?._id) {
@@ -38,21 +39,19 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   };
 
   const onSearchHandler = async (inputValue: string) => {
-    const projects = await projectByUser();
-    if (!projects) return;
-
     const currentFound = projects.find(
-      (project) => project.name === inputValue
+      (project) => project.name.toLowerCase() === inputValue.toLowerCase()
     );
 
     if (currentFound) {
       setActiveProject(currentFound);
       navigate("/project_overview");
     } else {
-      Swal.fire({
-        icon: "error",
-        text: "No project with this name",
-        timer: 750,
+      toast({
+        title: "Project not found",
+        position: "top-right",
+        description: "Could not find project with that name",
+        status: "error",
       });
     }
   };

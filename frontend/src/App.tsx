@@ -40,7 +40,7 @@ function App() {
     setIsNewUser(isNew);
     setActiveUser(response.data);
     setIsLoggedIn(true);
-    
+
     navigate("welcome");
 
     const timer = setTimeout(() => {
@@ -58,7 +58,7 @@ function App() {
       title: "Successfully Logged Out",
       description: "You have successfully logged out",
       status: "success",
-      
+
       position: "top-left",
     });
   };

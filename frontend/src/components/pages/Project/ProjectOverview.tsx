@@ -67,7 +67,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   useEffect(() => {
     if (!activeProject) return;
-    getTasksFromAPI(activeProject._id);
+    getTasksFromAPI(activeProject._id!);
   }, [isCreatingTask]);
 
   const onTaskClickHandler = (task: ITask) => {
@@ -89,15 +89,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const onAddUsertoProjectHandler = async (email: string) => {
     const foundUser = findUser(email);
-    if (foundUser || !activeProject) return;
-    if (!findUser(email)) {
-      const res = await getOneUser(email);
-      const user = res.data;
-      activeProject.users = [...activeProject.users, user];
-      updateProjectById(activeProject);
-      user.projects = [...user.projects, activeProject._id];
-      const userEdited = await editUser(user);
-    }
+    if (!foundUser || !activeProject) return;
+    const res = await getOneUser(email);
+    const user = res.data;
+    activeProject.users = [...activeProject.users, user];
+    updateProjectById(activeProject);
+    user.projects = [...user.projects, activeProject._id];
+    const userEdited = await editUser(user);
   };
 
   const onDeleteUserFromProjHandler = async (email: string) => {
@@ -107,35 +105,41 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     updateProjectById(activeProject);
     removeProjectFromUser(email);
     await removeUserFromTasks(email);
-    getTasksFromAPI(activeProject._id);
+    if (activeProject) getTasksFromAPI(activeProject._id!);
   };
 
   const removeUserFromTasks = async (userEmail: string) => {
     if (!activeProject) return;
     try {
-      await removeAssignedUserFromTasks(userEmail, activeProject._id);
+      await removeAssignedUserFromTasks(userEmail, activeProject._id!);
     } catch (error) {
       console.log(error);
     }
   };
 
   const removeProjectFromUser = async (email: string) => {
-    let user: any = null;
     try {
-      user = (await getOneUser(email)).data;
+      const user = (await getOneUser(email)).data;
       const currentProjectId = activeProject?._id;
       const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;
       });
       user.projects = [...updatedUserProjects];
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
       editUser(user);
+      toast({
+        title: "User removed from project",
+        status: "success",
+        position: "top-right",
+        duration: 5000,
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Failed to delete user from project",
+        status: "error",
+        position: "top-right",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -148,7 +152,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
         description: "Failed to create task",
         status: "error",
       });
-      console.log(res.data[0].message);
     } else {
       toast({
         title: "Task Created",
@@ -165,10 +168,10 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (res.request === "ERR_BAD_REQUEST") {
       toast({
         title: "Could not update task",
+        position: "top-right",
         description: "Failed to update task",
         status: "error",
       });
-      console.log(res.data[0].message);
     } else {
       toast({
         title: "Task Updated!",
@@ -178,11 +181,20 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       });
     }
     setTaskToEdit(null);
+    setIsCreatingTask(false);
   };
 
   const handleDeleteTask = async (id: number) => {
     const res = await deleteTask(id);
     if (res.status == 200) {
+      toast({
+        title: "Task Deleted",
+        description: "Successfully deleted task",
+        position: "top-right",
+        status: "success",
+      });
+
+      if (activeProject) getTasksFromAPI(activeProject._id!);
     }
     setIsCreatingTask(false);
     setTaskToEdit(null);
@@ -197,6 +209,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     setIsCreatingTask(false);
     setTaskToEdit(null);
   };
+
   return (
     <div className="w-full p-4">
       <ProjectWrapper

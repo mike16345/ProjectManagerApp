@@ -4,19 +4,23 @@ import Modal from "../Modal/Modal";
 import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
 
-interface Props {
+interface AllUsersTableProps {
   usersList: string[];
   deleteUser: (email: string) => void;
 }
 
-const AllUsersTable: React.FC<Props> = (props: Props) => {
+const AllUsersTable: React.FC<AllUsersTableProps> = ({
+  usersList,
+  deleteUser,
+}) => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [userToDelete, setUserToDelete] = useState<string>("");
   const { activeUser } = useUsersStore();
+
   const removeUserHandler = () => {
     setShowModal(false);
-    props.deleteUser(userToDelete);
+    deleteUser(userToDelete);
   };
 
   const clickOnUserHandler = (email: string) => {
@@ -29,17 +33,17 @@ const AllUsersTable: React.FC<Props> = (props: Props) => {
     <div>
       <div className="flex gap-1 ">
         {showAll
-          ? props.usersList.map((name: string, index: number) => (
+          ? usersList.map((name: string, index: number) => (
               <div key={index}>
                 <Profile onClick={() => clickOnUserHandler(name)} name={name} />
               </div>
             ))
-          : props.usersList.slice(0, 5).map((name: string, index: number) => (
+          : usersList.slice(0, 5).map((name: string, index: number) => (
               <div key={index}>
                 <Profile onClick={() => clickOnUserHandler(name)} name={name} />
               </div>
             ))}
-        {props.usersList.length > 5 && (
+        {usersList.length > 5 && (
           <span
             onClick={() => setShowAll(!showAll)}
             className="cursor-pointer ml-2 underline flex items-center"
