@@ -136,7 +136,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundColor="gray.200"
+      backgroundColor="gray.300"
       justifyContent="center"
       alignItems="center"
     >
@@ -146,8 +146,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
         justifyContent="center"
         alignItems="center"
       >
-        <Avatar bg="teal.500" />
-        <Heading color="teal.400">Welcome</Heading>
+        <Avatar bg="purple.500" />
+        <Heading color="purple.400">Welcome</Heading>
         <Box minW={{ base: "90%", md: "" }}>
           <form>
             <Stack
@@ -157,7 +157,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
               boxShadow="md"
             >
               <When condition={register}>
-                <FormControl>
+                <FormControl isRequired={true}>
                   <InputGroup>
                     <InputLeftElement
                       pointerEvents="none"
@@ -167,14 +167,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                       name="username"
                       value={registerInput.username}
                       onChange={handleChange}
-                      required
                       type="text"
                       placeholder="Username"
                     />
                   </InputGroup>
                 </FormControl>
               </When>
-              <FormControl>
+              <FormControl isRequired={true}>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
@@ -182,7 +181,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                   />
                   <Input
                     name="email"
-                    required
                     value={registerInput.email}
                     onChange={handleChange}
                     type="email"
@@ -190,7 +188,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                   />
                 </InputGroup>
               </FormControl>
-              <FormControl>
+              <FormControl isRequired={true}>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
@@ -199,7 +197,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                   />
                   <Input
                     name="password"
-                    required
                     value={registerInput.password}
                     onChange={handleChange}
                     type={showPassword ? "text" : "password"}
@@ -213,7 +210,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                 </InputGroup>
               </FormControl>
               <When condition={register}>
-                <FormControl>
+                <FormControl isRequired={true}>
                   <InputGroup>
                     <InputLeftElement
                       pointerEvents="none"
@@ -221,7 +218,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                       children={<CFaLock color="gray.300" />}
                     />
                     <Input
-                      required
                       value={registerInput.confirmPassword}
                       name="confirmPassword"
                       onChange={handleChange}
@@ -241,7 +237,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                 borderRadius={5}
                 type="submit"
                 variant="solid"
-                colorScheme="teal"
+                colorScheme="purple"
                 width="full"
               >
                 {register ? "Register" : "Login"}
@@ -251,10 +247,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
           </form>
         </Box>
       </Stack>
-      <Box>
-        New to us?
+      <Box className="flex gap-2">
+        <p className="font-medium">New to us?</p>
         <Link
-          color="teal.500"
+          color="purple.500"
           onClick={() => setRegister((register) => !register)}
         >
           {!register ? "Register" : "Login"}

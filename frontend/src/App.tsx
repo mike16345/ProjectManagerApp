@@ -1,21 +1,31 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { verifyToken, getAllEmails } from "./API/UserAPIcalls";
+import { verifyToken, getAllEmails, getAllUsers } from "./API/UserAPIcalls";
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
-import WelcomePage from "./components/pages/welcomePage/WelcomePage";
+import WelcomePage from "./components/Pages/WelcomePage/WelcomePage";
 import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
 import AllProjectPage from "./components/Pages/AllProjectsPage/AllProjectsPage";
 import { useUsersStore } from "./store/usersStore";
 import { When } from "react-if";
 import "./App.css";
+import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
+import { useProjectsStore } from "./store/projectsStore";
+import { useTasksStore } from "./store/tasksStore";
+import { getAllProjects } from "./API/ProjectAPIcalls";
+import { getAllTasks } from "./API/TaskAPIcalls";
 
 function App() {
   const navigate = useNavigate();
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
-  const { activeUser, setActiveUser, setUserEmails } = useUsersStore();
+
+  const { activeUser, setActiveUser, setUserEmails, setUsers } =
+    useUsersStore();
+  const { setProjects } = useProjectsStore();
+  const { setTasks } = useTasksStore();
 
   const loginOnToken = async (isNew: boolean) => {
     const token = localStorage.getItem("token-promger");
@@ -27,7 +37,6 @@ function App() {
     setIsNewUser(isNew);
     setActiveUser(response.data);
     setIsLoggedIn(true);
-    saveAllEmails();
 
     navigate("welcome");
 
@@ -44,12 +53,20 @@ function App() {
     navigate("/");
   };
 
-  const saveAllEmails = async () => {
-    const emails = await getAllEmails();
-    if (emails) setUserEmails(emails);
+  const initData = async () => {
+    const projects = await getAllProjects();
+    const tasks = await getAllTasks();
+    const users = await getAllUsers();
+    const userEmails = await getAllEmails();
+
+    setProjects(projects);
+    setTasks(tasks);
+    setUsers(users);
+    setUserEmails(userEmails);
   };
 
   useEffect(() => {
+    initData();
     loginOnToken(false);
   }, []);
 
@@ -68,6 +85,10 @@ function App() {
               isNew={isNewUser}
             />
           }
+        />
+        <Route
+          path="createProject"
+          element={isLoggedIn && <CreateProjectPage />}
         />
         <Route
           path="project_overview"

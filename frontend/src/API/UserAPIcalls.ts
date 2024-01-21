@@ -99,6 +99,14 @@ export const getAllEmails = async (): Promise<IEmail[]> => {
   }
 };
 
+export const getAllUsers = async () => {
+  try {
+    const res: AxiosResponse = await axios.get(`${APIaddress}/users/`);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const getOneUser = async (email: string): Promise<AxiosResponse> => {
   try {
     const res: AxiosResponse = await axios.get(

@@ -1,10 +1,15 @@
 import { Priority } from "./enums/Priority";
+import { ProjectType } from "./enums/ProjectType";
 import { TaskStatus } from "./enums/TaskStatus";
 
 export interface IProject {
-  _id: string;
+  _id?: string;
   name: string;
   users: IUser[];
+  description?: string;
+  deadline?: Deadline | null;
+  projectLead: IUser;
+  projectType: ProjectType;
   date_created?: Date;
 }
 
@@ -17,7 +22,6 @@ export interface ITask {
   project_id: string;
 }
 
-export interface IAdmin extends IUser {}
 export interface IUser {
   _id: string;
   name: string;
@@ -35,9 +39,19 @@ export interface IGoogleUser extends IUser {
   verified_email: boolean;
 }
 
+export interface Deadline {
+  startDate: Date;
+  endDate: Date | null;
+}
+
 export interface IAllTasks {
   [TaskStatus.TODO]: ITask[];
   [TaskStatus.IN_PROGRESS]: ITask[];
   [TaskStatus.CODE_REVIEW]: ITask[];
   [TaskStatus.DONE]: ITask[];
+}
+
+export interface Option {
+  ["name"]: string;
+  ["value"]: string | number | object;
 }

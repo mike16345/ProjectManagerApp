@@ -1,28 +1,18 @@
 import { useEffect, useState } from "react";
-import {
-  getAllProjects,
-  createProject,
-  getProjectsByUser,
-} from "../../../API/ProjectAPIcalls";
+import { getProjectsByUser } from "../../../API/ProjectAPIcalls";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import { IProject } from "../../../interfaces";
 import { When } from "react-if";
 import { useUsersStore } from "../../../store/usersStore";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import AddProjectModal from "./AddProjectModal";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@chakra-ui/react";
+import { useProjectsStore } from "../../../store/projectsStore";
 
 const AllProjectPage = () => {
   const { activeUser } = useUsersStore();
-  const [allProjects, setAllProjects] = useState<IProject[]>([]);
+  const { projects } = useProjectsStore();
   const [myProjects, setMyProjects] = useState<IProject[]>([]);
-
-  const MySwal = withReactContent(Swal);
-
-  const fetchAllProjects = async () => {
-    const projects = await getAllProjects();
-    setAllProjects(projects);
-  };
+  const navigate = useNavigate();
 
   const fetchUsersProject = async () => {
     if (!activeUser) return;
@@ -31,33 +21,23 @@ const AllProjectPage = () => {
   };
 
   const handleAddNewProject = () => {
-    MySwal.fire({
-      title: "Create New Project",
-      html: <AddProjectModal />,
-      showCancelButton: false,
-      showConfirmButton: false,
-      confirmButtonColor: "green",
-      cancelButtonText: "Cancel",
-      confirmButtonText: "Save",
-      background: "white",
-      color: "black",
-    });
+    navigate("/createProject");
   };
 
   useEffect(() => {
-    fetchAllProjects();
     fetchUsersProject();
   }, []);
 
   return (
     <div className="  flex flex-col gap-6 m-8 ">
       <When condition={activeUser && activeUser.isAdmin}>
-        <button
-          className=" border rounded-lg p-2 bg-indigo-500 text-white font-extrabold hover:scale-105 w-32 h-12 "
+        <Button
+          colorScheme="purple"
+          className=" border rounded-lg p-2   font-extrabold hover:scale-105 w-32 h-12 "
           onClick={handleAddNewProject}
         >
           Add project
-        </button>
+        </Button>
       </When>
 
       <When condition={activeUser && activeUser.projects.length > 0}>
@@ -69,17 +49,15 @@ const AllProjectPage = () => {
             ))}
           </div>
         </div>
-        <div>
-          <div>
-            <h2 className="">All projects:</h2>
-            <div className=" flex gap-2 ">
-              {allProjects.map((project, index) => (
-                <ProjectPreviewBox key={index} project={project} />
-              ))}
-            </div>
-          </div>
-        </div>
       </When>
+      <div>
+        <h2 className="">All projects:</h2>
+        <div className=" flex gap-2 ">
+          {projects.map((project, index) => (
+            <ProjectPreviewBox key={index} project={project} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -39,11 +39,11 @@ export const updateProjectById = async (project: IProject): Promise<void> => {
   }
 };
 
-export const createProject = async (name: string): Promise<IProject> => {
+export const createProject = async (project: IProject): Promise<IProject> => {
   try {
     const res: AxiosResponse<IProject> = await axios.post(
       `${APIaddress}/projects`,
-      { name }
+      { ...project }
     );
     return res.data;
   } catch (error) {
