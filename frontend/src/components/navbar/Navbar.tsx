@@ -7,6 +7,7 @@ import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
+import { Button, Flex, Heading } from "@chakra-ui/react";
 
 interface INavbar {
   isLoggedIn: boolean;
@@ -57,42 +58,53 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
   };
 
   return (
-    <div
-      className={` flex bg-indigo-600 p-2 items-center justify-between sticky top-0 z-10   `}
+    <Flex
+      bg={"purple.600"}
+      p={2}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      pos={"sticky"}
+      zIndex={10}
+      top={0}
     >
-      <button
+      <Heading
+        cursor={"pointer"}
         onClick={onLogoClickHandler}
-        className="border rounded-full w-12 h-12  text-center "
+        color="purple.50"
+        as={"h4"}
       >
-        Logo
-      </button>
-      <button
-        className="text-white hover:scale-105"
+        Synergize
+      </Heading>
+      <Button
+        colorScheme="white"
+        className=" hover:scale-105"
         onClick={onLogoClickHandler}
       >
         Home
-      </button>
+      </Button>
 
       <When condition={isLoggedIn}>
-        <button
-          className=" text-white hover:scale-105"
+        <Button
+          colorScheme="white"
+          className=" hover:scale-105"
           onClick={onMyTaskClickHandler}
         >
           My Tasks
-        </button>
-        <button
-          className=" text-white hover:scale-105"
+        </Button>
+        <Button
+          colorScheme="white"
+          className=" hover:scale-105"
           onClick={onProjectsClickHandler}
         >
           Projects
-        </button>
+        </Button>
       </When>
 
       <When condition={isLoggedIn}>
         <SearchBar onInput={onSearchHandler} />
         <ProfileModal logOut={onLogOutHandler} />
       </When>
-    </div>
+    </Flex>
   );
 };
 

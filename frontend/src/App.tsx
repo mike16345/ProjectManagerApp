@@ -15,6 +15,7 @@ import { useProjectsStore } from "./store/projectsStore";
 import { useTasksStore } from "./store/tasksStore";
 import { getAllProjects } from "./API/ProjectAPIcalls";
 import { getAllTasks } from "./API/TaskAPIcalls";
+import { useToast } from "@chakra-ui/react";
 
 function App() {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ function App() {
 
   const { activeUser, setActiveUser, setUserEmails, setUsers } =
     useUsersStore();
+  const toast = useToast();
+
   const { setProjects } = useProjectsStore();
   const { setTasks } = useTasksStore();
 
@@ -37,7 +40,7 @@ function App() {
     setIsNewUser(isNew);
     setActiveUser(response.data);
     setIsLoggedIn(true);
-
+    
     navigate("welcome");
 
     const timer = setTimeout(() => {
@@ -51,6 +54,13 @@ function App() {
     localStorage.removeItem("token-promger");
     setIsLoggedIn(false);
     navigate("/");
+    toast({
+      title: "Successfully Logged Out",
+      description: "You have successfully logged out",
+      status: "success",
+      
+      position: "top-left",
+    });
   };
 
   const initData = async () => {

@@ -1,5 +1,5 @@
 import { SearchIcon } from "@chakra-ui/icons";
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { Flex, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import React, { useState, ChangeEvent } from "react";
 
 interface SearchBarProps {
@@ -20,7 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
   };
 
   return (
-    <div className=" flex justify-center items-center">
+    <Flex justifyItems={"center"} alignItems={"center"}>
       <InputGroup>
         <InputRightElement>
           <SearchIcon
@@ -38,7 +38,7 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
           borderRadius="md"
         />
       </InputGroup>
-    </div>
+    </Flex>
   );
 };
 

@@ -22,6 +22,7 @@ import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask } from "../../../interfaces";
 import { When } from "react-if";
 import CreateTask from "../../Task/CreateTask";
+import { useToast } from "@chakra-ui/react";
 
 interface ProjectOverviewProps {}
 
@@ -39,7 +40,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
-
+  const toast = useToast();
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
     const filterTodo = tasks.filter((task) => task.status === TaskStatus.TODO);
@@ -141,9 +142,20 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const onCreateIssue = async (task: ITask) => {
     task.status = taskTypeToAdd;
     const res = await postTask(task);
-    console.log("res", res);
     if (res.request === "ERR_BAD_REQUEST") {
+      toast({
+        title: "Could not create task",
+        description: "Failed to create task",
+        status: "error",
+      });
       console.log(res.data[0].message);
+    } else {
+      toast({
+        title: "Task Created",
+        description: "Successfully created task",
+        position: "top-right",
+        status: "success",
+      });
     }
     setIsCreatingTask(false);
   };
@@ -151,7 +163,19 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const onEditTask = async (task: any) => {
     const res = await putEditTask(task);
     if (res.request === "ERR_BAD_REQUEST") {
+      toast({
+        title: "Could not update task",
+        description: "Failed to update task",
+        status: "error",
+      });
       console.log(res.data[0].message);
+    } else {
+      toast({
+        title: "Task Updated!",
+        description: "Successfully updated task",
+        position: "top-right",
+        status: "success",
+      });
     }
     setTaskToEdit(null);
   };
@@ -159,8 +183,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const handleDeleteTask = async (id: number) => {
     const res = await deleteTask(id);
     if (res.status == 200) {
-      //Add Successfully deleted the task alert
-      console.log("successfully deleted task");
     }
     setIsCreatingTask(false);
     setTaskToEdit(null);

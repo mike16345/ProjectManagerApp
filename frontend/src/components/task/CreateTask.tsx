@@ -82,6 +82,7 @@ const CreateTask: React.FC<InputModalProps> = ({
   const onDeleteTask = () => {
     if (!taskToEdit) return;
     handleDeleteTask(taskToEdit?.task_id);
+    
   };
 
   const statusSelect = taskToEdit ? (

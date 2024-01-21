@@ -3,6 +3,7 @@ import ProfilePage from "../Profile/ProfilePage";
 import { Profile } from "../Profile/Profile";
 import { When } from "react-if";
 import { useUsersStore } from "../../store/usersStore";
+import { Box, useToast } from "@chakra-ui/react";
 
 interface ProfileModalProps {
   logOut: () => void;
@@ -21,12 +22,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ logOut }) => {
   };
 
   return (
-    <div>
+    <Box>
       <Profile onClick={profileClickHandler} name={activeUser?.email || ""} />
       <When condition={showProfileModal}>
         <ProfilePage logOut={logOut} onCloseProfile={onCloseProfileHandler} />
       </When>
-    </div>
+    </Box>
   );
 };
 

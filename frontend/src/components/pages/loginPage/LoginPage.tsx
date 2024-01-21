@@ -19,6 +19,7 @@ import {
   FormControl,
   InputRightElement,
   chakra,
+  useToast,
 } from "@chakra-ui/react";
 
 import { FaUserAlt, FaLock } from "react-icons/fa";
@@ -42,6 +43,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
   const CFaUserAlt = chakra(FaUserAlt);
   const CFaLock = chakra(FaLock);
 
+  const toast = useToast();
   const [registerInput, setRegisterInput] = useState<Input>({
     username: "",
     email: "",
@@ -68,10 +70,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
       localStorage.setItem("token-promger", data);
       loginOnToken(response.isNew);
     } else if (response.data.status === "error") {
-      Swal.fire({
-        icon: "error",
-        text: data,
-        timer: 900,
+      toast({
+        title: "Login Failed",
+        description: "Incorrect Username or Password",
+        status: "error",
+        position: "top-right",
       });
     }
   };
