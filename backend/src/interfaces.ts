@@ -2,6 +2,7 @@ export interface IUser {
   name: string;
   email: string;
   type: string;
+  picture: string;
   projects: IProject[];
   isAdmin: boolean;
   date_created: Date;

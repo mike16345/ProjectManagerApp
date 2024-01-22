@@ -21,6 +21,7 @@ import { When } from "react-if";
 import { createProject } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import "react-datepicker/dist/react-datepicker.css";
+import UserSelectMenu from "../../Menu/UserSelectMenu";
 
 interface ProjectFieldProps {
   children: React.ReactNode;
@@ -62,6 +63,7 @@ export const CreateProjectPage = () => {
     projectType: ProjectType.FREESTYLE,
   });
 
+  console.log("new project", newProject);
   const projectTypesOptions: Option[] = enumToArray(ProjectType).map((type) => {
     return {
       name: type,
@@ -191,19 +193,15 @@ export const CreateProjectPage = () => {
           />
         </ProjectField>
         <ProjectField fieldName="Project Lead">
-          <MenuSelection
-            setValue={(value: IUser) => {
+          <UserSelectMenu
+            users={users}
+            onSelect={(value: IUser) => {
               setNewProject({
                 ...newProject,
                 projectLead: value,
               });
             }}
             defaultValue={newProject.projectLead.name}
-            options={
-              userEmails.length > 0
-                ? userEmails
-                : [{ name: "No Users", value: "No Users" }]
-            }
           />
         </ProjectField>
         <Button colorScheme="purple" type="submit">

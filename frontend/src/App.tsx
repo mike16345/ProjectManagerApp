@@ -58,8 +58,7 @@ function App() {
       title: "Successfully Logged Out",
       description: "You have successfully logged out",
       status: "success",
-
-      position: "top-left",
+      position: "top-right",
     });
   };
 

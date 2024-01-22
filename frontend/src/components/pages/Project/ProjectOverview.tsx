@@ -28,7 +28,6 @@ interface ProjectOverviewProps {}
 
 const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const { activeProject } = useProjectsStore();
-  const projectUsersEmails = activeProject?.users.map((user) => user.email);
   const allTasks: IAllTasks = {
     [TaskStatus.TODO]: [],
     [TaskStatus.IN_PROGRESS]: [],
@@ -79,6 +78,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (!activeProject) return false;
 
     activeProject.users.forEach((user) => {
+      console.log("user email", user.email);
       if (user.email.localeCompare(email) === 0) {
         return true;
       }
@@ -89,13 +89,20 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const onAddUsertoProjectHandler = async (email: string) => {
     const foundUser = findUser(email);
-    if (!foundUser || !activeProject) return;
+    if (foundUser || !activeProject) return;
     const res = await getOneUser(email);
     const user = res.data;
     activeProject.users = [...activeProject.users, user];
     updateProjectById(activeProject);
     user.projects = [...user.projects, activeProject._id];
-    const userEdited = await editUser(user);
+    await editUser(user);
+
+    toast({
+      title: "User added to project",
+      status: "success",
+      position: "top-right",
+      duration: 3000,
+    });
   };
 
   const onDeleteUserFromProjHandler = async (email: string) => {
@@ -214,7 +221,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     <div className="w-full p-4">
       <ProjectWrapper
         deleteUser={onDeleteUserFromProjHandler}
-        usersList={projectUsersEmails || []}
         addUser={onAddUsertoProjectHandler}
       >
         <TaskColumnWrapper
@@ -225,7 +231,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       </ProjectWrapper>
       <When condition={isCreatingTask}>
         <CreateTask
-          usersList={projectUsersEmails || []}
+          usersList={activeProject?.users.map((user) => user.email) || []}
           confirmButtonText={taskToEdit ? "Save Changes" : "Submit"}
           onCreateTask={taskToEdit ? onEditTask : onCreateIssue}
           onCloseModal={handleCancelAddTask}

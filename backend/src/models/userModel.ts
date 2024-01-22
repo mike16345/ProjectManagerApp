@@ -12,6 +12,7 @@ const userSchema: Schema<IUserDocument> = new Schema({
   email: String,
   type: String,
   projects: Array,
+  picture:String,
   isAdmin: {
     type: Boolean,
     default: false,

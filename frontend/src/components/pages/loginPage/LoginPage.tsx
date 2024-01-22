@@ -32,8 +32,8 @@ interface LoginPageProps {
   loginOnToken: (isNew: boolean) => void;
 }
 
-interface Input {
-  username: string;
+interface RegisterFields {
+  name: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -44,8 +44,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
   const CFaLock = chakra(FaLock);
 
   const toast = useToast();
-  const [registerInput, setRegisterInput] = useState<Input>({
-    username: "",
+  const [registerInput, setRegisterInput] = useState<RegisterFields>({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -55,7 +55,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [register, setRegister] = useState(false);
 
-  const onRegisterHandler = async (user: Input) => {
+  const onRegisterHandler = async (user: RegisterFields) => {
     user.type = "local";
     const response = await registerHandler(user);
     if (!response.token) return;
@@ -75,6 +75,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
         description: "Incorrect Username or Password",
         status: "error",
         position: "top-right",
+        duration: 5000,
       });
     }
   };
@@ -88,8 +89,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
     e.preventDefault();
     if (register) {
       if (!validateConfirmPassword()) {
-        // Alert passwords dont match
-        console.log("not the same");
+        toast({
+          title: "Passwords do not match",
+          description: "Please re-enter your passwords",
+          status: "error",
+          position: "top-right",
+        });
       } else {
         onRegisterHandler(registerInput);
       }
@@ -130,8 +135,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
       email: "",
       password: "",
       confirmPassword: "",
-      username: "",
-    } as Input);
+      name: "",
+    } as RegisterFields);
   }, [register]);
 
   return (
@@ -167,11 +172,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
                       children={<CFaUserAlt color="gray.300" />}
                     />
                     <Input
-                      name="username"
-                      value={registerInput.username}
+                      name="name"
+                      value={registerInput.name}
                       onChange={handleChange}
                       type="text"
-                      placeholder="Username"
+                      placeholder="Name"
                     />
                   </InputGroup>
                 </FormControl>
