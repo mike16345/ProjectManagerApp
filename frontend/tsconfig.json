@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "rootDir": "./src",
 
     /* Linting */
     "strict": true,
@@ -21,6 +22,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "types": ["vite-plugin-svgr/client"],
-  "include": ["**/*"],
+  "include": ["./src/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
