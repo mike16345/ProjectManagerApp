@@ -1,13 +1,14 @@
 import React, { ReactNode } from "react";
-import AllUsersTable from "../AllUsersTable/AllUsersTable";
-import { useProjectsStore } from "../../store/projectsStore";
-import { useUsersStore } from "../../store/usersStore";
-import UserSelectMenu from "../Menu/UserSelectMenu";
+import AllUsersTable from "../../AllUsersTable/AllUsersTable";
+import { useProjectsStore } from "../../../store/projectsStore";
+import { useUsersStore } from "../../../store/usersStore";
+import UserSelectMenu from "../../Menu/UserSelectMenu";
 import { Heading } from "@chakra-ui/react";
+import { IUser } from "../../../interfaces";
 
 interface ProjectWrapperProps {
-  addUser: (email: string) => void;
-  deleteUser: (email: string) => void;
+  addUser: (user: IUser) => void;
+  deleteUser: (user: IUser) => void;
   children: ReactNode;
 }
 
@@ -17,16 +18,14 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   children,
 }) => {
   const { activeProject } = useProjectsStore();
-  const { userEmails, users } = useUsersStore();
-  const avaliableUsers = users.filter((user) =>
-    user.projects.filter((project) => project === activeProject?._id)
+  const { users } = useUsersStore();
+  console.log("users", users);
+  const availableUsers = users.filter((user) =>
+    user.projects.every((projectID) => projectID !== activeProject?._id)
   );
 
-  const addUserHandler = (email: string) => {
-    console.log("email", email);
-    if (email !== "null") {
-      addUser(email);
-    }
+  const addUserHandler = (user: IUser) => {
+    addUser(user);
   };
 
   return (
@@ -44,7 +43,7 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
         </div>
         <div className=" flex flex-col  justify-center gap-1">
           <h2>Add users to the project</h2>
-          <UserSelectMenu onSelect={addUserHandler} users={avaliableUsers} />
+          <UserSelectMenu onSelect={addUserHandler} users={availableUsers} />
         </div>
       </div>
       {children}

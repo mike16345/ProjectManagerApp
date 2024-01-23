@@ -9,19 +9,22 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 import { ProjectType } from "../../../enums/ProjectType";
 import MenuSelection from "../../Menu/MenuSelection";
 import { IProject, IUser, Option } from "../../../interfaces";
 import { enumToArray } from "../../../utils/utils";
 import { useUsersStore } from "../../../store/usersStore";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { When } from "react-if";
-import { createProject } from "../../../API/ProjectAPIcalls";
+import { createProject, updateProjectById } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import "react-datepicker/dist/react-datepicker.css";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
+import { editUser } from "../../../API/UserAPIcalls";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectFieldProps {
   children: React.ReactNode;
@@ -29,6 +32,7 @@ interface ProjectFieldProps {
   helperText?: string;
   isRequired?: boolean;
 }
+const TODAY = new Date();
 
 const ProjectField: React.FC<ProjectFieldProps> = ({
   children,
@@ -50,8 +54,10 @@ const ProjectField: React.FC<ProjectFieldProps> = ({
 };
 
 export const CreateProjectPage = () => {
+  const toast = useToast();
+  const navigate = useNavigate();
   const { activeUser, users } = useUsersStore();
-  const { projects, setProjects } = useProjectsStore();
+  const { projects, setActiveProject, setProjects } = useProjectsStore();
   const [deadline, setDeadline] = useState(false);
 
   const [newProject, setNewProject] = useState<IProject>({
@@ -63,24 +69,27 @@ export const CreateProjectPage = () => {
     projectType: ProjectType.FREESTYLE,
   });
 
-  console.log("new project", newProject);
+  const filterUsers = (available: boolean) => {
+    const filtered = users.filter((user) =>
+      available
+        ? !newProject.users.some((projectUser) => projectUser._id === user._id)
+        : newProject.users.some((projectUser) => projectUser._id === user._id)
+    );
+
+    return filtered;
+  };
+
+  const [availableUsers, setAvailableUsers] = useState(filterUsers(true));
+
+  const [dateRange, setDateRange] = useState([TODAY, null]);
+  const [startDate, endDate] = dateRange;
+
   const projectTypesOptions: Option[] = enumToArray(ProjectType).map((type) => {
     return {
       name: type,
       value: type,
     };
   });
-
-  const userEmails: Option[] = users.map((user) => {
-    return {
-      name: user.email,
-      value: user,
-    };
-  });
-
-  const TODAY = new Date();
-  const [dateRange, setDateRange] = useState([TODAY, null]);
-  const [startDate, endDate] = dateRange;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewProject({ ...newProject, [e.target.name]: e.target.value });
@@ -93,7 +102,6 @@ export const CreateProjectPage = () => {
   const handleSetDeadlineRange = (dateRange: [Date, Date | null]) => {
     if (deadline) {
       setDateRange(dateRange);
-
       setNewProject({
         ...newProject,
         deadline: { startDate: dateRange[0], endDate: dateRange[1] },
@@ -104,9 +112,27 @@ export const CreateProjectPage = () => {
   const handleCreateProject = async (e: FormEvent) => {
     e.preventDefault();
     const project = await createProject(newProject);
-    console.log("project", project);
     setProjects([...projects, project]);
+    setActiveProject(project);
+
+    newProject.users.forEach(async (user) => {
+      user.projects = [...user.projects, project._id!];
+      const res = await editUser(user);
+    });
+
+    toast({
+      title: "Successfully created project",
+      status: "success",
+      position: "top-right",
+      duration: 3000,
+    });
+
+    navigate("/project_overview");
   };
+
+  useEffect(() => {
+    setAvailableUsers(filterUsers(true));
+  }, [newProject.projectLead, newProject.users]);
 
   return (
     <form onSubmit={handleCreateProject}>
@@ -181,20 +207,26 @@ export const CreateProjectPage = () => {
           />
         </ProjectField>
         <ProjectField fieldName="Invite Collaborators">
-          <MenuSelection
-            setValue={(value: IUser) => {
+          <UserSelectMenu
+            onSelect={(user: IUser) => {
               setNewProject({
                 ...newProject,
-                users: [...newProject.users, value],
+                users: [...newProject.users, user],
+              });
+              toast({
+                title: `Added ${user.email} to project`,
+                duration: 3000,
+                status: "success",
+                position: "top-right",
               });
             }}
             defaultValue={"Select User"}
-            options={userEmails}
+            users={availableUsers}
           />
         </ProjectField>
         <ProjectField fieldName="Project Lead">
           <UserSelectMenu
-            users={users}
+            users={newProject.users}
             onSelect={(value: IUser) => {
               setNewProject({
                 ...newProject,

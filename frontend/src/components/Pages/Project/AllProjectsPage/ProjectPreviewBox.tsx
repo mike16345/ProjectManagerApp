@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { IProject } from "../../../interfaces";
-import { useProjectsStore } from "../../../store/projectsStore";
+import { IProject } from "../../../../interfaces";
+import { useProjectsStore } from "../../../../store/projectsStore";
 
 interface IProjectPreviewBox {
   project: IProject;

@@ -33,9 +33,10 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
         {defaultValue ? defaultValue : "Add User"}
       </MenuButton>
       <MenuList>
-        {users.map((user) => {
+        {users.map((user, index) => {
           return (
             <MenuItem
+              key={index}
               onClick={() => onSelect(user)}
               name={user.name}
               minH="48px"
@@ -46,7 +47,7 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
                 src={user.picture}
                 mr="12px"
               />
-              <VStack alignItems={"start"} gap={0} justifyContent={"start"}>
+              <VStack alignItems={"start"} gap={0} justifyContent={"center"}>
                 <Text className="text-sm font-semibold">{user.name}</Text>
                 <span className="text-sm opacity-75 text-gray-600">
                   {user.email}

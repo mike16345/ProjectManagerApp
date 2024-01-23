@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { getProjectsByUser } from "../../../API/ProjectAPIcalls";
+import { getProjectsByUser } from "../../../../API/ProjectAPIcalls";
 import ProjectPreviewBox from "./ProjectPreviewBox";
-import { IProject } from "../../../interfaces";
+import { IProject } from "../../../../interfaces";
 import { When } from "react-if";
-import { useUsersStore } from "../../../store/usersStore";
+import { useUsersStore } from "../../../../store/usersStore";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@chakra-ui/react";
-import { useProjectsStore } from "../../../store/projectsStore";
+import { useProjectsStore } from "../../../../store/projectsStore";
 
 const AllProjectPage = () => {
+  const navigate = useNavigate();
   const { activeUser } = useUsersStore();
   const { projects } = useProjectsStore();
   const [myProjects, setMyProjects] = useState<IProject[]>([]);
-  const navigate = useNavigate();
 
   const fetchUsersProject = async () => {
     if (!activeUser) return;
@@ -43,7 +43,7 @@ const AllProjectPage = () => {
       <When condition={activeUser && activeUser.projects.length > 0}>
         <div className="w-full h-full ">
           <div className=" text-2xl font-bold ">My Projects:</div>
-          <div className=" border border-black rounded  p-2 flex gap-2 bg-indigo-100">
+          <div className=" border border-black rounded  p-2 flex flex-wrap gap-2 bg-indigo-100">
             {myProjects.map((project, index) => (
               <ProjectPreviewBox key={index} project={project} />
             ))}
@@ -52,7 +52,7 @@ const AllProjectPage = () => {
       </When>
       <div>
         <h2 className="">All projects:</h2>
-        <div className=" flex gap-2 ">
+        <div className=" flex gap-2 flex-wrap ">
           {projects.map((project, index) => (
             <ProjectPreviewBox key={index} project={project} />
           ))}

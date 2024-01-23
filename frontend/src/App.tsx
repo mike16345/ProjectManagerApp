@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
 import WelcomePage from "./components/Pages/WelcomePage/WelcomePage";
 import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
-import AllProjectPage from "./components/Pages/AllProjectsPage/AllProjectsPage";
+import AllProjectPage from "./components/Pages/Project/AllProjectsPage/AllProjectsPage";
 import { useUsersStore } from "./store/usersStore";
 import { When } from "react-if";
 import "./App.css";
