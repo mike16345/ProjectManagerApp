@@ -23,7 +23,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ logOut }) => {
 
   return (
     <Box>
-      <Profile onClick={profileClickHandler} name={activeUser?.email || ""} />
+      <Profile
+        onClick={profileClickHandler}
+        user={activeUser ? activeUser : undefined}
+      />
       <When condition={showProfileModal}>
         <ProfilePage logOut={logOut} onCloseProfile={onCloseProfileHandler} />
       </When>

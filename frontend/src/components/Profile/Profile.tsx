@@ -10,8 +10,6 @@ interface ProfileProps {
 }
 
 export const Profile: FC<ProfileProps> = ({ onClick, width, height, user }) => {
-  const shortName = user?.name.substring(0, 2).toUpperCase();
-
   const handleClick = () => {
     if (onClick) onClick(user?.name || "");
   };
@@ -22,7 +20,7 @@ export const Profile: FC<ProfileProps> = ({ onClick, width, height, user }) => {
       src={user?.picture}
       className={`rounded-full  ${width ? width : "w-10"} ${
         height ? height : "h-10"
-      } cursor-pointer hover:scale-105 font-bold text-center flex justify-center items-center  `}
+      } cursor-pointer hover:scale-105  `}
     ></Avatar>
   );
 };

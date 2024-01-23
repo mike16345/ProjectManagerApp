@@ -25,7 +25,11 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
 }) => {
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+      <MenuButton
+        className="text-black w-48 bg-inherit border"
+        as={Button}
+        rightIcon={<ChevronDownIcon />}
+      >
         {defaultValue ? defaultValue : "Add User"}
       </MenuButton>
       <MenuList>

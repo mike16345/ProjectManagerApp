@@ -4,7 +4,6 @@ import { Profile } from "./Profile";
 import { useUsersStore } from "../../store/usersStore";
 import { useClickAway } from "@uidotdev/usehooks";
 
-
 interface ProfilePageProps {
   logOut: () => void;
   onCloseProfile: () => void;
@@ -29,7 +28,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       className=" fixed top-[15%] right-2 flex flex-col items-center justify-center gap-2 p-2 bg-purple-500 border-2 border-black rounded-xl"
       ref={ref}
     >
-      <Profile name={activeUser?.email} />
+      <Profile user={activeUser ? activeUser : undefined} />
       <div className="username">{activeUser?.name}</div>
       <div className="email">{activeUser?.email}</div>
       <button
