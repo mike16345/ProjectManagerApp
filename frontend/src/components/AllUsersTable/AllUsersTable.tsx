@@ -37,7 +37,7 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
           ? usersList.map((user, index: number) => (
               <div key={index}>
                 <Profile
-                  onClick={() => clickOnUserHandler(user.name)}
+                  onClick={() => clickOnUserHandler(user.email)}
                   user={user}
                 />
               </div>
@@ -45,7 +45,7 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
           : usersList.slice(0, 5).map((user, index: number) => (
               <div key={index}>
                 <Profile
-                  onClick={() => clickOnUserHandler(user.name)}
+                  onClick={() => clickOnUserHandler(user.email)}
                   user={user}
                 />
               </div>
