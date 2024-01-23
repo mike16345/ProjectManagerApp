@@ -3,9 +3,10 @@ import Button from "../Button/Button";
 import Modal from "../Modal/Modal";
 import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
+import { IUser } from "../../interfaces";
 
 interface AllUsersTableProps {
-  usersList: string[];
+  usersList: IUser[];
   deleteUser: (email: string) => void;
 }
 
@@ -33,14 +34,20 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
     <div>
       <div className="flex gap-1 ">
         {showAll
-          ? usersList.map((name: string, index: number) => (
+          ? usersList.map((user, index: number) => (
               <div key={index}>
-                <Profile onClick={() => clickOnUserHandler(name)} name={name} />
+                <Profile
+                  onClick={() => clickOnUserHandler(user.name)}
+                  user={user}
+                />
               </div>
             ))
-          : usersList.slice(0, 5).map((name: string, index: number) => (
+          : usersList.slice(0, 5).map((user, index: number) => (
               <div key={index}>
-                <Profile onClick={() => clickOnUserHandler(name)} name={name} />
+                <Profile
+                  onClick={() => clickOnUserHandler(user.name)}
+                  user={user}
+                />
               </div>
             ))}
         {usersList.length > 5 && (

@@ -21,7 +21,6 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   const avaliableUsers = users.filter((user) =>
     user.projects.filter((project) => project === activeProject?._id)
   );
-  const usersOnProject = activeProject?.users.map((user) => user.email);
 
   const addUserHandler = (email: string) => {
     console.log("email", email);
@@ -39,7 +38,7 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
             <h3>People working on this project:</h3>
             <AllUsersTable
               deleteUser={deleteUser}
-              usersList={usersOnProject || []}
+              usersList={activeProject?.users || []}
             />
           </div>
         </div>
