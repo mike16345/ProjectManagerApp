@@ -101,13 +101,15 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
         >
           Projects
         </Button>
-        <Button
-          colorScheme="white"
-          className=" hover:scale-105"
-          onClick={onAdminClickHandler}
-        >
-          Admin
-        </Button>
+        <When condition={activeUser?.isAdmin}>
+          <Button
+            colorScheme="white"
+            className=" hover:scale-105"
+            onClick={onAdminClickHandler}
+          >
+            Admin
+          </Button>
+        </When>
       </When>
 
       <When condition={isLoggedIn}>
