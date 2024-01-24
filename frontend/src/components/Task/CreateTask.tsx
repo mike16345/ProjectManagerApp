@@ -39,7 +39,7 @@ const CreateTask: React.FC<InputModalProps> = ({
   );
 
   const [selectedPriority, setSelectedPriority] = useState<Priority>(
-    Priority.NONE
+    taskToEdit?.priority || Priority.NONE
   );
   const [statusState, setStatusState] = useState<TaskStatus>(
     taskToEdit?.status || TaskStatus.TODO
@@ -82,7 +82,6 @@ const CreateTask: React.FC<InputModalProps> = ({
   const onDeleteTask = () => {
     if (!taskToEdit) return;
     handleDeleteTask(taskToEdit?.task_id);
-    
   };
 
   const statusSelect = taskToEdit ? (
