@@ -16,6 +16,7 @@ import { useTasksStore } from "./store/tasksStore";
 import { getAllProjects } from "./API/ProjectAPIcalls";
 import { getAllTasks } from "./API/TaskAPIcalls";
 import { useToast } from "@chakra-ui/react";
+import AdminPage from "./components/Pages/AdminPage/AdminPage";
 
 function App() {
   const navigate = useNavigate();
@@ -94,6 +95,10 @@ function App() {
               isNew={isNewUser}
             />
           }
+        />
+        <Route
+          path="/admin"
+          element={activeUser && activeUser.isAdmin && <AdminPage />}
         />
         <Route
           path="createProject"

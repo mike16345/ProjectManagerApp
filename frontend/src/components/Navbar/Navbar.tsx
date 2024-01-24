@@ -38,6 +38,10 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
     return await getProjectsByUser(activeUser);
   };
 
+  const onAdminClickHandler = () => {
+    navigate("/admin");
+  };
+
   const onSearchHandler = async (inputValue: string) => {
     const currentFound = projects.find(
       (project) => project.name.toLowerCase() === inputValue.toLowerCase()
@@ -96,6 +100,13 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
           onClick={onProjectsClickHandler}
         >
           Projects
+        </Button>
+        <Button
+          colorScheme="white"
+          className=" hover:scale-105"
+          onClick={onAdminClickHandler}
+        >
+          Admin
         </Button>
       </When>
 

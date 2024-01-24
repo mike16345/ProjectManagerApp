@@ -1,3 +1,4 @@
+import path from "path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import svgr from "vite-plugin-svgr";
@@ -9,6 +10,11 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss],
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

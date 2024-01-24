@@ -233,7 +233,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (!activeProject) return;
     getTasksFromAPI(activeProject._id!);
   }, [isCreatingTask]);
-  
+
   return (
     <div className="w-full p-4">
       <ProjectWrapper

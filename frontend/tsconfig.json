@@ -13,8 +13,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": "./src",
-
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
