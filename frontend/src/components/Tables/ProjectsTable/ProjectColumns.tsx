@@ -53,11 +53,16 @@ export const columns: ColumnDef<IProject>[] = [
   },
   {
     accessorKey: "projectLead",
-    header: "Project Lead",
+    header: "Project Lead Name",
+    cell: ({ row }) => {
+      const project = row.original;
+
+      return project.projectLead.name;
+    },
   },
   {
     accessorKey: "projectType",
-    header: "Type",
+    header: "Project Type",
   },
 
   {
@@ -68,7 +73,6 @@ export const columns: ColumnDef<IProject>[] = [
     id: "actions",
     cell: ({ row }) => {
       const project = row.original;
-      console.log("project", project);
 
       return (
         <DropdownMenu>

@@ -20,10 +20,9 @@ import {
 import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask, IUser } from "../../../interfaces";
-import { When } from "react-if";
-import CreateTask from "../../Task/CreateTask";
 import { useToast } from "@chakra-ui/react";
 import { useUsersStore } from "../../../store/usersStore";
+import { CreateTaskNew } from "@/components/Task/CreateTaskNew";
 
 const allTasks: IAllTasks = {
   [TaskStatus.TODO]: [],
@@ -68,6 +67,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const onTaskClickHandler = (task: ITask) => {
+    console.log("task to edit: ", task);
     setTaskToEdit(task);
     setIsCreatingTask(true);
   };
@@ -106,8 +106,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       (user) => user.email !== userToDelete.email
     );
     activeProject.users = filtered;
-    updateProjectById(activeProject);
-    removeProjectFromUser(userToDelete.email);
+    await updateProjectById(activeProject);
+    await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete.email);
     if (activeProject) getTasksFromAPI(activeProject._id!);
   };
@@ -246,16 +246,15 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
           tasks={taskArr}
         />
       </ProjectWrapper>
-      <When condition={isCreatingTask}>
-        <CreateTask
-          usersList={activeProject?.users.map((user) => user.email) || []}
-          confirmButtonText={taskToEdit ? "Save Changes" : "Submit"}
-          onCreateTask={taskToEdit ? onEditTask : onCreateIssue}
-          onCloseModal={handleCancelAddTask}
-          taskToEdit={taskToEdit}
-          handleDeleteTask={handleDeleteTask}
-        />
-      </When>
+      <CreateTaskNew
+        isOpen={isCreatingTask}
+        usersList={activeProject?.users.map((user) => user.email) || []}
+        confirmButtonText={taskToEdit ? "Save Changes" : "Submit"}
+        onCreateTask={taskToEdit ? onEditTask : onCreateIssue}
+        setIsOpen={handleCancelAddTask}
+        taskToEdit={taskToEdit}
+        handleDeleteTask={handleDeleteTask}
+      />
     </div>
   );
 };

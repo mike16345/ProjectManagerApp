@@ -32,10 +32,10 @@ const CreateTask: React.FC<InputModalProps> = ({
   const DEFAULT_EMAIL = "none@gmail.com";
 
   const [descriptionState, setDescriptionState] = useState<string>(
-    taskToEdit?.text || ""
+    taskToEdit?.name || ""
   );
   const [assignee, setAssignee] = useState<string>(
-    taskToEdit?.email || DEFAULT_EMAIL
+    taskToEdit?.assignee || DEFAULT_EMAIL
   );
 
   const [selectedPriority, setSelectedPriority] = useState<Priority>(
@@ -87,7 +87,7 @@ const CreateTask: React.FC<InputModalProps> = ({
   const statusSelect = taskToEdit ? (
     <select
       defaultValue={statusState}
-      onChange={onSelectStatusHandler}
+      onChange={onSelectStatusHandler}  
       className="drop-select-status"
     >
       <option value={TaskStatus.TODO}>{TaskStatus.TODO}</option>

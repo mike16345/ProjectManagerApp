@@ -16,8 +16,9 @@ export interface IProject {
 }
 
 export interface ITask {
-  text: string;
-  email: string;
+  name: string;
+  assignee: string;
+  description: string;
   task_id: number;
   priority: string;
   status: string;

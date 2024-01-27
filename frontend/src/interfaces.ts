@@ -14,9 +14,10 @@ export interface IProject {
 }
 
 export interface ITask {
-  text: string;
-  email: string;
+  name: string;
+  assignee: string;
   task_id: number;
+  description: string;
   priority: Priority;
   status: TaskStatus;
   project_id: string;
@@ -30,7 +31,7 @@ export interface IUser {
   picture: string;
   projects: string[];
   isAdmin: boolean;
-  dateCreated: Date;
+  date_created: string;
 }
 
 export interface IGoogleUser extends IUser {

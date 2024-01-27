@@ -66,6 +66,11 @@ export const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: "date_created",
     header: "Date Created",
+    cell: ({ row }) => {
+      const user = row.original;
+
+      return user.date_created.slice(0, 10);
+    },
   },
   {
     id: "actions",

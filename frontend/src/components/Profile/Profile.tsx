@@ -4,8 +4,8 @@ import { IUser } from "../../interfaces";
 
 interface ProfileProps {
   user?: IUser;
-  width?: string;
-  height?: string;
+  width?: number;
+  height?: number;
   onClick?: (name: string) => void;
 }
 
@@ -18,9 +18,9 @@ export const Profile: FC<ProfileProps> = ({ onClick, width, height, user }) => {
     <Avatar
       onClick={handleClick}
       src={user?.picture}
-      className={`rounded-full  ${width ? width : "w-10"} ${
-        height ? height : "h-10"
-      } cursor-pointer hover:scale-105  `}
+      width={width ? width : 10}
+      height={height ? height : 10}
+      className={`rounded-full cursor-pointer  `}
     ></Avatar>
   );
 };
