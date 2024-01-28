@@ -2,13 +2,27 @@ import React from "react";
 import Task from "./Task";
 import { IoMdAdd } from "react-icons/io";
 import { ITask } from "../../interfaces";
+import { TaskStatus } from "@/enums/TaskStatus";
 
 interface TaskColumnProps {
-  header: string;
+  header: TaskStatus;
   tasks: ITask[];
   onTaskClickHandler: (task: ITask) => void;
   onAddTaskClickHandler: () => void;
 }
+
+const statusToColor = (status: TaskStatus) => {
+  switch (status) {
+    case TaskStatus.TODO:
+      return "bg-red-300";
+    case TaskStatus.CODE_REVIEW:
+      return "bg-yellow-300";
+    case TaskStatus.IN_PROGRESS:
+      return "bg-blue-300";
+    case TaskStatus.DONE:
+      return "bg-green-300";
+  }
+};
 
 const TaskColumn: React.FC<TaskColumnProps> = ({
   onTaskClickHandler,
@@ -19,7 +33,11 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <div className=" flex gap-2 items-center">
-        <div className=" bg-red-300 rounded p-[2px] cursor-pointer">
+        <div
+          className={` ${statusToColor(
+            header
+          )} rounded p-[2px] font-semibold cursor-pointer`}
+        >
           {header}
         </div>
         <span className="font-semibold">{tasks.length}</span>

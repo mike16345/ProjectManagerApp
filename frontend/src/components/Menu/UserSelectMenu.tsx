@@ -26,13 +26,19 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
   return (
     <Menu>
       <MenuButton
-        className="text-black w-48 bg-inherit border"
+        w={200}
+        bgColor={"white"}
+        border={"solid"}
+        borderColor={"gray.200"}
+        size={"sm"}
+        h={8}
+        p={1}
         as={Button}
         rightIcon={<ChevronDownIcon />}
       >
         {defaultValue ? defaultValue : "Add User"}
       </MenuButton>
-      <MenuList>
+      <MenuList className=" overflow-y-auto max-h-[250px]">
         {users.map((user, index) => {
           return (
             <MenuItem

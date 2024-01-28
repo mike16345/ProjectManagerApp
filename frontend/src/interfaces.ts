@@ -10,7 +10,7 @@ export interface IProject {
   deadline?: Deadline | null;
   projectLead: IUser;
   projectType: ProjectType;
-  date_created?: Date;
+  date_created?: string;
 }
 
 export interface ITask {

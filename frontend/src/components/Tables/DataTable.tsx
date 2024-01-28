@@ -39,6 +39,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
@@ -65,45 +66,50 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4 gap-4">
-        <Input
-          placeholder="Search..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+      <div className="flex flex-col ">
+        <div className="flex items-center py-4 gap-4">
+          <Input
+            placeholder="Search..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                <FilterIcon size={15} className="mr-2" /> Filter Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              <FilterIcon size={15} className="mr-2" /> Filter Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="mb-2 text-sm text-muted-foreground self-end">
+          Page {pageNumber} of {table.getPageCount()}
+        </div>
       </div>
       <div className="rounded-md border max-h-[75vh] overflow-auto">
         <Table>
@@ -159,7 +165,10 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={() => {
+            table.previousPage();
+            setPageNumber((page) => page - 1);
+          }}
           disabled={!table.getCanPreviousPage()}
         >
           Previous
@@ -167,7 +176,10 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
+          onClick={() => {
+            table.nextPage();
+            setPageNumber((page) => page + 1);
+          }}
           disabled={!table.getCanNextPage()}
         >
           Next

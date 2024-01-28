@@ -14,7 +14,7 @@ const priorityToBgColor = (priority: Priority) => {
     case Priority.LOW:
       return "bg-green-500";
     default:
-      return "bg-gray-500";
+      return "bg-gray-400";
   }
 };
 const Tag: FC<TagProps> = ({ priority, isMyTasks }) => {

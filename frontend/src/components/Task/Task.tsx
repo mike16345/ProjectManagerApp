@@ -15,9 +15,9 @@ const Task: FC<TaskProps> = ({ isMyTasks, task, setTaskToEdit }) => {
   return (
     <div
       onClick={() => setTaskToEdit(task)}
-      className={` border rounded p-2 flex flex-col hover:shadow-lg justify-evenly gap-3 w-44  cursor-pointer  `}
+      className={` border rounded p-2 flex flex-col  hover:shadow-lg justify-between w-40 h-28 cursor-pointer  `}
     >
-      <div className=" self-start font-semibold ">{task.name}</div>
+      <div className="  font-semibold truncate">{task.name}</div>
       <div className=" flex items-center justify-between">
         <Tag isMyTasks={isMyTasks} priority={task.priority} />
         <When condition={task.assignee !== "none@gmail.com"}>

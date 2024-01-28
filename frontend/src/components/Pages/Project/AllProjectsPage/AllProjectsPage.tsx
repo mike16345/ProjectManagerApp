@@ -30,7 +30,7 @@ const AllProjectPage = () => {
 
   return (
     <div className="  flex flex-col gap-6 m-8 ">
-      <When condition={activeUser && activeUser.isAdmin}>
+      <When condition={activeUser !== null}>
         <Button
           colorScheme="purple"
           className=" border rounded-lg p-2   font-extrabold hover:scale-105 w-32 h-12 "
@@ -43,18 +43,26 @@ const AllProjectPage = () => {
       <When condition={activeUser && activeUser.projects.length > 0}>
         <div className="w-full h-full ">
           <div className=" text-2xl font-bold ">My Projects:</div>
-          <div className=" border border-black rounded  p-2 flex flex-wrap gap-2 bg-indigo-100">
+          <div className=" border  rounded  p-2 flex flex-wrap gap-2">
             {myProjects.map((project, index) => (
-              <ProjectPreviewBox key={index} project={project} />
+              <ProjectPreviewBox
+                key={index}
+                project={project}
+                isMyProject={true}
+              />
             ))}
           </div>
         </div>
       </When>
       <div>
-        <h2 className="">All projects:</h2>
-        <div className=" flex gap-2 flex-wrap ">
+        <div className=" text-2xl font-bold ">All Projects:</div>
+        <div className=" border  rounded  p-2 flex flex-wrap gap-2">
           {projects.map((project, index) => (
-            <ProjectPreviewBox key={index} project={project} />
+            <ProjectPreviewBox
+              key={index}
+              project={project}
+              isMyProject={false}
+            />
           ))}
         </div>
       </div>

@@ -9,20 +9,18 @@ import { IUser } from "../../../interfaces";
 interface ProjectWrapperProps {
   addUser: (user: IUser) => void;
   deleteUser: (user: IUser) => void;
+  availableUsers: Array<IUser>;
   children: ReactNode;
 }
 
 const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   addUser,
   deleteUser,
+  availableUsers,
   children,
 }) => {
   const { activeProject } = useProjectsStore();
-  const { users } = useUsersStore();
-  console.log("users", users);
-  const availableUsers = users.filter((user) =>
-    user.projects.every((projectID) => projectID !== activeProject?._id)
-  );
+
 
   const addUserHandler = (user: IUser) => {
     addUser(user);

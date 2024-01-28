@@ -8,7 +8,6 @@ import {
 } from "../../../API/ProjectAPIcalls";
 import { useUsersStore } from "../../../store/usersStore";
 import { IProject, ITask } from "../../../interfaces";
-import { When } from "react-if";
 import { Text } from "@chakra-ui/react";
 
 const MyTasksPage: React.FC = () => {
@@ -46,7 +45,7 @@ const MyTasksPage: React.FC = () => {
                 <Text className=" text-xl font-semibold">
                   Project: {project.name}
                 </Text>
-                <div className="flex flex-wrap gap-6 border p-3">
+                <div className="flex flex-wrap  gap-6 border p-3">
                   {tasks
                     .filter((task) => task.project_id === project._id)
                     .map((task, index) => (

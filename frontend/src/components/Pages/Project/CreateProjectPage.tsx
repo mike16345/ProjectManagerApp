@@ -1,5 +1,6 @@
 import {
   Button,
+  EditableTextarea,
   Flex,
   FormControl,
   FormHelperText,
@@ -9,6 +10,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import { ProjectType } from "../../../enums/ProjectType";
@@ -91,7 +93,9 @@ export const CreateProjectPage = () => {
     };
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setNewProject({ ...newProject, [e.target.name]: e.target.value });
   };
 
@@ -135,10 +139,9 @@ export const CreateProjectPage = () => {
   }, [newProject.projectLead, newProject.users]);
 
   return (
-    <form onSubmit={handleCreateProject}>
+    <form className=" w-screen h-screen" onSubmit={handleCreateProject}>
       <Flex
         margin={8}
-        className=" w-screen h-screen"
         gap={4}
         flexDirection={"column"}
         justifyContent={"start"}
@@ -149,7 +152,7 @@ export const CreateProjectPage = () => {
             <Input
               onChange={handleChange}
               name="name"
-              className="w-1/2"
+              w={"50%"}
               isRequired={true}
               placeholder="Project Name"
             />
@@ -158,9 +161,10 @@ export const CreateProjectPage = () => {
 
         <ProjectField fieldName="Project Description">
           <InputGroup>
-            <Input
+            <Textarea
               onChange={handleChange}
               name="description"
+              w={"50%"}
               className=" w-1/2"
               placeholder="Project Description"
             />
@@ -182,7 +186,6 @@ export const CreateProjectPage = () => {
               minDate={TODAY}
               dateFormat={"dd/MM/yyyy"}
               showIcon={true}
-              isClearable={true}
               value={`${startDate?.toDateString()} - ${
                 endDate ? endDate.toDateString() : ""
               }`}

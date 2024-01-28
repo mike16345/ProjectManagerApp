@@ -3,6 +3,7 @@ import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { When } from "react-if";
 import { Option } from "../../interfaces";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface IMenuSelection {
   defaultValue: number | string;
@@ -26,7 +27,14 @@ const MenuSelection: React.FC<IMenuSelection> = ({
       <MenuButton
         className="text-black w-48 bg-inherit border"
         as={Button}
-        rightIcon={<IoMdArrowDropdown />}
+        w={200}
+        bgColor={"white"}
+        border={"solid"}
+        borderColor={"gray.200"}
+        size={"sm"}
+        h={8}
+        p={1}
+        rightIcon={<ChevronDownIcon />}
       >
         <p>{defaultValue}</p>
       </MenuButton>

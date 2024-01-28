@@ -22,7 +22,7 @@ import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask, IUser } from "../../../interfaces";
 import { useToast } from "@chakra-ui/react";
 import { useUsersStore } from "../../../store/usersStore";
-import { CreateTaskNew } from "@/components/Task/CreateTaskNew";
+import { CreateTask } from "@/components/Task/CreateTask";
 
 const allTasks: IAllTasks = {
   [TaskStatus.TODO]: [],
@@ -35,6 +35,10 @@ interface ProjectOverviewProps {}
 const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const { activeProject, setActiveProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
+  const { users } = useUsersStore();
+  const availableUsers = users.filter((user) =>
+    user.projects.every((projectID) => projectID !== activeProject?._id)
+  );
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
@@ -178,6 +182,11 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
         position: "top-right",
         status: "success",
       });
+      console.log("res", res.data);
+      setTaskArr({
+        ...taskArr,
+        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], res.data],
+      });
     }
     setIsCreatingTask(false);
   };
@@ -237,6 +246,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   return (
     <div className="w-full p-4">
       <ProjectWrapper
+        availableUsers={availableUsers}
         deleteUser={onDeleteUserFromProjHandler}
         addUser={onAddUsertoProjectHandler}
       >
@@ -246,9 +256,10 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
           tasks={taskArr}
         />
       </ProjectWrapper>
-      <CreateTaskNew
+      <CreateTask
+        availableUsers={activeProject?.users || []}
         isOpen={isCreatingTask}
-        usersList={activeProject?.users.map((user) => user.email) || []}
+        taskType={taskTypeToAdd}
         confirmButtonText={taskToEdit ? "Save Changes" : "Submit"}
         onCreateTask={taskToEdit ? onEditTask : onCreateIssue}
         setIsOpen={handleCancelAddTask}
