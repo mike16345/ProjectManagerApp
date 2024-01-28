@@ -1,6 +1,6 @@
-import { SearchIcon } from "@chakra-ui/icons";
-import { Flex, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import React, { useState, ChangeEvent } from "react";
+import { Input } from "../ui/input";
+import { SearchIcon } from "lucide-react";
 
 interface SearchBarProps {
   onInput: (input: string) => void;
@@ -20,25 +20,20 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
   };
 
   return (
-    <Flex justifyItems={"center"} alignItems={"center"}>
-      <InputGroup>
-        <InputRightElement>
-          <SearchIcon
-            onClick={search}
-            color="gray.300"
-            className="cursor-pointer"
-          />
-        </InputRightElement>
-        <Input
-          onChange={searchInputHandler}
-          type="text"
-          color={"white"}
-          placeholder="Find a project"
-          borderColor="white"
-          borderRadius="md"
+    <div className=" flex-center">
+      <div className="relative flex items-center max-w-2xl">
+        <SearchIcon
+          onClick={search}
+          className="absolute right-2 top-1/2 h-4 w-4 cursor-pointer -translate-y-1/2 transform"
         />
-      </InputGroup>
-    </Flex>
+        <Input
+          type="text"
+          placeholder="Search for project..."
+          onChange={searchInputHandler}
+          value={searchInput}
+        />
+      </div>
+    </div>
   );
 };
 

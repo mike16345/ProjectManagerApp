@@ -26,7 +26,6 @@ router.get("/emails", async (req: Request, res: Response) => {
 
 router.post("/register", async (req: Request, res: Response) => {
   const existingUser = await UserModel.findOne({ email: req.body.email });
-  console.log("req body:", req.body);
   if (existingUser) {
     const token = genToken(existingUser._id);
     return res.json({ isNew: false, status: "existing_user", data: token });
@@ -35,6 +34,7 @@ router.post("/register", async (req: Request, res: Response) => {
   try {
     const user = new UserModel(req.body);
     await user.save();
+
     const oldUser = await UserModel.findOne({ email: req.body.email });
     if (!oldUser) return;
     if (req.body.type === "local") {
@@ -43,6 +43,7 @@ router.post("/register", async (req: Request, res: Response) => {
         _id: oldUser._id,
         password: password,
       });
+
       await newPassword.save();
     }
     const newToken = genToken(user._id);
@@ -63,7 +64,7 @@ router.put("/:idEdit", async (req: Request, res: Response) => {
   } catch (error) {
     res.status(400).json({ error: error });
   }
-});
+}); 
 
 router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;

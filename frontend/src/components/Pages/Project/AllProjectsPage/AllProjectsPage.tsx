@@ -5,8 +5,8 @@ import { IProject } from "../../../../interfaces";
 import { When } from "react-if";
 import { useUsersStore } from "../../../../store/usersStore";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@chakra-ui/react";
 import { useProjectsStore } from "../../../../store/projectsStore";
+import { Button } from "@/components/ui/button";
 
 const AllProjectPage = () => {
   const navigate = useNavigate();
@@ -32,8 +32,7 @@ const AllProjectPage = () => {
     <div className="  flex flex-col gap-6 m-8 ">
       <When condition={activeUser !== null}>
         <Button
-          colorScheme="purple"
-          className=" border rounded-lg p-2   font-extrabold hover:scale-105 w-32 h-12 "
+          className=" font-extrabold hover:scale-105 w-32 h-12 "
           onClick={handleAddNewProject}
         >
           Add project

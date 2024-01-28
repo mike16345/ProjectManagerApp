@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
-import { Box, useToast } from "@chakra-ui/react";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@chakra-ui/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/theme/mode-toggle";
@@ -38,14 +32,11 @@ const ProfileModal: React.FC = () => {
   };
 
   return (
-    <Box>
+    <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button>
-            <Profile
-              // onClick={profileClickHandler}
-              user={activeUser ? activeUser : undefined}
-            />
+            <Profile user={activeUser ? activeUser : undefined} />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -57,7 +48,7 @@ const ProfileModal: React.FC = () => {
             </DropdownMenuItem>
             <DropdownMenuItem className="flex hover:bg-current items-center cursor-pointer justify-between ">
               Notifications
-              <span className="rounded bg-red-500 w-5 h-5 text-center text-black">
+              <span className="rounded bg-destructive w-5 h-5 text-center text-primary">
                 5
               </span>
             </DropdownMenuItem>
@@ -74,7 +65,7 @@ const ProfileModal: React.FC = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </Box>
+    </div>
   );
 };
 

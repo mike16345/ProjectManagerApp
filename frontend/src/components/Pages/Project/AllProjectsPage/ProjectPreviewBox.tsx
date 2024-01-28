@@ -4,7 +4,6 @@ import { useProjectsStore } from "../../../../store/projectsStore";
 import { Button } from "@/components/ui/button";
 import { Else, If, Then, When } from "react-if";
 import { useUsersStore } from "@/store/usersStore";
-import { MouseEventHandler } from "react";
 import secureLocalStorage from "react-secure-storage";
 
 interface IProjectPreviewBox {

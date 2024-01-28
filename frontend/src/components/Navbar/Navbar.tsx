@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import SearchBar from "./SearchBar";
 import { getProjectsByUser } from "../../API/ProjectAPIcalls";
@@ -21,23 +21,6 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const onMyTaskClickHandler = () => {
-    navigate("myTasks");
-  };
-
-  const onProjectsClickHandler = () => {
-    navigate("allProjects");
-  };
-
-  const projectByUser = async () => {
-    if (!activeUser) return;
-    return await getProjectsByUser(activeUser);
-  };
-
-  const onAdminClickHandler = () => {
-    navigate("/admin");
-  };
-
   const onSearchHandler = async (inputValue: string) => {
     const currentFound = projects.find(
       (project) => project.name.toLowerCase() === inputValue.toLowerCase()
@@ -57,58 +40,44 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <Flex
-      bg={"purple.600"}
-      p={2}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      pos={"sticky"}
-      zIndex={10}
-      top={0}
-    >
-      <Heading
-        cursor={"pointer"}
+    <div className=" bg-primary p-3 z-10 sticky top-0 flex items-center justify-between">
+      <h1
+        className=" text-4xl cursor-pointer font-bold text-secondary "
         onClick={onLogoClickHandler}
-        color="purple.50"
-        as={"h4"}
       >
         Synergize
-      </Heading>
-      <Button
-        colorScheme="white"
-        className=" hover:scale-105"
-        onClick={onLogoClickHandler}
+      </h1>
+      <Link
+        to={"/project_overview"}
+        className=" text-secondary font-extrabold hover:scale-105"
       >
         Home
-      </Button>
+      </Link>
 
-      <Button
-        colorScheme="white"
-        className=" hover:scale-105"
-        onClick={onMyTaskClickHandler}
+      <Link
+        to={"/myTasks"}
+        className=" text-secondary font-extrabold hover:scale-105"
       >
         My Tasks
-      </Button>
-      <Button
-        colorScheme="white"
-        className=" hover:scale-105"
-        onClick={onProjectsClickHandler}
+      </Link>
+      <Link
+        to={"/allProjects"}
+        className=" text-secondary font-extrabold hover:scale-105"
       >
         Projects
-      </Button>
+      </Link>
       <When condition={activeUser?.isAdmin}>
-        <Button
-          colorScheme="white"
-          className=" hover:scale-105"
-          onClick={onAdminClickHandler}
+        <Link
+          to={"/admin"}
+          className=" text-secondary font-extrabold hover:scale-105"
+          onClick={onLogoClickHandler}
         >
           Admin
-        </Button>
+        </Link>
       </When>
-
       <SearchBar onInput={onSearchHandler} />
       <ProfileModal />
-    </Flex>
+    </div>
   );
 };
 

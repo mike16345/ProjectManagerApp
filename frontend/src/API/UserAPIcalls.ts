@@ -102,6 +102,7 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
+
 export const getOneUser = async (email: string): Promise<AxiosResponse> => {
   try {
     const res: AxiosResponse = await axios.get(

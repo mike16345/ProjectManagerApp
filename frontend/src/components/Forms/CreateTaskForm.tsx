@@ -35,15 +35,11 @@ const formSchema = z.object({
   priority: z.string(),
   description: z
     .string()
-    .min(10, {
-      message: "Task description must be at least 2 characters.",
-    })
     .max(250, {
       message: "Task description must be less than 250 characters.",
-    }),
-  assignee: z
-    .string()
-    .email({ message: "Task assignee must be a valid email address." }),
+    })
+    .optional(),
+  assignee: z.string(),
   status: z.string(),
 });
 
@@ -67,14 +63,15 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   confirmButtonText,
 }) => {
   const { activeProject } = useProjectsStore();
-  const [assignee, setAssignee] = useState<IUser | null>(null);
+  const [taskTypeToAdd, setTaskTypeToAdd] = useState(taskType);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: taskToEdit?.name || "",
-      description: taskToEdit?.description || "",
-      assignee: taskToEdit?.assignee || "",
-      status: taskToEdit?.status || taskType,
+      description: taskToEdit?.description || undefined,
+      assignee: taskToEdit ? JSON.stringify(taskToEdit?.assignee) : undefined,
+      status: taskToEdit?.status || taskTypeToAdd,
       priority: taskToEdit?.priority || Priority.NONE,
     },
   });
@@ -82,9 +79,9 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   function onSubmit(values: z.infer<typeof formSchema>) {
     const task: ITask = {
       name: values.name,
-      assignee: assignee?.email || "none@gmail.com",
+      assignee: JSON.parse(values.assignee) || ({} as IUser),
       priority: values.priority as Priority,
-      description: values.description,
+      description: values.description || "",
       status: values.status as TaskStatus,
       task_id: taskToEdit?.task_id || Date.now().valueOf(),
       project_id: taskToEdit?.project_id || activeProject?._id!,
@@ -151,9 +148,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                     <SelectTrigger className="ring-0 flex  py-4 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
                       <SelectValue
                         defaultValue={
-                          field.value.length > 0
-                            ? field.value
-                            : "Select user to assign"
+                          field.value ? field.value : "Select user to assign"
                         }
                       />
                     </SelectTrigger>
@@ -163,7 +158,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                           <SelectItem
                             className="max-h-[250px] overflow-y-auto"
                             key={index}
-                            value={user.email}
+                            value={JSON.stringify(user)}
                           >
                             <div className="flex items-center justify-center">
                               <Avatar
@@ -186,12 +181,6 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                       })}
                     </SelectContent>
                   </Select>
-
-                  {/* <UserSelectMenu
-                    users={availableUsers}
-                    defaultValue={"Assign To"}
-                    onSelect={(value: IUser) => setAssignee(value)}
-                  /> */}
                 </FormControl>
               </div>
               <FormMessage />
@@ -233,7 +222,13 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             <FormItem>
               <FormLabel>Status</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} {...field}>
+                <Select
+                  onValueChange={(e) => {
+                    setTaskTypeToAdd(e as TaskStatus);
+                    field.onChange(e);
+                  }}
+                  {...field}
+                >
                   <SelectTrigger className=" focus:ring-0 focus:border-2">
                     <SelectValue defaultValue={field.value} />
                   </SelectTrigger>
