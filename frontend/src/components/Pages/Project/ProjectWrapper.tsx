@@ -21,7 +21,6 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
 }) => {
   const { activeProject } = useProjectsStore();
 
-
   const addUserHandler = (user: IUser) => {
     addUser(user);
   };
@@ -32,7 +31,7 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
         <div className=" flex flex-col gap-2">
           <Heading>{activeProject?.name || "No Name"}</Heading>
           <div className=" flex flex-col gap-1">
-            <h3>People working on this project:</h3>
+            <h3>Project Participants:</h3>
             <AllUsersTable
               deleteUser={deleteUser}
               usersList={activeProject?.users || []}

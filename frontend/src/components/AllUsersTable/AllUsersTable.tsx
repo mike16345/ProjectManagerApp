@@ -4,6 +4,7 @@ import Modal from "../Modal/Modal";
 import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
 import { IUser } from "../../interfaces";
+import { useProjectsStore } from "@/store/projectsStore";
 
 interface AllUsersTableProps {
   usersList: IUser[];
@@ -18,15 +19,25 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [userToDelete, setUserToDelete] = useState<IUser | null>(null);
   const { activeUser } = useUsersStore();
+  const { activeProject } = useProjectsStore();
 
   const removeUserHandler = () => {
     setShowModal(false);
     if (!userToDelete) return;
+    console.log("User to delete: ", userToDelete);
     deleteUser(userToDelete);
   };
 
+  const isProjectLead = () => {
+    if (!activeProject) return false;
+    return (
+      activeProject.projectLead.email.localeCompare(activeUser?.email || "") ===
+      0
+    );
+  };
+
   const clickOnUserHandler = (user: IUser) => {
-    if (!activeUser || !activeUser.isAdmin) return;
+    if (!activeUser || (!activeUser.isAdmin && !isProjectLead())) return;
     setUserToDelete(user);
     setShowModal(true);
   };

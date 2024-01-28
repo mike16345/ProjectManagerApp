@@ -55,6 +55,7 @@
   "devDependencies": {
     "@types/gapi": "^0.0.47",
     "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.9",
     "@types/react": "^18.2.43",
     "@types/react-datepicker": "^4.19.5",
     "@types/react-dom": "^18.2.17",

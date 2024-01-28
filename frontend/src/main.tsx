@@ -3,7 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ChakraProvider } from "@chakra-ui/react";
-import { ThemeProvider } from "./components/theme-provider.tsx";
+import { ThemeProvider } from "./theme/theme-provider.tsx";
 import { AuthProvider } from "./Authentication/useAuth.tsx";
 
 const domNode = document.getElementById("root") as HTMLElement;

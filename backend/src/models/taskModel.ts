@@ -6,7 +6,7 @@ import Joi from "joi";
 const taskSchema: Schema<ITask> = new Schema({
   name: String,
   description: String,
-  assignee: String,
+  assignee: Object,
   task_id: Number,
   priority: String,
   status: String,
@@ -18,7 +18,7 @@ export const TaskModel = mongoose.model("tasks", taskSchema);
 export const validateTask = (reqBody: any) => {
   const joiSchema = Joi.object({
     name: Joi.string().min(2).max(100).required(),
-    assignee: Joi.string().min(2).max(100).required().email(),
+    assignee: Joi.object(),
     description: Joi.string().min(10).max(250),
     task_id: Joi.number().min(2).required(),
     priority: Joi.string().min(2).max(100).required(),

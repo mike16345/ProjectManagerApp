@@ -15,6 +15,7 @@ async function main() {
   const cluster = "projectmanagementserver";
   const DATABASE_SERVER = `mongodb+srv://${username}:${password}@${cluster}.7hss9cc.mongodb.net/`;
   const port = process.env.PORT;
+  console.log("database server:", DATABASE_SERVER);
 
   try {
     await mongoose.connect(DATABASE_SERVER);

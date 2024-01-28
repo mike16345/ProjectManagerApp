@@ -6,6 +6,7 @@ const APIaddress = "http://localhost:3002";
 export const getAllTasks = async (): Promise<ITask[]> => {
   try {
     const res: AxiosResponse<ITask[]> = await axios.get(`${APIaddress}/tasks`);
+    console.log(res);
     return res.data;
   } catch (error) {
     throw error;

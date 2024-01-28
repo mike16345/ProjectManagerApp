@@ -105,7 +105,9 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const onDeleteUserFromProjHandler = async (userToDelete: IUser) => {
+    console.log("activeProject: ", activeProject);
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
+    console.log("user to delete: ", userToDelete);
     const filtered = activeProject.users.filter(
       (user) => user.email !== userToDelete.email
     );
@@ -140,6 +142,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const removeProjectFromUser = async (email: string) => {
+    console.log("email: ", email);
     try {
       const user = (await getOneUser(email)).data;
       const currentProjectId = activeProject?._id;
@@ -148,12 +151,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       });
       user.projects = [...updatedUserProjects];
       editUser(user);
-      toast({
-        title: "User removed from project",
-        status: "success",
-        position: "top-right",
-        duration: 3000,
-      });
     } catch (error) {
       toast({
         title: "Failed to delete user from project",

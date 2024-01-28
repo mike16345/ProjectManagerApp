@@ -149,7 +149,13 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                 <FormControl>
                   <Select onValueChange={field.onChange} {...field}>
                     <SelectTrigger className="ring-0 flex  py-4 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
-                      <SelectValue defaultValue={field.value} />
+                      <SelectValue
+                        defaultValue={
+                          field.value.length > 0
+                            ? field.value
+                            : "Select user to assign"
+                        }
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {availableUsers.map((user, index) => {

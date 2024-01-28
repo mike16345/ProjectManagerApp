@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Else, If, Then, When } from "react-if";
 import { useUsersStore } from "@/store/usersStore";
 import { MouseEventHandler } from "react";
+import secureLocalStorage from "react-secure-storage";
 
 interface IProjectPreviewBox {
   isMyProject: boolean;
@@ -20,6 +21,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
 
   const onProjectClickHandler = () => {
     setActiveProject(project);
+    secureLocalStorage.setItem("active-project", JSON.stringify(project));
     navigate("/project_overview");
   };
 

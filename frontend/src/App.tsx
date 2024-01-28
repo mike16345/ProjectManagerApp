@@ -1,32 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { verifyToken, getAllEmails, getAllUsers } from "./API/UserAPIcalls";
+import {
+  verifyToken,
+  getAllEmails,
+  getAllUsers,
+  editUser,
+} from "./API/UserAPIcalls";
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
-import WelcomePage from "./components/Pages/WelcomePage/WelcomePage";
 import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
 import AllProjectPage from "./components/Pages/Project/AllProjectsPage/AllProjectsPage";
 import { useUsersStore } from "./store/usersStore";
 import { When } from "react-if";
-import "./App.css";
 import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
 import { useProjectsStore } from "./store/projectsStore";
 import { useTasksStore } from "./store/tasksStore";
 import { getAllProjects } from "./API/ProjectAPIcalls";
 import { getAllTasks } from "./API/TaskAPIcalls";
-import { useToast } from "@chakra-ui/react";
 import AdminPage from "./components/Pages/AdminPage/AdminPage";
-import secureLocalStorage from "react-secure-storage";
 import RequireAuth from "./Authentication/RequireAuth";
 import useAuth from "./Authentication/useAuth";
+import secureLocalStorage from "react-secure-storage";
+import "./App.css";
+import { getImage, getImageNames } from "./utils/utils";
+import { userInfo } from "os";
 
 function App() {
-  const { activeUser, setActiveUser, setUserEmails, setUsers } =
+  const { activeUser, users, setActiveUser, setUserEmails, setUsers } =
     useUsersStore();
   const { authed } = useAuth();
 
-  const { setProjects } = useProjectsStore();
+  const { setProjects, setActiveProject } = useProjectsStore();
   const { setTasks } = useTasksStore();
 
   const initData = async () => {
@@ -34,11 +39,23 @@ function App() {
     const tasks = await getAllTasks();
     const users = await getAllUsers();
     const userEmails = await getAllEmails();
+    console.log(tasks);
+    const userToken = secureLocalStorage.getItem("user-token");
+    const activeProject = secureLocalStorage.getItem("active-project");
 
     setProjects(projects);
     setTasks(tasks);
     setUsers(users);
     setUserEmails(userEmails);
+
+    if (userToken) {
+      const response = await verifyToken(userToken as string);
+      setActiveUser(response.data);
+    }
+
+    if (activeProject) {
+      setActiveProject(JSON.parse(activeProject as string));
+    }
   };
 
   useEffect(() => {
@@ -46,7 +63,7 @@ function App() {
   }, []);
 
   return (
-    <div className="w-full h-full">
+    <>
       <When condition={authed}>
         <Navbar />
       </When>
@@ -98,7 +115,7 @@ function App() {
           }
         />
       </Routes>
-    </div>
+    </>
   );
 }
 

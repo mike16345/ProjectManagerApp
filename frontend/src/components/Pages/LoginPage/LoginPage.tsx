@@ -144,8 +144,12 @@ const LoginPage: React.FC = () => {
     };
 
     const response = await registerHandler(googleUser);
-    if (response.token)
-      secureLocalStorage.setItem("token-promger", response.token);
+    if (response.token) {
+      secureLocalStorage.clear();
+      secureLocalStorage.setItem("user-token", response.token);
+      const user = await verifyToken(response.token);
+      setActiveUser(user.data);
+    }
 
     if (
       response.status === "registered" ||

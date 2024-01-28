@@ -15,7 +15,7 @@ export interface IProject {
 
 export interface ITask {
   name: string;
-  assignee: string;
+  assignee: IUser;
   task_id: number;
   description: string;
   priority: Priority;
