@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { verifyToken, getAllEmails, getAllUsers } from "./API/UserAPIcalls";
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
@@ -17,51 +17,17 @@ import { getAllProjects } from "./API/ProjectAPIcalls";
 import { getAllTasks } from "./API/TaskAPIcalls";
 import { useToast } from "@chakra-ui/react";
 import AdminPage from "./components/Pages/AdminPage/AdminPage";
+import secureLocalStorage from "react-secure-storage";
+import RequireAuth from "./Authentication/RequireAuth";
+import useAuth from "./Authentication/useAuth";
 
 function App() {
-  const navigate = useNavigate();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
-
   const { activeUser, setActiveUser, setUserEmails, setUsers } =
     useUsersStore();
-  const toast = useToast();
+  const { authed } = useAuth();
 
   const { setProjects } = useProjectsStore();
   const { setTasks } = useTasksStore();
-
-  const loginOnToken = async (isNew: boolean) => {
-    const token = localStorage.getItem("token-promger");
-    if (!token) return;
-
-    const response = await verifyToken(token);
-    response.data.isNew = isNew;
-
-    setIsNewUser(isNew);
-    setActiveUser(response.data);
-    setIsLoggedIn(true);
-
-    navigate("welcome");
-
-    const timer = setTimeout(() => {
-      navigate("allProjects");
-    }, 800);
-
-    return () => clearTimeout(timer);
-  };
-
-  const onLogOutHandler = () => {
-    localStorage.removeItem("token-promger");
-    setIsLoggedIn(false);
-    navigate("/");
-    toast({
-      title: "Successfully Logged Out",
-      description: "You have successfully logged out",
-      status: "success",
-      position: "top-right",
-    });
-  };
 
   const initData = async () => {
     const projects = await getAllProjects();
@@ -77,39 +43,60 @@ function App() {
 
   useEffect(() => {
     initData();
-    loginOnToken(false);
   }, []);
 
   return (
     <div className="w-full h-full">
-      <When condition={isLoggedIn}>
-        <Navbar onLogOutHandler={onLogOutHandler} isLoggedIn={isLoggedIn} />
+      <When condition={authed}>
+        <Navbar />
       </When>
       <Routes>
-        <Route path="/" element={<LoginPage loginOnToken={loginOnToken} />} />
         <Route
-          path="welcome"
+          path="/admin"
           element={
-            <WelcomePage
-              name={activeUser ? activeUser.name : "User"}
-              isNew={isNewUser}
-            />
+            <RequireAuth>
+              <When condition={activeUser?.isAdmin}>
+                <AdminPage />
+              </When>
+            </RequireAuth>
           }
         />
         <Route
-          path="/admin"
-          element={activeUser && activeUser.isAdmin && <AdminPage />}
-        />
-        <Route
           path="createProject"
-          element={isLoggedIn && <CreateProjectPage />}
+          element={
+            <RequireAuth>
+              <CreateProjectPage />
+            </RequireAuth>
+          }
         />
         <Route
           path="project_overview"
-          element={isLoggedIn && <ProjectOverview />}
+          element={
+            <RequireAuth>
+              <ProjectOverview />
+            </RequireAuth>
+          }
         />
-        <Route path="myTasks" element={isLoggedIn && <MyTasksPage />} />
-        <Route path="allProjects" element={isLoggedIn && <AllProjectPage />} />
+        <Route
+          path="myTasks"
+          element={
+            <RequireAuth>
+              <MyTasksPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/"
+          element={authed ? <Navigate to="/myTasks" /> : <LoginPage />}
+        />
+        <Route
+          path="allProjects"
+          element={
+            <RequireAuth>
+              <AllProjectPage />
+            </RequireAuth>
+          }
+        />
       </Routes>
     </div>
   );

@@ -3,7 +3,7 @@ import ProfilePage from "../Profile/ProfilePage";
 import { Profile } from "../Profile/Profile";
 import { When } from "react-if";
 import { useUsersStore } from "../../store/usersStore";
-import { Box } from "@chakra-ui/react";
+import { Box, useToast } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,21 +19,23 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import secureLocalStorage from "react-secure-storage";
+import useAuth from "@/Authentication/useAuth";
 
-interface ProfileModalProps {
-  logOut: () => void;
-}
-
-const ProfileModal: React.FC<ProfileModalProps> = ({ logOut }) => {
-  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
+const ProfileModal: React.FC = () => {
   const { activeUser } = useUsersStore();
+  const { logout } = useAuth();
+  const toast = useToast();
 
-  const profileClickHandler = () => {
-    setShowProfileModal((show) => !show);
-  };
-
-  const onCloseProfileHandler = () => {
-    setShowProfileModal(false);
+  const onLogOutHandler = () => {
+    secureLocalStorage.removeItem("user-token");
+    logout();
+    toast({
+      title: "Successfully Logged Out",
+      description: "You have successfully logged out",
+      status: "success",
+      position: "top-right",
+    });
   };
 
   return (
@@ -62,7 +64,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ logOut }) => {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logOut} className="cursor-pointer">
+          <DropdownMenuItem
+            onClick={onLogOutHandler}
+            className="cursor-pointer"
+          >
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>

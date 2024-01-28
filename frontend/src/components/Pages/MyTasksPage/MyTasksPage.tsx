@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getTasksByEmail } from "../../../API/TaskAPIcalls";
 import Task from "../../Task/Task";
 
-import {
-  getAllProjects,
-  getProjectsByUser,
-} from "../../../API/ProjectAPIcalls";
+import { getProjectsByUser } from "../../../API/ProjectAPIcalls";
 import { useUsersStore } from "../../../store/usersStore";
 import { IProject, ITask } from "../../../interfaces";
 import { Text } from "@chakra-ui/react";
@@ -14,6 +11,7 @@ const MyTasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [projects, setProjects] = useState<IProject[]>([]);
   const { activeUser } = useUsersStore();
+
   const fetchMyProjects = async () => {
     if (!activeUser) return;
     const res = await getProjectsByUser(activeUser);

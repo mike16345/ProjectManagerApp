@@ -4,6 +4,7 @@ import {
   loginHandler,
   registerHandler,
   signInWithGoogle,
+  verifyToken,
 } from "../../../API/UserAPIcalls";
 import {
   Flex,
@@ -27,10 +28,10 @@ import { FaUserAlt, FaLock } from "react-icons/fa";
 import GoogleLogin from "./GoogleLogin";
 import { When } from "react-if";
 import { IGoogleUser } from "../../../interfaces";
-
-interface LoginPageProps {
-  loginOnToken: (isNew: boolean) => void;
-}
+import useAuth from "@/Authentication/useAuth";
+import secureLocalStorage from "react-secure-storage";
+import { useNavigate } from "react-router-dom";
+import { useUsersStore } from "@/store/usersStore";
 
 interface RegisterFields {
   name: string;
@@ -39,11 +40,13 @@ interface RegisterFields {
   confirmPassword: string;
   type: string;
 }
-const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
+const LoginPage: React.FC = () => {
   const CFaUserAlt = chakra(FaUserAlt);
   const CFaLock = chakra(FaLock);
-
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
+  const { setActiveUser } = useUsersStore();
   const [registerInput, setRegisterInput] = useState<RegisterFields>({
     name: "",
     email: "",
@@ -57,25 +60,46 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
 
   const onRegisterHandler = async (user: RegisterFields) => {
     user.type = "local";
-    const response = await registerHandler(user);
-    if (!response.token) return;
-    localStorage.setItem("token-promger", response.token);
-    loginOnToken(response.isNew);
+    const { token, isNew } = await registerHandler(user);
+    if (!token) return;
+    secureLocalStorage.clear();
+    secureLocalStorage.setItem("user-token", token);
+
+    setTimeout(() => {
+      login();
+      navigate("/myTasks");
+    }, 500);
   };
 
   const onLoginHandler = async (userDetails: any) => {
     const response = await loginHandler(userDetails);
-    const data = response.data.data;
-    if (response.data.status === "ok") {
-      localStorage.setItem("token-promger", data);
-      loginOnToken(response.isNew);
+    const token = response.data.data;
+
+    if (token) {
+      secureLocalStorage.clear();
+      secureLocalStorage.setItem("user-token", token);
+
+      const response = await verifyToken(token);
+      setActiveUser(response.data);
+
+      toast({
+        title: "Successfully logged in",
+        status: "success",
+        position: "top-right",
+        duration: 1000,
+      });
+
+      setTimeout(() => {
+        login();
+        navigate("/myTasks");
+      }, 500);
     } else if (response.data.status === "error") {
       toast({
         title: "Login Failed",
         description: "Incorrect Username or Password",
         status: "error",
         position: "top-right",
-        duration: 5000,
+        duration: 1500,
       });
     }
   };
@@ -120,13 +144,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ loginOnToken }) => {
     };
 
     const response = await registerHandler(googleUser);
-    if (response.token) localStorage.setItem("token-promger", response.token);
+    if (response.token)
+      secureLocalStorage.setItem("token-promger", response.token);
 
     if (
       response.status === "registered" ||
       response.status === "existing_user"
     ) {
-      loginOnToken(response.isNew);
+      setTimeout(() => {
+        login();
+        navigate("/myTasks");
+      }, 500);
     }
   };
 

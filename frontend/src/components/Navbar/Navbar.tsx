@@ -8,11 +8,7 @@ import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
 import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
 
-interface INavbar {
-  isLoggedIn: boolean;
-  onLogOutHandler: () => void;
-}
-const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
+const Navbar: React.FC = () => {
   const { activeProject, projects, setActiveProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
 
@@ -86,36 +82,32 @@ const Navbar: React.FC<INavbar> = ({ isLoggedIn, onLogOutHandler }) => {
         Home
       </Button>
 
-      <When condition={isLoggedIn}>
+      <Button
+        colorScheme="white"
+        className=" hover:scale-105"
+        onClick={onMyTaskClickHandler}
+      >
+        My Tasks
+      </Button>
+      <Button
+        colorScheme="white"
+        className=" hover:scale-105"
+        onClick={onProjectsClickHandler}
+      >
+        Projects
+      </Button>
+      <When condition={activeUser?.isAdmin}>
         <Button
           colorScheme="white"
           className=" hover:scale-105"
-          onClick={onMyTaskClickHandler}
+          onClick={onAdminClickHandler}
         >
-          My Tasks
+          Admin
         </Button>
-        <Button
-          colorScheme="white"
-          className=" hover:scale-105"
-          onClick={onProjectsClickHandler}
-        >
-          Projects
-        </Button>
-        <When condition={activeUser?.isAdmin}>
-          <Button
-            colorScheme="white"
-            className=" hover:scale-105"
-            onClick={onAdminClickHandler}
-          >
-            Admin
-          </Button>
-        </When>
       </When>
 
-      <When condition={isLoggedIn}>
-        <SearchBar onInput={onSearchHandler} />
-        <ProfileModal logOut={onLogOutHandler} />
-      </When>
+      <SearchBar onInput={onSearchHandler} />
+      <ProfileModal />
     </Flex>
   );
 };

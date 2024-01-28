@@ -16,7 +16,6 @@ function useAuth(): AuthContext {
 
   const checkUserToken = () => {
     const userToken = secureLocalStorage.getItem("user-token");
-
     if (!userToken || userToken === "undefined") {
       setAuthed(false);
     } else {
@@ -26,7 +25,7 @@ function useAuth(): AuthContext {
 
   useEffect(() => {
     checkUserToken();
-    setLoading(false);
+    setTimeout(() => setLoading(false), 1000);
   }, []);
 
   return {
