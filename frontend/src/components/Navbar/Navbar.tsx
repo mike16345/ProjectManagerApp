@@ -45,11 +45,15 @@ const Navbar: React.FC = () => {
       >
         Synergize
       </h1>
+      <Link to={"/"} className=" font-extrabold hover:scale-105">
+        Home
+      </Link>
+
       <Link
         to={"/project_overview"}
         className=" font-extrabold hover:scale-105"
       >
-        Home
+        Project Overview
       </Link>
 
       <Link to={"/myTasks"} className="  font-extrabold hover:scale-105">

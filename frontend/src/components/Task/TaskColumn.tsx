@@ -15,13 +15,13 @@ interface TaskColumnProps {
 const statusToColor = (status: TaskStatus) => {
   switch (status) {
     case TaskStatus.TODO:
-      return "bg-red-300";
+      return "bg-red-500";
     case TaskStatus.CODE_REVIEW:
-      return "bg-yellow-300";
+      return "bg-yellow-500";
     case TaskStatus.IN_PROGRESS:
-      return "bg-blue-300";
+      return "bg-blue-500";
     case TaskStatus.DONE:
-      return "bg-green-300";
+      return "bg-green-500";
   }
 };
 
@@ -38,7 +38,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
           <div
             className={` ${statusToColor(
               header
-            )} rounded p-[2px] font-semibold cursor-pointer`}
+            )} rounded px-3 py-1 text-primary font-semibold cursor-pointer`}
           >
             {header}
           </div>

@@ -36,9 +36,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const { activeProject, setActiveProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
   const { users } = useUsersStore();
-  const availableUsers = users.filter((user) =>
-    user.projects.every((projectID) => projectID !== activeProject?._id)
-  );
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
@@ -46,6 +43,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
   const { toast } = useToast();
 
+  const filterUsers = () => {
+    return users.filter((user) =>
+      user.projects.every((projectID) => projectID !== activeProject?._id)
+    );
+  };
+
+  const [availableUsers, setAvailableUsers] = useState<IUser[]>(filterUsers());
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
     const filterTodo = tasks.filter((task) => task.status === TaskStatus.TODO);
@@ -81,7 +85,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       ...activeProject,
       users: [...activeProject.users, user],
     };
-    console.log("updatedProject", updatedProject);
     setActiveProject(updatedProject);
     updateProjectById(updatedProject);
     user.projects = [...user.projects, updatedProject._id!];
@@ -113,6 +116,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     await updateProjectById(activeProject);
     await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete.email);
+    setAvailableUsers(filterUsers());
+      
     if (activeProject) getTasksFromAPI(activeProject._id!);
   };
 

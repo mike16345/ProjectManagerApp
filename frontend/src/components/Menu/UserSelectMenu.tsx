@@ -30,6 +30,7 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
   defaultValue,
   onSelect,
 }) => {
+  console.log("users:", users);
   return (
     <div className="flex flex-col gap-2">
       <Popover>
@@ -46,8 +47,10 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
         <PopoverContent>
           <Command>
             <CommandInput placeholder="Search user..." />
-            <ScrollArea className=" h-48">
-              <CommandEmpty>No user found.</CommandEmpty>
+            <ScrollArea className=" flex-center h-48">
+              <CommandEmpty className="text-primary text-center">
+                No user found.
+              </CommandEmpty>
               <CommandGroup>
                 {users.map((user, index) => {
                   return (

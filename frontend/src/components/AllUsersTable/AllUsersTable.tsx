@@ -11,7 +11,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +18,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+
 interface AllUsersTableProps {
   usersList: IUser[];
   deleteUser: (user: IUser) => void;
@@ -57,7 +57,6 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
   };
 
   const handleHoverOnUser = (user: IUser) => {
-    console.log("hovering on user", user);
     setSelectedUser(user);
     setTimeout(() => {
       setShowUserDetails(true), 5000;
@@ -66,36 +65,43 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
   return (
     <div>
       <div className="flex gap-1 ">
-        {showAll
-          ? usersList.map((user, index: number) => (
-              <div
-                onMouseLeave={() => {
-                  setShowUserDetails(false);
-                  setSelectedUser(null);
-                }}
-                onMouseOver={() => handleHoverOnUser(user)}
-                key={index}
-              >
-                <Profile onClick={() => clickOnUserHandler(user)} user={user} />
-              </div>
-            ))
-          : usersList.slice(0, 5).map((user, index: number) => (
-              <div key={index}>
-                <div
-                  onMouseLeave={() => {
-                    setShowUserDetails(false);
-                    setSelectedUser(null);
-                  }}
-                  onMouseOver={() => handleHoverOnUser(user)}
-                  key={index}
-                >
+        {usersList.map((user, index: number) => (
+          <div
+            key={index}
+            onMouseLeave={() => {
+              setShowUserDetails(false);
+              setSelectedUser(null);
+            }}
+            style={{ display: showAll || index < 5 ? "block" : "none" }}
+          >
+            <HoverCard openDelay={200}>
+              <HoverCardTrigger asChild>
+                <div>
                   <Profile
                     onClick={() => clickOnUserHandler(user)}
                     user={user}
                   />
                 </div>
-              </div>
-            ))}
+              </HoverCardTrigger>
+              <HoverCardContent className="w-[300px]">
+                <div className="flex space-x-4">
+                  <Profile user={user} />
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold">@{user?.name}</h4>
+                    <p className="text-sm">{user?.email}</p>
+                    <div className="flex items-center pt-2">
+                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                      <span className="text-xs text-muted-foreground">
+                        Joined{" "}
+                        {new Date(user?.date_created!).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        ))}
         {usersList.length > 5 && (
           <span
             onClick={() => setShowAll(!showAll)}
@@ -114,7 +120,11 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant={"secondary"} onClick={() => setShowModal(false)} type="submit">
+            <Button
+              variant={"secondary"}
+              onClick={() => setShowModal(false)}
+              type="submit"
+            >
               No
             </Button>
             <Button onClick={removeUserHandler} type="submit">
@@ -123,30 +133,6 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <HoverCard
-        open={showUserDetails}
-        onOpenChange={setShowUserDetails}
-        defaultOpen={showUserDetails}
-      >
-        <HoverCardTrigger></HoverCardTrigger>
-        <HoverCardContent className="w-[300px]">
-          <div className="flex justify-between space-x-4">
-            <Profile user={selectedUser!} />
-            <div className="space-y-1">
-              <h4 className="text-sm font-semibold">@{selectedUser?.name}</h4>
-              <p className="text-sm">{selectedUser?.email}</p>
-              <div className="flex items-center pt-2">
-                <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                <span className="text-xs text-muted-foreground">
-                  Joined{" "}
-                  {new Date(selectedUser?.date_created!).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        </HoverCardContent>
-      </HoverCard>
     </div>
   );
 };
