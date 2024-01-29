@@ -5,7 +5,6 @@ import Task from "../../Task/Task";
 import { getProjectsByUser } from "../../../API/ProjectAPIcalls";
 import { useUsersStore } from "../../../store/usersStore";
 import { IProject, ITask } from "../../../interfaces";
-import { Text } from "@chakra-ui/react";
 
 const MyTasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -30,7 +29,7 @@ const MyTasksPage: React.FC = () => {
   }, []);
 
   return (
-    <div className=" flex flex-col  gap-4 justify-start m-4">
+    <div className=" flex flex-col gap-4 justify-start m-4">
       <div className=" text-2xl font-extrabold ">My Tasks</div>
       <div className="flex flex-col gap-12">
         {projects
@@ -40,9 +39,9 @@ const MyTasksPage: React.FC = () => {
           .map((project, index) => (
             <div key={index}>
               <div className="flex flex-col">
-                <Text className=" text-xl font-semibold">
+                <p className=" text-xl font-semibold">
                   Project: {project.name}
-                </Text>
+                </p>
                 <div className="flex flex-wrap  gap-6 border p-3">
                   {tasks
                     .filter((task) => task.project_id === project._id)

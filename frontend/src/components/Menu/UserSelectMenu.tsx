@@ -1,7 +1,6 @@
 import React from "react";
-import { IUser, Option } from "../../interfaces";
+import { IUser } from "../../interfaces";
 import {
-  Avatar,
   Button,
   Menu,
   MenuButton,
@@ -11,6 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Profile } from "../Profile/Profile";
 
 interface IUserSelectMenu {
   users: IUser[];
@@ -47,12 +47,7 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
               name={user.name}
               minH="48px"
             >
-              <Avatar
-                boxSize="2rem"
-                borderRadius="full"
-                src={user.picture}
-                mr="12px"
-              />
+              <Profile user={user} className="mr-2" />
               <VStack alignItems={"start"} gap={0} justifyContent={"center"}>
                 <Text className="text-sm font-semibold">{user.name}</Text>
                 <span className="text-sm opacity-75 text-gray-600">

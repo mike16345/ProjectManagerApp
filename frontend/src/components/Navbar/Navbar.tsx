@@ -6,7 +6,7 @@ import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
-import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 
 const Navbar: React.FC = () => {
   const { activeProject, projects, setActiveProject } = useProjectsStore();

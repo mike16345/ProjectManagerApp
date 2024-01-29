@@ -25,6 +25,7 @@ import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { getImage, getImageNames } from "./utils/utils";
 import { userInfo } from "os";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   const { activeUser, users, setActiveUser, setUserEmails, setUsers } =
@@ -67,6 +68,7 @@ function App() {
       <When condition={authed}>
         <Navbar />
       </When>
+      <Toaster />
       <Routes>
         <Route
           path="/admin"

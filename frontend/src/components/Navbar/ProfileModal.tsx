@@ -35,7 +35,7 @@ const ProfileModal: React.FC = () => {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button>
+          <button className=" flex-center">
             <Profile user={activeUser ? activeUser : undefined} />
           </button>
         </DropdownMenuTrigger>

@@ -1,9 +1,7 @@
 import React, { ReactNode } from "react";
 import AllUsersTable from "../../AllUsersTable/AllUsersTable";
 import { useProjectsStore } from "../../../store/projectsStore";
-import { useUsersStore } from "../../../store/usersStore";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
-import { Heading } from "@chakra-ui/react";
 import { IUser } from "../../../interfaces";
 
 interface ProjectWrapperProps {
@@ -29,9 +27,11 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
     <div className=" flex flex-col gap-4 ">
       <div className="flex justify-between p-2 items-center">
         <div className=" flex flex-col gap-2">
-          <Heading>{activeProject?.name || "No Name"}</Heading>
+          <div className=" text-4xl font-bold text-primary ">
+            {activeProject?.name || "No Name"}
+          </div>
           <div className=" flex flex-col gap-1">
-            <h3>Project Participants:</h3>
+            <div className=" text-lg">Project Participants:</div>
             <AllUsersTable
               deleteUser={deleteUser}
               usersList={activeProject?.users || []}

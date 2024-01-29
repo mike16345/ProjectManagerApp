@@ -26,7 +26,7 @@ import {
 } from "../ui/select";
 import { useProjectsStore } from "@/store/projectsStore";
 import { useState } from "react";
-import { Avatar, Text } from "@chakra-ui/react";
+import { Profile } from "../Profile/Profile";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -145,7 +145,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                 <FormLabel>Assignee</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} {...field}>
-                    <SelectTrigger className="ring-0 flex  py-4 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
+                    <SelectTrigger className="ring-0 flex h-14 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
                       <SelectValue
                         defaultValue={
                           field.value ? field.value : "Select user to assign"
@@ -161,16 +161,11 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                             value={JSON.stringify(user)}
                           >
                             <div className="flex items-center justify-center">
-                              <Avatar
-                                size={"sm"}
-                                borderRadius="full"
-                                src={user.picture}
-                                mr={2}
-                              />
+                              <Profile className="mr-2" user={user} />
                               <div className="flex flex-col justify-center items-start">
-                                <Text className="text-sm font-semibold">
+                                <span className="text-sm font-semibold">
                                   {user.name}
-                                </Text>
+                                </span>
                                 <span className="text-sm opacity-75 text-gray-600">
                                   {user.email}
                                 </span>

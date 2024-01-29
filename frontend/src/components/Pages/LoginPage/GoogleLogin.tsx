@@ -4,6 +4,7 @@ import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import { IGoogleUser, IUser } from "../../../interfaces";
 import { useToast } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 
 interface IGoogleLogin {
   onSuccessHandler: (user: IGoogleUser) => void;
@@ -17,7 +18,7 @@ const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
       toast({
         title: "Login Successful",
         description: "Login Successful",
-        position:"top-right",
+        position: "top-right",
         status: "success",
       });
     },
@@ -50,15 +51,15 @@ const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   }, [user]);
 
   return (
-    <div className="">
-      <button
+    <div className="w-full">
+      <Button
         type="button"
-        className=" flex justify-center items-center w-full border-2 border-black  p-3 rounded-lg cursor-pointer outline-none"
+        className=" flex justify-center bg-primary  text-secondary font-semibold items-center w-full  "
         onClick={() => login()}
       >
         <FcGoogle className="mr-4" />
         Sign in with Google
-      </button>
+      </Button>
     </div>
   );
 };

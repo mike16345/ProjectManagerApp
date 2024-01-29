@@ -3,6 +3,7 @@ import Task from "./Task";
 import { IoMdAdd } from "react-icons/io";
 import { ITask } from "../../interfaces";
 import { TaskStatus } from "@/enums/TaskStatus";
+import { Separator } from "../ui/separator";
 
 interface TaskColumnProps {
   header: TaskStatus;
@@ -32,15 +33,17 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className=" flex gap-2 items-center">
-        <div
-          className={` ${statusToColor(
-            header
-          )} rounded p-[2px] font-semibold cursor-pointer`}
-        >
-          {header}
+      <div className=" flex gap-2 items-center justify-between">
+        <div className=" flex-center gap-4">
+          <div
+            className={` ${statusToColor(
+              header
+            )} rounded p-[2px] font-semibold cursor-pointer`}
+          >
+            {header}
+          </div>
+          <span className="font-semibold">{tasks.length}</span>
         </div>
-        <span className="font-semibold">{tasks.length}</span>
         <button
           className=" text-center hover:bg-gray-300/50 hover:rounded"
           onClick={onAddTaskClickHandler}
@@ -48,6 +51,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
           <IoMdAdd size={20} />
         </button>
       </div>
+      <Separator />
+
       <div className="flex flex-col gap-2 max-h-[75vh] overflow-x-hidden overflow-y-auto">
         {tasks.map((task, index) => (
           <Task
