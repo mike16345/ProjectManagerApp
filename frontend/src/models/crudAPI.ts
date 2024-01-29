@@ -1,7 +1,7 @@
 export interface CrudApi {
-  addRequest: (row: any) => Promise<unknown>;
-  EditRequest: (row: any) => Promise<unknown>;
-  DeleteRequest: (id: any) => Promise<unknown>;
-  BulkAddItemsRequest: (rows: any[]) => Promise<unknown>;
+  addRequest: (item: any) => Promise<unknown>;
+  editRequest: (item: any) => Promise<unknown>;
+  deleteRequest: (id: any) => Promise<unknown>;
+  bulkAddItemsRequest: (rows: any[]) => Promise<unknown>;
   refreshData: () => void;
 }

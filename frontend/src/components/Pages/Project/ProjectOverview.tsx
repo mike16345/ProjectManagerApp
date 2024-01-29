@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { cloneDeep } from "lodash";
 import ProjectWrapper from "./ProjectWrapper";
 import TaskColumnWrapper from "../../Task/TaskColumnWrapper";
@@ -95,6 +95,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       variant: "success",
       duration: 3000,
     });
+    setAvailableUsers(filterUsers());
   };
 
   const isProjectLead = () => {
@@ -111,13 +112,15 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     const filtered = activeProject.users.filter(
       (user) => user.email !== userToDelete.email
     );
-
+    console.log("active project", activeProject.users);
     activeProject.users = filtered;
+    console.log("active project", activeProject.users);
+
     await updateProjectById(activeProject);
     await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete.email);
     setAvailableUsers(filterUsers());
-      
+
     if (activeProject) getTasksFromAPI(activeProject._id!);
   };
 
@@ -151,7 +154,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
         return project !== currentProjectId;
       });
       user.projects = [...updatedUserProjects];
-      editUser(user);
+
+      await editUser(user);
     } catch (error) {
       toast({
         title: "Failed to delete user from project",
@@ -201,7 +205,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
         title: "Task Updated!",
         description: "Successfully updated task",
         duration: 2000,
-
         variant: "success",
       });
     } catch (error) {
@@ -257,6 +260,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (!activeProject) return;
     getTasksFromAPI(activeProject._id!);
   }, []);
+
+  useMemo(() => {
+    if (!activeProject) return;
+    const filtered = filterUsers();
+    console.log("filtering:", filtered);
+    setAvailableUsers(filtered);
+  }, [activeProject?.users]);
 
   return (
     <div className="w-full p-4">

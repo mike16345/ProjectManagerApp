@@ -40,7 +40,6 @@ function App() {
     const tasks = await getAllTasks();
     const users = await getAllUsers();
     const userEmails = await getAllEmails();
-    console.log(tasks);
     const userToken = secureLocalStorage.getItem("user-token");
     const activeProject = secureLocalStorage.getItem("active-project");
 

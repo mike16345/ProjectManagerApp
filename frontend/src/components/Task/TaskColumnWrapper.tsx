@@ -18,12 +18,12 @@ const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = ({
   tasks,
 }) => {
   const taskStatuses = enumToArray(TaskStatus) as TaskStatus[];
-  console.log(taskStatuses);
+
   return (
     <div className=" flex w-full justify-around p-2 ">
       {taskStatuses.map((status, index) => {
         return (
-          <div className="flex gap-12">
+          <div key={index} className="flex gap-12">
             <TaskColumn
               key={status}
               header={status}

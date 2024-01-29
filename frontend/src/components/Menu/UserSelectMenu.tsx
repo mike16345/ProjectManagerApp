@@ -30,7 +30,6 @@ const UserSelectMenu: React.FC<IUserSelectMenu> = ({
   defaultValue,
   onSelect,
 }) => {
-  console.log("users:", users);
   return (
     <div className="flex flex-col gap-2">
       <Popover>

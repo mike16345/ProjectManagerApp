@@ -30,8 +30,6 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
 }) => {
   const [showAll, setShowAll] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showUserDetails, setShowUserDetails] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [userToDelete, setUserToDelete] = useState<IUser | null>(null);
   const { activeUser } = useUsersStore();
   const { activeProject } = useProjectsStore();
@@ -56,22 +54,12 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
     setShowModal(true);
   };
 
-  const handleHoverOnUser = (user: IUser) => {
-    setSelectedUser(user);
-    setTimeout(() => {
-      setShowUserDetails(true), 5000;
-    });
-  };
   return (
     <div>
       <div className="flex gap-1 ">
         {usersList.map((user, index: number) => (
           <div
             key={index}
-            onMouseLeave={() => {
-              setShowUserDetails(false);
-              setSelectedUser(null);
-            }}
             style={{ display: showAll || index < 5 ? "block" : "none" }}
           >
             <HoverCard openDelay={200}>
@@ -119,7 +107,7 @@ const AllUsersTable: React.FC<AllUsersTableProps> = ({
               {`Would you like to remove "${userToDelete?.email}" from this project?`}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className=" flex-center gap-1">
             <Button
               variant={"secondary"}
               onClick={() => setShowModal(false)}
