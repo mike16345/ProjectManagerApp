@@ -1,7 +1,6 @@
 import React from "react";
 import { Profile } from "../Profile/Profile";
 import { useUsersStore } from "../../store/usersStore";
-import { useToast } from "@chakra-ui/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +13,12 @@ import {
 import { ModeToggle } from "@/theme/mode-toggle";
 import secureLocalStorage from "react-secure-storage";
 import useAuth from "@/Authentication/useAuth";
+import { useToast } from "../ui/use-toast";
 
 const ProfileModal: React.FC = () => {
   const { activeUser } = useUsersStore();
   const { logout } = useAuth();
-  const toast = useToast();
+  const { toast } = useToast();
 
   const onLogOutHandler = () => {
     secureLocalStorage.removeItem("user-token");
@@ -26,8 +26,7 @@ const ProfileModal: React.FC = () => {
     toast({
       title: "Successfully Logged Out",
       description: "You have successfully logged out",
-      status: "success",
-      position: "top-right",
+      variant: "success",
     });
   };
 

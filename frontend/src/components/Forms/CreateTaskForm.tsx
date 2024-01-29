@@ -7,6 +7,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import React from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +44,8 @@ import {
 import { useProjectsStore } from "@/store/projectsStore";
 import { useState } from "react";
 import { Profile } from "../Profile/Profile";
+import { ScrollArea } from "../ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -77,9 +96,12 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("values: ", values);
+    const assignee = JSON.parse(values.assignee);
+    console.log("assignee: ", assignee);
     const task: ITask = {
       name: values.name,
-      assignee: JSON.parse(values.assignee) || ({} as IUser),
+      assignee: assignee || ({} as IUser),
       priority: values.priority as Priority,
       description: values.description || "",
       status: values.status as TaskStatus,
@@ -143,7 +165,83 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             <FormItem>
               <div className="flex flex-col gap-2">
                 <FormLabel>Assignee</FormLabel>
-                <FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={"h-14 justify-between text-muted-foreground"}
+                      >
+                        {field.value ? (
+                          <div className="flex items-center justify-center">
+                            <Profile
+                              className="mr-2"
+                              user={JSON.parse(field.value)}
+                            />
+                            <div className="flex flex-col justify-center items-start">
+                              <span className="text-sm font-semibold">
+                                {JSON.parse(field.value).name}
+                              </span>
+                              <span className="text-sm opacity-75 text-gray-600">
+                                {JSON.parse(field.value).email}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          "Select user"
+                        )}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Command onValueChange={field.onChange}>
+                      <CommandInput placeholder="Search user..." />
+                      <ScrollArea className=" h-48">
+                        <CommandEmpty>No user found.</CommandEmpty>
+                        <CommandGroup>
+                          {availableUsers.map((user, index) => {
+                            return (
+                              <CommandItem
+                                key={index}
+                                className=" cursor-pointer"
+                                value={JSON.stringify(user)}
+                                onSelect={() => {
+                                  form.setValue(
+                                    "assignee",
+                                    JSON.stringify(user)
+                                  );
+                                }}
+                              >
+                                <div className="flex items-center justify-center">
+                                  <Profile className="mr-2" user={user} />
+                                  <div className="flex flex-col justify-center items-start">
+                                    <span className="text-sm font-semibold">
+                                      {user.name}
+                                    </span>
+                                    <span className="text-sm opacity-75 text-gray-600">
+                                      {user.email}
+                                    </span>
+                                  </div>
+                                </div>
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    JSON.stringify(user) === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            );
+                          })}
+                        </CommandGroup>
+                      </ScrollArea>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                {/* <FormControl>
                   <Select onValueChange={field.onChange} {...field}>
                     <SelectTrigger className="ring-0 flex h-14 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
                       <SelectValue
@@ -176,7 +274,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                       })}
                     </SelectContent>
                   </Select>
-                </FormControl>
+                </FormControl> */}
               </div>
               <FormMessage />
             </FormItem>

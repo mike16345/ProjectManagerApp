@@ -12,7 +12,6 @@ interface TaskProps {
 }
 
 const Task: FC<TaskProps> = ({ isMyTasks, task, setTaskToEdit }) => {
-  console.log("Task:", task);
   return (
     <div
       onClick={() => setTaskToEdit(task)}

@@ -42,6 +42,7 @@ export const postTask = async (task: ITask): Promise<AxiosResponse> => {
     const res: AxiosResponse = await axios.post(`${APIaddress}/tasks`, task);
     return res;
   } catch (error) {
+    console.log("error", error);
     throw error;
   }
 };

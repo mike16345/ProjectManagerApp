@@ -5,8 +5,8 @@ import Joi from "joi";
 
 const taskSchema: Schema<ITask> = new Schema({
   name: String,
-  description: { String, required: false },
-  assignee: { Object, required: false },
+  description: String,
+  assignee: Object,
   task_id: Number,
   priority: String,
   status: String,

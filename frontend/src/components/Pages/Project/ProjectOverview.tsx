@@ -20,7 +20,7 @@ import {
 import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask, IUser } from "../../../interfaces";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@/components/ui/use-toast";
 import { useUsersStore } from "../../../store/usersStore";
 import { CreateTask } from "@/components/Task/CreateTask";
 
@@ -44,7 +44,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
-  const toast = useToast();
+  const { toast } = useToast();
 
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
@@ -71,7 +71,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const onTaskClickHandler = (task: ITask) => {
-    console.log("task to edit: ", task);
     setTaskToEdit(task);
     setIsCreatingTask(true);
   };
@@ -90,8 +89,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
     toast({
       title: "User added to project",
-      status: "success",
-      position: "top-right",
+      variant: "success",
       duration: 3000,
     });
   };
@@ -105,12 +103,12 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const onDeleteUserFromProjHandler = async (userToDelete: IUser) => {
-    console.log("activeProject: ", activeProject);
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
-    console.log("user to delete: ", userToDelete);
+
     const filtered = activeProject.users.filter(
       (user) => user.email !== userToDelete.email
     );
+
     activeProject.users = filtered;
     await updateProjectById(activeProject);
     await removeProjectFromUser(userToDelete.email);
@@ -123,18 +121,17 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
     try {
       await removeAssignedUserFromTasks(userEmail, activeProject._id!);
+
       toast({
         title: `Successfully unassigned ${userEmail} from task`,
-        status: "success",
-        position: "top-right",
+        variant: "success",
         duration: 3000,
       });
     } catch (error) {
       toast({
         title: `Failed to remove user from task`,
-        status: "error",
+        variant: "destructive",
         description: "Try again later",
-        position: "top-right",
         duration: 3000,
       });
       console.error(error);
@@ -155,71 +152,88 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       toast({
         title: "Failed to delete user from project",
         description: "Try again later",
-        status: "error",
-        position: "top-right",
-        duration: 3000,
-        isClosable: true,
+        duration: 2000,
+        variant: "destructive",
       });
     }
   };
 
   const onCreateIssue = async (task: ITask) => {
     task.status = taskTypeToAdd;
-    const res = await postTask(task);
-    if (res.request === "ERR_BAD_REQUEST") {
-      toast({
-        title: "Could not create task",
-        description: "Failed to create task",
-        status: "error",
-      });
-    } else {
+    try {
+      const res = await postTask(task);
+
       toast({
         title: "Task Created",
         description: "Successfully created task",
-        position: "top-right",
-        status: "success",
+        duration: 2000,
+        variant: "success",
       });
-      console.log("res", res.data);
       setTaskArr({
         ...taskArr,
         [taskTypeToAdd]: [...taskArr[taskTypeToAdd], res.data],
+      });
+    } catch (error) {
+      toast({
+        title: "Could not create task",
+        description: "Failed to create task",
+        duration: 2000,
+
+        variant: "destructive",
       });
     }
     setIsCreatingTask(false);
   };
 
   const onEditTask = async (task: any) => {
-    const res = await putEditTask(task);
-    if (res.request === "ERR_BAD_REQUEST") {
-      toast({
-        title: "Could not update task",
-        position: "top-right",
-        description: "Failed to update task",
-        status: "error",
+    try {
+      const res = await putEditTask(task);
+
+      setTaskArr({
+        ...taskArr,
+        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], res.data],
       });
-    } else {
       toast({
         title: "Task Updated!",
         description: "Successfully updated task",
-        position: "top-right",
-        status: "success",
+        duration: 2000,
+
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Could not update task",
+        description: "Failed to update task",
+        duration: 2000,
+
+        variant: "destructive",
       });
     }
+
     setTaskToEdit(null);
     setIsCreatingTask(false);
   };
 
   const handleDeleteTask = async (id: number) => {
-    const res = await deleteTask(id);
-    if (res.status == 200) {
+    try {
+      const res = await deleteTask(id);
+
       toast({
         title: "Task Deleted",
         description: "Successfully deleted task",
-        position: "top-right",
-        status: "success",
+        duration: 2000,
+        variant: "success",
       });
 
       if (activeProject) getTasksFromAPI(activeProject._id!);
+    } catch (error) {
+      toast({
+        title: "Could not delete task",
+        description: "Failed to delete task",
+        duration: 2000,
+
+        variant: "destructive",
+      });
     }
     setIsCreatingTask(false);
     setTaskToEdit(null);
@@ -238,7 +252,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   useEffect(() => {
     if (!activeProject) return;
     getTasksFromAPI(activeProject._id!);
-  }, [isCreatingTask]);
+  }, []);
 
   return (
     <div className="w-full p-4">

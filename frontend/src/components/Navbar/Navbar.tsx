@@ -2,17 +2,16 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import SearchBar from "./SearchBar";
-import { getProjectsByUser } from "../../API/ProjectAPIcalls";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "../ui/use-toast";
 
 const Navbar: React.FC = () => {
   const { activeProject, projects, setActiveProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
 
-  const toast = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const onLogoClickHandler = () => {
@@ -32,9 +31,8 @@ const Navbar: React.FC = () => {
     } else {
       toast({
         title: "Project not found",
-        position: "top-right",
         description: "Could not find project with that name",
-        status: "error",
+        variant: "destructive",
       });
     }
   };

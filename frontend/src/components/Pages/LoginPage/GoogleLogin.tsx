@@ -2,31 +2,30 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
-import { IGoogleUser, IUser } from "../../../interfaces";
-import { useToast } from "@chakra-ui/react";
+import { IGoogleUser } from "../../../interfaces";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 interface IGoogleLogin {
   onSuccessHandler: (user: IGoogleUser) => void;
 }
+
 const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   const [user, setUser] = useState<TokenResponse | null>(null);
-  const toast = useToast();
+  const { toast } = useToast();
   const login = useGoogleLogin({
     onSuccess: (codeResponse: TokenResponse) => {
       setUser(codeResponse);
       toast({
         title: "Login Successful",
-        description: "Login Successful",
-        position: "top-right",
-        status: "success",
+        variant: "success",
       });
     },
     onError: (error) => {
       toast({
         title: "Login Failed",
         description: "Failed to login. Check credentials.",
-        status: "error",
+        variant: "destructive",
       });
     },
   });
