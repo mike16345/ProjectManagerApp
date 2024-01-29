@@ -38,36 +38,30 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <div className=" bg-primary p-3 z-10 sticky top-0 flex items-center justify-between">
+    <div className=" bg-secondary text-primary p-3 z-10 sticky top-0 flex items-center justify-between">
       <h1
-        className=" text-4xl cursor-pointer font-bold text-secondary "
+        className=" text-4xl cursor-pointer font-bold "
         onClick={onLogoClickHandler}
       >
         Synergize
       </h1>
       <Link
         to={"/project_overview"}
-        className=" text-secondary font-extrabold hover:scale-105"
+        className=" font-extrabold hover:scale-105"
       >
         Home
       </Link>
 
-      <Link
-        to={"/myTasks"}
-        className=" text-secondary font-extrabold hover:scale-105"
-      >
+      <Link to={"/myTasks"} className="  font-extrabold hover:scale-105">
         My Tasks
       </Link>
-      <Link
-        to={"/allProjects"}
-        className=" text-secondary font-extrabold hover:scale-105"
-      >
+      <Link to={"/allProjects"} className="  font-extrabold hover:scale-105">
         Projects
       </Link>
       <When condition={activeUser?.isAdmin}>
         <Link
           to={"/admin"}
-          className=" text-secondary font-extrabold hover:scale-105"
+          className="  font-extrabold hover:scale-105"
           onClick={onLogoClickHandler}
         >
           Admin

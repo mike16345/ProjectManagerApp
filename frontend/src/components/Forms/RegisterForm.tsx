@@ -3,7 +3,7 @@ import { registerHandler, verifyToken } from "@/API/UserAPIcalls";
 
 import GoogleLogin from "@/components/Pages/LoginPage/GoogleLogin";
 import { Else, If, Then } from "react-if";
-import { IGoogleUser } from "@/interfaces";
+import { IGoogleUser, IUser } from "@/interfaces";
 import useAuth from "@/Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "../ui/use-toast";
 import { useUsersStore } from "@/store/usersStore";
+import { getImage, getImageNames } from "@/utils/utils";
 
 const registerFormSchema = z.object({
   name: z
@@ -82,7 +83,11 @@ const RegisterForm: React.FC<IRegisterForm> = ({
   }
 
   const onRegisterHandler = async (userDetails: any) => {
-    const newUser = { ...userDetails, type: "local" };
+    const imageNames = getImageNames();
+    const randIndex = Math.floor(Math.random() * imageNames.length);
+    const picture = getImage(imageNames[randIndex]);
+
+    const newUser: IUser = { ...userDetails, picture: picture, type: "local" };
     const { token } = await registerHandler(newUser);
 
     if (!token) return;
@@ -126,7 +131,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type="name"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Name"
                           {...field}
                         />
@@ -144,7 +149,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type="email"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -163,7 +168,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                         <div className=" flex justify-between items-center">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />
@@ -196,7 +201,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type={showPassword ? "text" : "password"}
-                          className="  w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                          className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Confirm Password"
                           {...field}
                         />
@@ -210,11 +215,11 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                 <Button type="submit" className="w-full">
                   Register
                 </Button>
-                <span className="mt-2 text-xs text-center text-gray-700">
+                <span className="mt-2 text-xs text-center text-primary">
                   Already have an account?{" "}
                   <span
                     onClick={setRegister}
-                    className=" text-blue-600 hover:underline"
+                    className=" text-blue-600 cursor-pointer text-sm hover:underline"
                   >
                     Login
                   </span>

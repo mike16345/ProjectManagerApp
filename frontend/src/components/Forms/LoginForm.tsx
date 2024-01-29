@@ -118,7 +118,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                       <FormControl>
                         <Input
                           type="email"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -137,7 +137,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                         <div className=" flex justify-between items-center">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-black"
+                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />
@@ -166,11 +166,11 @@ const LoginForm: React.FC<ILoginForm> = ({
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <span className="mt-2 text-xs text-center text-gray-700">
+                <span className="mt-2 text-xs text-center text-primary">
                   Don't have an account?{" "}
                   <span
                     onClick={setRegister}
-                    className=" text-blue-600 hover:underline"
+                    className=" text-blue-500 cursor-pointer text-sm hover:underline"
                   >
                     Register
                   </span>

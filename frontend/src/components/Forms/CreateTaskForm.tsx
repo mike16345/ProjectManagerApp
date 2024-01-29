@@ -132,7 +132,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
               <FormLabel>Task Name</FormLabel>
               <FormControl>
                 <Input
-                  className="  focus-visible:ring-0 focus-visible:border-black"
+                  className="  focus-visible:ring-0 focus-visible:border-primary"
                   placeholder="Task Name"
                   {...field}
                 />
@@ -149,7 +149,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
               <FormLabel>Task Description</FormLabel>
               <FormControl>
                 <Textarea
-                  className="  focus-visible:ring-0 focus-visible:border-black"
+                  className="  focus-visible:ring-0 focus-visible:border-primary"
                   placeholder="Task Description..."
                   {...field}
                 />
@@ -241,40 +241,6 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                     </Command>
                   </PopoverContent>
                 </Popover>
-                {/* <FormControl>
-                  <Select onValueChange={field.onChange} {...field}>
-                    <SelectTrigger className="ring-0 flex h-14 items-center focus:ring-0 focus:border-2 focus-visible:border-black">
-                      <SelectValue
-                        defaultValue={
-                          field.value ? field.value : "Select user to assign"
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableUsers.map((user, index) => {
-                        return (
-                          <SelectItem
-                            className="max-h-[250px] overflow-y-auto"
-                            key={index}
-                            value={JSON.stringify(user)}
-                          >
-                            <div className="flex items-center justify-center">
-                              <Profile className="mr-2" user={user} />
-                              <div className="flex flex-col justify-center items-start">
-                                <span className="text-sm font-semibold">
-                                  {user.name}
-                                </span>
-                                <span className="text-sm opacity-75 text-gray-600">
-                                  {user.email}
-                                </span>
-                              </div>
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </FormControl> */}
               </div>
               <FormMessage />
             </FormItem>

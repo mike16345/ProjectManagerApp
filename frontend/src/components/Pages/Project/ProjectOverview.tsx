@@ -139,7 +139,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const removeProjectFromUser = async (email: string) => {
-    console.log("email: ", email);
     try {
       const user = (await getOneUser(email)).data;
       const currentProjectId = activeProject?._id;

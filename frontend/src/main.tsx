@@ -2,7 +2,6 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ChakraProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "./theme/theme-provider.tsx";
 import { AuthProvider } from "./Authentication/useAuth.tsx";
 
@@ -14,13 +13,11 @@ root.render(
     <GoogleOAuthProvider
       clientId={import.meta.env.VITE_REACT_APP_GOOGLE_API_TOKEN || ""}
     >
-      <ChakraProvider>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </ThemeProvider>
-      </ChakraProvider>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
     </GoogleOAuthProvider>
   </BrowserRouter>
 );

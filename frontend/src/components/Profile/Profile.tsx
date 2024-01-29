@@ -1,6 +1,7 @@
 import { FC } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { IUser } from "../../interfaces";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 
 interface ProfileProps {
   user?: IUser;
