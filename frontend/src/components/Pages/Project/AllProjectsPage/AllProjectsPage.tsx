@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getProjectsByUser } from "../../../../API/ProjectAPIcalls";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import { IProject } from "../../../../interfaces";
 import { When } from "react-if";
@@ -7,7 +6,7 @@ import { useUsersStore } from "../../../../store/usersStore";
 import { useNavigate } from "react-router-dom";
 import { useProjectsStore } from "../../../../store/projectsStore";
 import { Button } from "@/components/ui/button";
-
+import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
 const AllProjectPage = () => {
   const navigate = useNavigate();
   const { activeUser } = useUsersStore();
@@ -16,7 +15,10 @@ const AllProjectPage = () => {
 
   const fetchUsersProject = async () => {
     if (!activeUser) return;
-    const projects = await getProjectsByUser(activeUser);
+    const projects = await projectRequests.getItemsByRequest(
+      activeUser._id,
+      BY_USER_ENDPOINT
+    );
     setMyProjects(projects);
   };
 

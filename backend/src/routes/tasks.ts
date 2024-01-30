@@ -11,22 +11,23 @@ router.post("/add", TaskController.addTask);
 // Get All Tasks
 router.get("/getItems", TaskController.getTasks);
 
+// Get Tasks by projects
+router.get("/byProject/getItems/:id", TaskController.getTasksByProject);
+
+// Get Tasks by User
+router.get("/byUser/getItems/:id", TaskController.getTasksByUser);
+
 // Update Task
 router.put("/edit", TaskController.updateTask);
 
 // Update many tasks
 router.put("/edit/bulk", TaskController.updateManyTasks);
+
 // Delete Task
 router.delete("/:id", TaskController.deleteTask);
 
-router.delete("/project/:id", async (req: Request, res: Response) => {
-  const data = await removeUserFromTasks(
-    req.params.id,
-    (req.body as any).email
-  );
-
-  res.send(data);
-});
+// Remove user from tasks
+router.put("/assignee", express.json(), TaskController.removeUserFromTasks);
 
 router.get("/byProjectId/:id", async (req: Request, res: Response) => {
   const allTasks = await Task.find({ project_id: req.params.id });

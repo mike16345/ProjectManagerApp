@@ -1,7 +1,6 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,9 +13,6 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -96,16 +92,13 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values: ", values);
     const assignee = JSON.parse(values.assignee);
-    console.log("assignee: ", assignee);
     const task: ITask = {
       name: values.name,
       assignee: assignee || ({} as IUser),
       priority: values.priority as Priority,
       description: values.description || "",
       status: values.status as TaskStatus,
-      task_id: taskToEdit?.task_id || Date.now().valueOf(),
       project_id: taskToEdit?.project_id || activeProject?._id!,
     };
 
@@ -114,7 +107,7 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
   }
 
   const onDeleteClick = () => {
-    handleDeleteTask(taskToEdit?.task_id!);
+    handleDeleteTask(taskToEdit?._id!);
     onCloseModal();
   };
 

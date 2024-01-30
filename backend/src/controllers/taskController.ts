@@ -7,11 +7,11 @@ class taskController {
   addTask = async (req: Request, res: Response) => {
     const data = {
       name: req.body.name,
-      taskLead: req.body.taskLead,
-      users: req.body.users,
-      deadline: req.body.deadline,
-      taskType: req.body.taskType,
+      assignee: req.body.assignee,
       description: req.body.description,
+      status: req.body.status,
+      project_id: req.body.project_id,
+      priority: req.body.priority,
     };
 
     const { error, value } = TaskSchemaValidation.validate(data);
@@ -42,7 +42,28 @@ class taskController {
   };
 
   updateManyTasks = async (req: Request, res: Response) => {
-    
+    const tasks = taskServices.updateManyTasks(req.body);
+
+    res.send(tasks);
+  };
+
+  getTasksByUser = async (req: Request, res: Response) => {
+    const tasks = await taskServices.getTasksByUser(req.params.id);
+    res.send(tasks);
+  };
+
+  getTasksByProject = async (req: Request, res: Response) => {
+    const tasks = await taskServices.getTasksByProject(req.params.id);
+    res.send(tasks);
+  };
+
+  removeUserFromTasks = async (req: Request, res: Response) => {
+    const tasks = await taskServices.removeUserFromTasks(
+      req.body.projectId as string,
+      req.body.userId
+    );
+    console.log(tasks);
+    res.send(tasks);
   };
 
   deleteTask = async (req: Request, res: Response) => {

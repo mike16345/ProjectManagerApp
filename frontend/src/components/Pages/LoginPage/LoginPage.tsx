@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  getUserByEmail,
-  registerHandler,
-  verifyToken,
-} from "../../../API/UserAPIcalls";
+import { registerHandler, verifyToken } from "../../../API/UserAPIcalls";
 
 import { Else, If, Then } from "react-if";
 import { IGoogleUser } from "../../../interfaces";
@@ -13,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useUsersStore } from "@/store/usersStore";
 import LoginForm from "@/components/Forms/LoginForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
+import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
 
 const LoginPage: React.FC = () => {
   const [register, setRegister] = useState(false);
@@ -32,15 +29,17 @@ const LoginPage: React.FC = () => {
     };
 
     try {
-      const user = await getUserByEmail(googleUser.email);
-      console.log("user exists:", user);
-      setActiveUser(user.data);
+      const user = await userRequests.getItemByRequest(
+        googleUser.email,
+        BY_EMAIL_ENDPOINT
+      );
+      setActiveUser(user);
+
       setTimeout(() => {
         login();
         navigate("/myTasks");
       }, 500);
     } catch (error) {
-      console.log("register");
       const response = await registerHandler(googleUser);
       if (response.token) {
         const user = await verifyToken(response.token);

@@ -74,13 +74,11 @@ const LoginForm: React.FC<ILoginForm> = ({
     const token = response.token;
 
     if (token) {
-      console.log("setting token", token);
+      // Place in Try catch 
       secureLocalStorage.clear();
       secureLocalStorage.setItem("user-token", token);
 
-      const response = await verifyToken(token);
-      console.log("response", response);
-      console.log("user", user);
+      await verifyToken(token);
       setActiveUser(user);
 
       toast({

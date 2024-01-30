@@ -29,7 +29,9 @@ export async function updateItem<T>(
   headers?: any
 ): Promise<T> {
   try {
-    const response = await axiosInstance.put<T>(endpoint);
+    const response = await axiosInstance.put<T>(endpoint, data, {
+      headers: headers,
+    });
     return response.data;
   } catch (error) {
     throw error;

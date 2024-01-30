@@ -1,10 +1,11 @@
 import { Task } from "../models/taskModel";
+import { User } from "../models/userModel";
 
 export class TaskService {
   async createTask(data: any) {
     try {
       const newTask = await Task.create(data);
-
+      console.log("Task created", newTask);
       return newTask;
     } catch (error) {
       console.log(error);
@@ -33,6 +34,23 @@ export class TaskService {
     }
   }
 
+  async getTasksByUser(id: string) {
+    try {
+      const tasks = await Task.find({ "assignee._id": id });
+
+      return tasks;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getTasksByProject(id: string) {
+    try {
+      const tasks = await Task.find({ project_id: id });
+      return tasks;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async updateTask(id: string, data: any) {
     try {
       const task = await Task.findByIdAndUpdate({ _id: id }, data, {
@@ -61,6 +79,14 @@ export class TaskService {
       console.log(error);
     }
   }
+  async removeUserFromTasks(projectId: string, userId: string) {
+    const tasks = await Task.updateMany(
+      { project_id: projectId, "assignee._id": userId },
+      { $set: { assignee: {} } }
+    );
+
+    return tasks;
+  }
 
   async deleteTask(id: string) {
     try {
@@ -78,10 +104,10 @@ export const taskServices = new TaskService();
 
 export const removeUserFromTasks = async (
   projectId: string,
-  userEmail: string
+  userId: string
 ) => {
   await Task.updateMany(
-    { task_id: projectId, email: userEmail },
-    { $set: { email: "none@gmail.com" } }
+    { project_id: projectId, "assignee._id": userId },
+    { $set: { assignee: {} } }
   );
 };

@@ -13,7 +13,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { When } from "react-if";
 import { Checkbox } from "@/components/ui/checkbox";
 import { userRequests } from "@/requests/UserRequests";
-import { projectRequests } from "@/requests/ProjectRequests";
+import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
 
 const handleMakeUserAdmin = async (user: IUser) => {
   user.isAdmin = true;
@@ -21,9 +21,9 @@ const handleMakeUserAdmin = async (user: IUser) => {
 };
 
 const handleDeleteUser = async (user: IUser) => {
-  const userProjects = await projectRequests.getItemsByRequest<IProject>(
+  const userProjects = await projectRequests.getItemsByRequest(
     user._id,
-    "byUser"
+    BY_USER_ENDPOINT
   );
 
   for (const project of userProjects) {

@@ -1,4 +1,5 @@
 export interface IUser {
+  id: string;
   name: string;
   email: string;
   type: string;
@@ -20,10 +21,10 @@ export interface IProject extends Document {
 }
 
 export interface ITask {
+  id: string;
   name: string;
   assignee: string;
   description: string;
-  task_id: number;
   priority: string;
   status: string;
   project_id: string;

@@ -66,16 +66,9 @@ export class ProjectService {
 
   async getUserProjects(id: string) {
     try {
-      const user = await User.findOne({ _id: id });
-      if (!user) return;
-
-      const userProjects = await Promise.all(
-        user.projects.map(async (projectId) => {
-          return await this.getProject(projectId);
-        })
-      );
-
-      return userProjects;
+      const projects = await Project.find({ "users._id": id });
+      
+      return projects;
     } catch (error) {
       console.log(error);
     }

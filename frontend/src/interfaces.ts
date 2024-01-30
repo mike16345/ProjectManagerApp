@@ -16,7 +16,6 @@ export interface IProject {
 export interface ITask {
   name: string;
   assignee: IUser;
-  task_id: number;
   description: string;
   priority: Priority;
   status: TaskStatus;

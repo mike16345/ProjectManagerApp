@@ -7,11 +7,9 @@ class userController {
   addUser = async (req: Request, res: Response) => {
     const data = {
       name: req.body.name,
-      userLead: req.body.userLead,
-      users: req.body.users,
-      deadline: req.body.deadline,
-      userType: req.body.userType,
-      description: req.body.description,
+      type: req.body.type,
+      picture: req.body.picture,
+      email: req.body.email,
     };
 
     const { error, value } = UserSchemaValidation.validate(data);
@@ -42,7 +40,6 @@ class userController {
   };
 
   updateUser = async (req: Request, res: Response) => {
-    console.log("req", req);
     const user = await userServices.updateUser(req.body._id, req.body);
     res.send(user);
   };

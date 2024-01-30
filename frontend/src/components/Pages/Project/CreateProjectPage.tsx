@@ -5,11 +5,9 @@ import { useUsersStore } from "../../../store/usersStore";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { When } from "react-if";
-import { createProject, updateProjectById } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import "react-datepicker/dist/react-datepicker.css";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
-import { updateUser } from "../../../API/UserAPIcalls";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -29,7 +27,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -51,6 +48,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Profile } from "@/components/Profile/Profile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { projectRequests } from "@/requests/ProjectRequests";
+import { userRequests } from "@/requests/UserRequests";
 
 const TODAY = new Date();
 
@@ -141,15 +140,15 @@ export const CreateProjectPage = () => {
   };
 
   const handleCreateProject = async (newProject: IProject) => {
-    const project = await createProject(newProject);
+    const project = await projectRequests.addItemRequest(newProject);
     setProjects([...projects, project]);
     setActiveProject(project);
 
     newProject.users.forEach(async (user) => {
       user.projects = [...user.projects, project._id!];
-      const res = await updateUser(user);
     });
-
+    
+    await userRequests.bulkEditItemsRequest(newProject.users);
     toast({
       title: "Successfully created project",
       variant: "success",

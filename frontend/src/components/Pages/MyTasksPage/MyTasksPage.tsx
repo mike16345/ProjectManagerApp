@@ -1,31 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { getTasksByEmail } from "../../../API/TaskAPIcalls";
 import Task from "../../Task/Task";
-
-import { getProjectsByUser } from "../../../API/ProjectAPIcalls";
 import { useUsersStore } from "../../../store/usersStore";
 import { IProject, ITask } from "../../../interfaces";
+import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
+import { taskRequests } from "@/requests/TaskRequests";
 
 const MyTasksPage: React.FC = () => {
+  const { activeUser } = useUsersStore();
+  
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [projects, setProjects] = useState<IProject[]>([]);
-  const { activeUser } = useUsersStore();
-
+  
   const fetchMyProjects = async () => {
     if (!activeUser) return;
-    const res = await getProjectsByUser(activeUser);
-    setProjects(res);
+
+    await projectRequests
+      .getItemsByRequest(activeUser._id, BY_USER_ENDPOINT)
+      .then((projects) => {
+        setProjects(projects);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  const getUsersTasks = async (email: string) => {
-    const res = await getTasksByEmail(email);
-    setTasks(res.data);
+  const getUsersTasks = async () => {
+    if (!activeUser) return;
+
+    await taskRequests
+      .getItemsByRequest(activeUser._id, BY_USER_ENDPOINT)
+      .then((res) => setTasks(res))
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
     fetchMyProjects();
-    if (!activeUser) return;
-    getUsersTasks(activeUser.email);
+    getUsersTasks();
   }, []);
 
   return (

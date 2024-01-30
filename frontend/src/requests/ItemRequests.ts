@@ -2,7 +2,7 @@ import { deleteItem, fetchData, sendData, updateItem } from "@/API/api";
 
 export class ItemRequests<T> {
   endpoint;
-  
+
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   }
@@ -23,6 +23,9 @@ export class ItemRequests<T> {
     return deleteItem<T>(`${this.endpoint}/delete`, id);
   };
 
+  deleteItemFromRequest = (id: string, from: string) => {
+    return deleteItem<T>(`${this.endpoint}/${from}`, id);
+  };
   bulkAddItemsRequest = (data: T[]) => {
     return sendData<T[]>(`${this.endpoint}/bulkAdd`, data);
   };
@@ -32,11 +35,15 @@ export class ItemRequests<T> {
     return fetchData<T[]>(`${this.endpoint}/getItems`);
   };
 
-  getItemsByRequest = <T>(id: string, by: string): Promise<T[]> => {
+  getItemsByRequest = (id: string, by: string): Promise<T[]> => {
     return fetchData<T[]>(`${this.endpoint}/${by}/getItems/${id}`);
   };
 
   getItemRequest = (id: string): Promise<T> => {
     return fetchData<T>(`${this.endpoint}/getItem/${id}`);
+  };
+
+  getItemByRequest = (id: string, by: string): Promise<T> => {
+    return fetchData<T>(`${this.endpoint}/${by}/getItem/${id}`);
   };
 }

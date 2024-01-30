@@ -20,7 +20,7 @@ router.get("/getItem/:id", UserController.getUser);
 router.delete("/:id", UserController.deleteUser);
 
 // Get user by email
-// router.get("/:email", UserController.getUserByEmail);
+router.get("/byEmail/getItem/:email", UserController.getUserByEmail);
 
 router.post("/register", async (req: Request, res: Response) => {
   try {

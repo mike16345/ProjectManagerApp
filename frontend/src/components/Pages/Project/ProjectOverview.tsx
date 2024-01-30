@@ -2,23 +2,18 @@ import React, { useState, useEffect, useMemo } from "react";
 import { cloneDeep } from "lodash";
 import ProjectWrapper from "./ProjectWrapper";
 import TaskColumnWrapper from "../../Task/TaskColumnWrapper";
-import {
-  postTask,
-  putEditTask,
-  deleteTask,
-  getAllProjectTasks,
-} from "../../../API/TaskAPIcalls";
-import { getUserByEmail, updateUser } from "../../../API/UserAPIcalls";
-import {
-  updateProjectById,
-  removeAssignedUserFromTasks,
-} from "../../../API/ProjectAPIcalls";
+
+import { removeAssignedUserFromTasks } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask, IUser } from "../../../interfaces";
 import { useToast } from "@/components/ui/use-toast";
 import { useUsersStore } from "../../../store/usersStore";
 import { CreateTask } from "@/components/Task/CreateTask";
+import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
+import { projectRequests } from "@/requests/ProjectRequests";
+import { BY_PROJECT_ENDPOINT, taskRequests } from "@/requests/TaskRequests";
+import { useTasksStore } from "@/store/tasksStore";
 
 const allTasks: IAllTasks = {
   [TaskStatus.TODO]: [],
@@ -27,16 +22,16 @@ const allTasks: IAllTasks = {
   [TaskStatus.DONE]: [],
 };
 
-interface ProjectOverviewProps {}
-const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
+const ProjectOverview: React.FC = () => {
   const { activeProject, setActiveProject } = useProjectsStore();
-  const { activeUser } = useUsersStore();
-  const { users } = useUsersStore();
+  const { activeUser, users } = useUsersStore();
+  const { tasks } = useTasksStore();
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
+
   const { toast } = useToast();
 
   const filterUsers = () => {
@@ -46,6 +41,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const [availableUsers, setAvailableUsers] = useState<IUser[]>(filterUsers());
+
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
     const filterTodo = tasks.filter((task) => task.status === TaskStatus.TODO);
@@ -66,7 +62,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   };
 
   const getTasksFromAPI = async (id: string) => {
-    const tasks = await getAllProjectTasks(id);
+    const tasks = await taskRequests.getItemsByRequest(id, BY_PROJECT_ENDPOINT);
     filterToColumns(tasks);
   };
 
@@ -82,9 +78,9 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       users: [...activeProject.users, user],
     };
     setActiveProject(updatedProject);
-    updateProjectById(updatedProject);
+    await projectRequests.editItemRequest(updatedProject);
     user.projects = [...user.projects, updatedProject._id!];
-    await updateUser(user);
+    await userRequests.editItemRequest(user);
 
     toast({
       title: "User added to project",
@@ -105,16 +101,17 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   const onDeleteUserFromProjHandler = async (userToDelete: IUser) => {
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
 
-    const filtered = activeProject.users.filter(
+    const filteredProjectUsers = activeProject.users.filter(
       (user) => user.email !== userToDelete.email
     );
-    console.log("active project", activeProject.users);
-    activeProject.users = filtered;
-    console.log("active project", activeProject.users);
 
-    await updateProjectById(activeProject);
+    const filteredTasks = Object.values(taskArr).map((tasks: ITask[]) => {
+      tasks.forEach(() => {});
+    });
+    activeProject.users = filteredProjectUsers;
+    await projectRequests.editItemRequest(activeProject);
     await removeProjectFromUser(userToDelete.email);
-    await removeUserFromTasks(userToDelete.email);
+    await removeUserFromTasks(userToDelete._id);
     setAvailableUsers(filterUsers());
 
     if (activeProject) getTasksFromAPI(activeProject._id!);
@@ -124,7 +121,10 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
 
     try {
-      await removeAssignedUserFromTasks(userEmail, activeProject._id!);
+      await taskRequests.removeAssignedUserFromTasks(
+        userEmail,
+        activeProject._id!
+      );
 
       toast({
         title: `Successfully unassigned ${userEmail} from task`,
@@ -144,14 +144,17 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const removeProjectFromUser = async (email: string) => {
     try {
-      const user = (await getUserByEmail(email)).data;
+      const user = await userRequests.getItemByRequest(
+        email,
+        BY_EMAIL_ENDPOINT
+      );
       const currentProjectId = activeProject?._id;
       const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;
       });
       user.projects = [...updatedUserProjects];
 
-      await updateUser(user);
+      await userRequests.editItemRequest(user);
     } catch (error) {
       toast({
         title: "Failed to delete user from project",
@@ -162,11 +165,12 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     }
   };
 
-  const onCreateIssue = async (task: ITask) => {
-    task.status = taskTypeToAdd;
+  const onCreateIssue = async (newTask: ITask) => {
+    console.log("New task", newTask);
+    newTask.status = taskTypeToAdd;
     try {
-      const res = await postTask(task);
-
+      const task = await taskRequests.addItemRequest(newTask);
+      console.log("task", task);
       toast({
         title: "Task Created",
         description: "Successfully created task",
@@ -175,7 +179,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
       });
       setTaskArr({
         ...taskArr,
-        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], res.data],
+        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], task],
       });
     } catch (error) {
       toast({
@@ -189,13 +193,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     setIsCreatingTask(false);
   };
 
-  const onEditTask = async (task: any) => {
+  const onEditTask = async (taskToUpdate: any) => {
     try {
-      const res = await putEditTask(task);
+      const task = await taskRequests.editItemRequest(taskToUpdate);
 
       setTaskArr({
         ...taskArr,
-        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], res.data],
+        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], task],
       });
       toast({
         title: "Task Updated!",
@@ -219,7 +223,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const handleDeleteTask = async (id: number) => {
     try {
-      const res = await deleteTask(id);
+      await taskRequests.deleteItemRequest(id);
 
       toast({
         title: "Task Deleted",
@@ -260,7 +264,6 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
   useMemo(() => {
     if (!activeProject) return;
     const filtered = filterUsers();
-    console.log("filtering:", filtered);
     setAvailableUsers(filtered);
   }, [activeProject?.users]);
 

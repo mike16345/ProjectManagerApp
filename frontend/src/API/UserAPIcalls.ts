@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { IUser } from "../interfaces";
 
 const APIaddress = "http://localhost:3002/users";
 
@@ -48,47 +47,6 @@ export const verifyToken = async (token: string): Promise<AxiosResponse> => {
       headers: { "x-api-key": token },
     });
     return res;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getAllUsers = async () => {
-  try {
-    const res: AxiosResponse = await axios.get(`${APIaddress}`);
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getUserByEmail = async (email: string): Promise<AxiosResponse> => {
-  try {
-    const res: AxiosResponse = await axios.get(`${APIaddress}/${email}`);
-    return res;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const getUser = async (id: string): Promise<AxiosResponse> => {
-  try {
-    const res: AxiosResponse = await axios.get(`${APIaddress}/${id}`);
-    return res;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const updateUser = async (user: IUser): Promise<IUser> => {
-  try {
-    const res: AxiosResponse = await axios.put(
-      `${APIaddress}/users/${user._id}`,
-      user
-    );
-    return res.data;
   } catch (error) {
     throw error;
   }
