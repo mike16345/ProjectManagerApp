@@ -1,11 +1,6 @@
 import { useEffect } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import {
-  verifyToken,
-  getAllEmails,
-  getAllUsers,
-  editUser,
-} from "./API/UserAPIcalls";
+import { verifyToken, getAllUsers, updateUser } from "./API/UserAPIcalls";
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
@@ -23,15 +18,12 @@ import RequireAuth from "./Authentication/RequireAuth";
 import useAuth from "./Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import "./App.css";
-import { getImage, getImageNames } from "./utils/utils";
-import { userInfo } from "os";
 import { Toaster } from "./components/ui/toaster";
 
 function App() {
-  const { activeUser, users, setActiveUser, setUserEmails, setUsers } =
-    useUsersStore();
   const { authed } = useAuth();
 
+  const { activeUser, setActiveUser, setUsers } = useUsersStore();
   const { setProjects, setActiveProject } = useProjectsStore();
   const { setTasks } = useTasksStore();
 
@@ -39,14 +31,12 @@ function App() {
     const projects = await getAllProjects();
     const tasks = await getAllTasks();
     const users = await getAllUsers();
-    const userEmails = await getAllEmails();
     const userToken = secureLocalStorage.getItem("user-token");
     const activeProject = secureLocalStorage.getItem("active-project");
 
     setProjects(projects);
     setTasks(tasks);
     setUsers(users);
-    setUserEmails(userEmails);
 
     if (userToken) {
       const response = await verifyToken(userToken as string);

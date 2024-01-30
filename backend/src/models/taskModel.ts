@@ -1,6 +1,5 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 import { ITask } from "../interfaces";
-import mongoose from "mongoose";
 import Joi from "joi";
 
 const taskSchema: Schema<ITask> = new Schema({
@@ -13,17 +12,20 @@ const taskSchema: Schema<ITask> = new Schema({
   project_id: String,
 });
 
-export const TaskModel = mongoose.model("tasks", taskSchema);
+export const TaskSchemaValidation = Joi.object({
+  name: Joi.string().min(2).max(100).required(),
 
-export const validateTask = (reqBody: any) => {
-  const joiSchema = Joi.object({
-    name: Joi.string().min(2).max(100).required(),
-    assignee: Joi.object().optional(),
-    description: Joi.string().max(250),
-    task_id: Joi.number().min(2).required(),
-    priority: Joi.string().min(2).max(100).required(),
-    status: Joi.string().min(2).max(15).required(),
-    project_id: Joi.string().required(),
-  });
-  return joiSchema.validate(reqBody);
-};
+  assignee: Joi.object().optional(),
+
+  description: Joi.string().max(250),
+
+  task_id: Joi.number().min(2).required(),
+
+  priority: Joi.string().min(2).max(100).required(),
+
+  status: Joi.string().min(2).max(15).required(),
+
+  project_id: Joi.string().required(),
+});
+
+export const Task = model("tasks", taskSchema);

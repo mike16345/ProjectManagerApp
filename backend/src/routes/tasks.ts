@@ -2,42 +2,20 @@ import express, { Request, Response } from "express";
 import { removeUserFromTasks } from "../services/taskService";
 const router = express.Router();
 
-import { TaskModel, validateTask } from "../models/taskModel";
+import { Task } from "../models/taskModel";
+import { TaskController } from "../controllers/taskController";
 
-router.get("/", async (req: Request, res: Response) => {
-  const data = await TaskModel.find({});
-  res.json(data);
-});
+// Add Task
+router.post("/", TaskController.addTask);
 
-router.post("/", async (req: Request, res: Response) => {
-  const validBody = validateTask(req.body);
-  if (validBody.error) {
-    return res.status(400).json(validBody.error.details);
-  }
-  try {
-    const data = new TaskModel(req.body);
-    await data.save();
-    res.json(data);
-  } catch (error) {
-    res.status(400).json({ error: "did not work" });
-  }
-});
+// Get All Tasks
+router.get("/", TaskController.getTasks);
 
-router.put("/:idEdit", async (req: Request, res: Response) => {
-  const validBody = validateTask(req.body);
-  if (validBody.error) {
-    return res.status(401).json(validBody.error.details);
-  }
-  try {
-    const data = await TaskModel.updateOne(
-      { task_id: req.params.idEdit },
-      req.body
-    );
-    res.json(data);
-  } catch (error) {
-    res.status(400).json({ error: error });
-  }
-});
+// Update Task
+router.put("/:id", TaskController.updateTask);
+
+// Delete Task
+router.delete("/:id", TaskController.deleteTask);
 
 router.delete("/project/:id", async (req: Request, res: Response) => {
   const data = await removeUserFromTasks(
@@ -49,18 +27,13 @@ router.delete("/project/:id", async (req: Request, res: Response) => {
 });
 
 router.get("/byProjectId/:id", async (req: Request, res: Response) => {
-  const allTasks = await TaskModel.find({ project_id: req.params.id });
+  const allTasks = await Task.find({ project_id: req.params.id });
   res.json(allTasks);
 });
 
 router.get("/byEmail/:email", async (req: Request, res: Response) => {
-  const allTasks = await TaskModel.find({ email: req.params.email });
+  const allTasks = await Task.find({ email: req.params.email });
   res.json(allTasks);
-});
-
-router.delete("/:idDel", async (req: Request, res: Response) => {
-  const data = await TaskModel.deleteOne({ task_id: req.params.idDel });
-  res.json(data);
 });
 
 export default router;

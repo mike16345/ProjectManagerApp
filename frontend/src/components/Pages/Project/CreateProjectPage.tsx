@@ -9,7 +9,7 @@ import { createProject, updateProjectById } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import "react-datepicker/dist/react-datepicker.css";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
-import { editUser } from "../../../API/UserAPIcalls";
+import { updateUser } from "../../../API/UserAPIcalls";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -147,7 +147,7 @@ export const CreateProjectPage = () => {
 
     newProject.users.forEach(async (user) => {
       user.projects = [...user.projects, project._id!];
-      const res = await editUser(user);
+      const res = await updateUser(user);
     });
 
     toast({

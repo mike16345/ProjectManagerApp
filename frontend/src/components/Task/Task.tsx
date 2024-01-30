@@ -1,9 +1,8 @@
 import { FC } from "react";
 import Tag from "../Tag/Tag";
 import { When } from "react-if";
-import { ITask, IUser } from "../../interfaces";
+import { ITask } from "../../interfaces";
 import { Profile } from "../Profile/Profile";
-import { getOneUser } from "@/API/UserAPIcalls";
 
 interface TaskProps {
   task: ITask;

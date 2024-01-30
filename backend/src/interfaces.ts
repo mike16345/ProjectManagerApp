@@ -8,10 +8,14 @@ export interface IUser {
   date_created: Date;
 }
 
-export interface IProject {
+export interface IProject extends Document {
   id: string;
-  users: Array<string>;
+  projectLead: object;
+  users: Array<object>;
+  deadline: object;
+  projectType: string;
   name: string;
+  description: string;
   date_created: Date;
 }
 

@@ -1,26 +1,33 @@
 import express, { Request, Response } from "express";
+import { Project, ProjectSchemaValidation } from "../models/projectModel";
+import { User } from "../models/userModel";
+import { ProjectController } from "../controllers/projectController";
+
 const router = express.Router();
 
-import { ProjectsModel, validateProject } from "../models/projectModal";
-import { UserModel } from "../models/userModel";
+// Add Project
+router.post("/", ProjectController.addProject);
 
-router.get("/", async (req: Request, res: Response) => {
-  const data = await ProjectsModel.find();
-  res.json(data);
-});
+// Delete Project
+router.delete("/:id", ProjectController.deleteProject);
 
-router.get("/:id", async (req: Request, res: Response) => {
-  const data = await ProjectsModel.findOne({ _id: req.params.id });
-  res.json(data);
-});
+// Update Project
+router.put("/:id", ProjectController.updateProject);
 
+// Get all projects
+router.get("/", ProjectController.getProjects);
+
+// Get one project
+router.get("/:id", ProjectController.getOneProject);
+
+// Get all projects for a user
 router.get("/perUser/:id", async (req: Request, res: Response) => {
   try {
-    const user = await UserModel.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: req.params.id });
     if (!user) return;
     const projects_ar = await Promise.all(
       user.projects.map(async (projectId) => {
-        return await ProjectsModel.findOne({ _id: projectId });
+        return await Project.findOne({ _id: projectId });
       })
     );
     res.json(projects_ar);
@@ -29,30 +36,16 @@ router.get("/perUser/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/", async (req: Request, res: Response) => {
-  const validBody = validateProject(req.body);
-  if (validBody.error) {
-    return res.status(401).json(validBody.error.details);
-  }
-  try {
-    const data = new ProjectsModel(req.body);
-    await data.save();
-    res.json(data);
-  } catch (error) {
-    res.status(400).json({ error: "did not work" });
-  }
-});
-
+// Add user to project
 router.put("/addUser/:idEdit", async (req: Request, res: Response) => {
-  const validBody = validateProject(req.body);
+  const validBody = ProjectSchemaValidation.validate(req.body);
+
   if (validBody.error) {
     return res.status(401).json(validBody.error.details);
   }
+
   try {
-    const data = await ProjectsModel.updateOne(
-      { _id: req.params.idEdit },
-      req.body
-    );
+    const data = await Project.updateOne({ _id: req.params.idEdit }, req.body);
     res.json(data);
   } catch (error) {
     res.status(400).json({ error: error });

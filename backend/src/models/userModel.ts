@@ -1,6 +1,5 @@
-import { Schema, Document } from "mongoose";
+import { Schema, Document, model } from "mongoose";
 import { IUser } from "../interfaces";
-import mongoose from "mongoose";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 
@@ -12,7 +11,7 @@ const userSchema: Schema<IUserDocument> = new Schema({
   email: String,
   type: String,
   projects: Array,
-  picture:String,
+  picture: String,
   isAdmin: {
     type: Boolean,
     default: false,
@@ -23,19 +22,17 @@ const userSchema: Schema<IUserDocument> = new Schema({
   },
 });
 
-export const UserModel = mongoose.model("users", userSchema);
+export const User = model("users", userSchema);
 
 export const genToken = (id: string) => {
   const token = jwt.sign({ id: id }, JWT_SECRET, {
     expiresIn: "30d",
   });
+
   return token;
 };
 
-export const validateLogin = (reqBody: any) => {
-  const joiSchema = Joi.object({
-    email: Joi.string().min(2).max(25).required().email(),
-  });
-
-  return joiSchema.validate(reqBody);
-};
+export const UserSchemaValidation = Joi.object({
+  name: Joi.string().min(2).max(25).required(),
+  email: Joi.string().min(2).max(30).required().email(),
+});

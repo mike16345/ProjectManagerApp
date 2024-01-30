@@ -1,51 +1,41 @@
-import { googleUserModel } from "../models/googleUserModel";
+import { create } from "zustand";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { UserModel, genToken } from "../models/userModel";
+import { User, genToken } from "../models/userModel";
 import { authToken } from "../auth/authToken";
-import { passwordModel } from "../models/passwordModel";
-
-const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
+import { Password } from "../models/passwordModel";
+import { UserController } from "../controllers/userController";
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
-  const data = await UserModel.find({});
-  res.json(data);
-});
+// Get all users
+router.get("/", UserController.getUsers);
 
-router.get("/one/:email", async (req: Request, res: Response) => {
-  const data = await UserModel.findOne({ email: req.params.email });
-  res.json(data);
-});
+// Update user
+router.put("/:id", UserController.updateUser);
 
-router.get("/emails", async (req: Request, res: Response) => {
-  const data = await UserModel.find({}, { email: 1 });
-  res.json(data);
-});
+// Get user by id
+router.get("/:id", UserController.getUserByEmail);
+
+//Delete user
+router.delete("/:id", UserController.deleteUser);
+
+// Get user by email
+router.get("/:email", UserController.getUserByEmail);
 
 router.post("/register", async (req: Request, res: Response) => {
-  const existingUser = await UserModel.findOne({ email: req.body.email });
-  if (existingUser) {
-    const token = genToken(existingUser._id);
-    return res.json({ isNew: false, status: "existing_user", data: token });
-  }
-
   try {
-    const user = new UserModel(req.body);
-    await user.save();
+    const user = await User.create(req.body);
 
-    const oldUser = await UserModel.findOne({ email: req.body.email });
-    if (!oldUser) return;
     if (req.body.type === "local") {
       const password = await bcrypt.hash(req.body.password, 10);
-      const newPassword = new passwordModel({
-        _id: oldUser._id,
+
+      await Password.create({
+        _id: user._id,
         password: password,
       });
-
-      await newPassword.save();
     }
+
     const newToken = genToken(user._id);
 
     return res.json({ isNew: true, status: "registered", data: newToken });
@@ -54,45 +44,28 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:idEdit", async (req: Request, res: Response) => {
-  try {
-    const data = await UserModel.updateOne(
-      { _id: req.params.idEdit },
-      req.body
-    );
-    res.json(data);
-  } catch (error) {
-    res.status(400).json({ error: error });
-  }
-}); 
-
 router.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await UserModel.findOne({ email }).lean();
-
+  const user = await User.findOne({ email }).lean();
   if (!user) {
-    return res.json({ status: "error", data: "invalid username" });
+    return res.json({ status: "error", data: "Invalid Email!" });
   }
-
-  const passwordObj = await passwordModel.findOne({ _id: user._id });
+  const passwordObj = await Password.findOne({ _id: user._id });
 
   if (!passwordObj) return;
 
   if (await bcrypt.compare(password, passwordObj.password)) {
     const newToken = genToken(user._id);
 
-    return res.json({ status: "ok", data: newToken });
+    return res.json({ status: "ok", data: user });
   } else {
-    return res.json({ status: "error", data: "invalid password or email" });
+    return res.json({ status: "error", data: "Invalid password!" });
   }
 });
 
 router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
-  const user = await UserModel.findOne(
-    { _id: req.tokenData.id },
-    { password: 0 }
-  );
+  const user = await User.findOne({ _id: req.tokenData.id }, { password: 0 });
 
   res.json(user);
 });
