@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { registerHandler, verifyToken } from "../../../API/UserAPIcalls";
+import {
+  getUserByEmail,
+  registerHandler,
+  verifyToken,
+} from "../../../API/UserAPIcalls";
 
 import { Else, If, Then } from "react-if";
 import { IGoogleUser } from "../../../interfaces";
@@ -27,23 +31,32 @@ const LoginPage: React.FC = () => {
       type: "googleUser",
     };
 
-    const response = await registerHandler(googleUser);
-    if (response.token) {
-      const user = await verifyToken(response.token);
+    try {
+      const user = await getUserByEmail(googleUser.email);
       setActiveUser(user.data);
-
-      secureLocalStorage.clear();
-      secureLocalStorage.setItem("user-token", response.token);
-    }
-
-    if (
-      response.status === "registered" ||
-      response.status === "existing_user"
-    ) {
       setTimeout(() => {
         login();
         navigate("/myTasks");
       }, 500);
+    } catch (error) {
+      const response = await registerHandler(googleUser);
+      if (response.token) {
+        const user = await verifyToken(response.token);
+
+        secureLocalStorage.clear();
+        secureLocalStorage.setItem("user-token", response.token);
+        setActiveUser(user.data);
+      }
+
+      if (
+        response.status === "registered" ||
+        response.status === "existing_user"
+      ) {
+        setTimeout(() => {
+          login();
+          navigate("/myTasks");
+        }, 500);
+      }
     }
   };
 
