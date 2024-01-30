@@ -1,38 +1,36 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { IUser } from "../interfaces";
-import { IEmail } from "../store/usersStore";
 
-const APIaddress = "http://localhost:3002";
+const APIaddress = "http://localhost:3002/users";
 
 interface AuthResponse {
-  isNew: boolean;
   status?: string;
+  isNew?: boolean;
   token?: string;
-  data?: any;
+  user?: any;
 }
 
 export const loginHandler = async (userDetails: any): Promise<AuthResponse> => {
   try {
     const res: AxiosResponse = await axios.post(
-      `${APIaddress}/users/login`,
+      `${APIaddress}/login`,
       userDetails
     );
-
     return {
-      isNew: false,
-      data: await res.data,
+      isNew: res.data.isNew,
+      user: res.data.user,
+      token: res.data.token,
+      status: res.data.status,
     };
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
 
 export const registerHandler = async (user: any): Promise<AuthResponse> => {
   try {
-    const res: AxiosResponse = await axios.post(
-      `${APIaddress}/users/register`,
-      user
-    );
+    const res: AxiosResponse = await axios.post(`${APIaddress}/register`, user);
 
     return {
       isNew: res.data.isNew,
@@ -46,49 +44,10 @@ export const registerHandler = async (user: any): Promise<AuthResponse> => {
 
 export const verifyToken = async (token: string): Promise<AxiosResponse> => {
   try {
-    const res: AxiosResponse = await axios.get(
-      `${APIaddress}/users/tokenLogin`,
-      {
-        headers: { "x-api-key": token },
-      }
-    );
+    const res: AxiosResponse = await axios.get(`${APIaddress}/tokenLogin`, {
+      headers: { "x-api-key": token },
+    });
     return res;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const verifyTokenWithGoogle = async (
-  token: string
-): Promise<AxiosResponse> => {
-  try {
-    const res: AxiosResponse = await axios.get(
-      `${APIaddress}/googleUsers/tokenLogin`,
-      {
-        headers: { "x-api-key": token },
-      }
-    );
-    return res;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const getAllEmails = async (): Promise<IEmail[]> => {
-  try {
-    const res: AxiosResponse = await axios.get(`${APIaddress}/users/emails`);
-
-    let users: IEmail[] = res.data;
-
-    const googleRes: AxiosResponse = await axios.get(
-      `${APIaddress}/googleUsers/emails`
-    );
-    const googleUsers: IEmail[] = googleRes.data;
-
-    users = [...users, ...googleUsers];
-
-    return users;
   } catch (error) {
     throw error;
   }
@@ -96,18 +55,16 @@ export const getAllEmails = async (): Promise<IEmail[]> => {
 
 export const getAllUsers = async () => {
   try {
-    const res: AxiosResponse = await axios.get(`${APIaddress}/users/`);
+    const res: AxiosResponse = await axios.get(`${APIaddress}`);
     return res.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getOneUser = async (email: string): Promise<AxiosResponse> => {
+export const getUserByEmail = async (email: string): Promise<AxiosResponse> => {
   try {
-    const res: AxiosResponse = await axios.get(
-      `${APIaddress}/users/one/${email}`
-    );
+    const res: AxiosResponse = await axios.get(`${APIaddress}/${email}`);
     return res;
   } catch (error) {
     console.error(error);
@@ -115,7 +72,17 @@ export const getOneUser = async (email: string): Promise<AxiosResponse> => {
   }
 };
 
-export const editUser = async (user: IUser): Promise<IUser> => {
+export const getUser = async (id: string): Promise<AxiosResponse> => {
+  try {
+    const res: AxiosResponse = await axios.get(`${APIaddress}/${id}`);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const updateUser = async (user: IUser): Promise<IUser> => {
   try {
     const res: AxiosResponse = await axios.put(
       `${APIaddress}/users/${user._id}`,
@@ -125,26 +92,4 @@ export const editUser = async (user: IUser): Promise<IUser> => {
   } catch (error) {
     throw error;
   }
-};
-
-export const editUserByEmail = async (user: IUser): Promise<IUser> => {
-  try {
-    const res: AxiosResponse = await axios.put(
-      `${APIaddress}/users/one/${user.email}`,
-      user
-    );
-
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const signInWithGoogle = async (user: IUser): Promise<any> => {
-  const res: AxiosResponse = await axios.post(
-    `${APIaddress}/googleUsers/login`,
-    { user }
-  );
-
-  return res.data;
 };

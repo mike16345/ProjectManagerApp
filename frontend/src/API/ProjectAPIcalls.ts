@@ -17,7 +17,7 @@ export const getAllProjects = async (): Promise<IProject[]> => {
 export const getProjectsByUser = async (user: IUser): Promise<IProject[]> => {
   try {
     const res: AxiosResponse<IProject[]> = await axios.get(
-      `${APIaddress}/projects/perUser/${user._id}`
+      `${APIaddress}/projects/byUser/getItems/${user._id}`
     );
     return res.data;
   } catch (error) {

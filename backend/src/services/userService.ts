@@ -13,7 +13,7 @@ export class UserService {
 
   async getUsers() {
     try {
-      const users = await User.find({});
+      const users = await User.find({}).lean();
       return users;
     } catch (error) {
       console.log(error);
@@ -22,7 +22,7 @@ export class UserService {
 
   async getUser(id: string) {
     try {
-      const user = await User.findById({ _id: id });
+      const user = await User.findById({ _id: id }).lean();
       if (!user) {
         return "User not available";
       }
@@ -35,10 +35,12 @@ export class UserService {
 
   async getUserByEmail(email: string) {
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).lean();
       if (!user) {
         return "User not available";
       }
+
+      return user;
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +54,7 @@ export class UserService {
       if (!user) {
         return "User not available";
       }
+      
       return user;
     } catch (error) {
       console.log(error);
@@ -64,6 +67,8 @@ export class UserService {
       if (!user) {
         return "user not available";
       }
+
+      return user;
     } catch (error) {
       console.log(error);
     }

@@ -6,14 +6,16 @@ import { Task } from "../models/taskModel";
 import { TaskController } from "../controllers/taskController";
 
 // Add Task
-router.post("/", TaskController.addTask);
+router.post("/add", TaskController.addTask);
 
 // Get All Tasks
-router.get("/", TaskController.getTasks);
+router.get("/getItems", TaskController.getTasks);
 
 // Update Task
-router.put("/:id", TaskController.updateTask);
+router.put("/edit", TaskController.updateTask);
 
+// Update many tasks
+router.put("/edit/bulk", TaskController.updateManyTasks);
 // Delete Task
 router.delete("/:id", TaskController.deleteTask);
 

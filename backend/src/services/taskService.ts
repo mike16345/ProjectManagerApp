@@ -48,6 +48,20 @@ export class TaskService {
     }
   }
 
+  async updateManyTasks(data: any[]) {
+    try {
+      const updatedTasks = await Promise.all(
+        data.map(async (task) => {
+          return await this.updateTask(task._id, task);
+        })
+      );
+
+      return updatedTasks;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async deleteTask(id: string) {
     try {
       const task = await Task.findByIdAndDelete(id);

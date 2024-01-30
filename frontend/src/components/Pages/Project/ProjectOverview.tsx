@@ -8,11 +8,7 @@ import {
   deleteTask,
   getAllProjectTasks,
 } from "../../../API/TaskAPIcalls";
-import {
-  getOneUser,
-  editUser,
-  editUserByEmail,
-} from "../../../API/UserAPIcalls";
+import { getUserByEmail, updateUser } from "../../../API/UserAPIcalls";
 import {
   updateProjectById,
   removeAssignedUserFromTasks,
@@ -88,7 +84,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
     setActiveProject(updatedProject);
     updateProjectById(updatedProject);
     user.projects = [...user.projects, updatedProject._id!];
-    await editUser(user);
+    await updateUser(user);
 
     toast({
       title: "User added to project",
@@ -148,14 +144,14 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = () => {
 
   const removeProjectFromUser = async (email: string) => {
     try {
-      const user = (await getOneUser(email)).data;
+      const user = (await getUserByEmail(email)).data;
       const currentProjectId = activeProject?._id;
       const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;
       });
       user.projects = [...updatedUserProjects];
 
-      await editUser(user);
+      await updateUser(user);
     } catch (error) {
       toast({
         title: "Failed to delete user from project",

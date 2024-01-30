@@ -1,4 +1,4 @@
-import { IUser } from "@/interfaces";
+import { IProject, IUser } from "@/interfaces";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,27 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { When } from "react-if";
 import { Checkbox } from "@/components/ui/checkbox";
+import { userRequests } from "@/requests/UserRequests";
+import { projectRequests } from "@/requests/ProjectRequests";
+
+const handleMakeUserAdmin = async (user: IUser) => {
+  user.isAdmin = true;
+  await userRequests.editItemRequest(user);
+};
+
+const handleDeleteUser = async (user: IUser) => {
+  const userProjects = await projectRequests.getItemsByRequest<IProject>(
+    user._id,
+    "byUser"
+  );
+
+  for (const project of userProjects) {
+    project.users = project.users.filter((u) => u._id !== user._id);
+  }
+
+  await projectRequests.bulkEditItemsRequest(userProjects);
+  await userRequests.deleteItemRequest(user._id);
+};
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -87,16 +108,16 @@ export const columns: ColumnDef<IUser>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <When condition={!user.isAdmin}>
-              <DropdownMenuItem
-                onClick={() => console.log("Making user admin")}
-              >
+              <DropdownMenuItem onClick={() => handleMakeUserAdmin(user)}>
                 {!user.isAdmin && "Make Admin"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </When>
             <DropdownMenuItem>View user</DropdownMenuItem>
             <DropdownMenuItem>View projects</DropdownMenuItem>
-            <DropdownMenuItem>Delete User</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteUser(user)}>
+              Delete User
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

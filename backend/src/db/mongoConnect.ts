@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import path from "path";
 
-dotenv.config({ path: "./.env.local" });
+const pathToEnv = path.resolve(__dirname, "..", "..", ".env.local");
+dotenv.config({ path: pathToEnv });
 main().catch((err) => {
   console.error(err);
   console.log(

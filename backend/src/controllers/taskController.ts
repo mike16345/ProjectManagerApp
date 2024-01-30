@@ -1,7 +1,7 @@
 import { taskServices } from "../services/taskService";
 import { Request, Response } from "express";
 import { TaskSchemaValidation } from "../models/taskModel";
-import { ITask } from "../interfaces"; 
+import { ITask } from "../interfaces";
 
 class taskController {
   addTask = async (req: Request, res: Response) => {
@@ -39,6 +39,10 @@ class taskController {
     const id = req.params.id;
     const task = await taskServices.updateTask(id, req.body);
     res.send(task);
+  };
+
+  updateManyTasks = async (req: Request, res: Response) => {
+    
   };
 
   deleteTask = async (req: Request, res: Response) => {

@@ -1,4 +1,5 @@
 import { Project } from "../models/projectModel";
+import { User } from "../models/userModel";
 
 export class ProjectService {
   async createProject(data: any) {
@@ -33,16 +34,48 @@ export class ProjectService {
     }
   }
 
-  async updateProject(id: string, data: any) {
+  async updateProject(data: any) {
     try {
-      const project = await Project.findByIdAndUpdate({ _id: id }, data, {
+      const project = await Project.findByIdAndUpdate({ _id: data._id }, data, {
         new: true,
       });
 
       if (!project) {
         return "Project not available";
       }
+
       return project;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateManyProjects(data: any[]) {
+    try {
+      const updatedProjects = await Promise.all(
+        data.map(async (proj) => {
+          return await this.updateProject(proj);
+        })
+      );
+
+      return updatedProjects;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getUserProjects(id: string) {
+    try {
+      const user = await User.findOne({ _id: id });
+      if (!user) return;
+
+      const userProjects = await Promise.all(
+        user.projects.map(async (projectId) => {
+          return await this.getProject(projectId);
+        })
+      );
+
+      return userProjects;
     } catch (error) {
       console.log(error);
     }

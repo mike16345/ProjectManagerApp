@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { verifyToken, getAllUsers, updateUser } from "./API/UserAPIcalls";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { verifyToken } from "./API/UserAPIcalls";
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
@@ -11,14 +11,15 @@ import { When } from "react-if";
 import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
 import { useProjectsStore } from "./store/projectsStore";
 import { useTasksStore } from "./store/tasksStore";
-import { getAllProjects } from "./API/ProjectAPIcalls";
-import { getAllTasks } from "./API/TaskAPIcalls";
 import AdminPage from "./components/Pages/AdminPage/AdminPage";
 import RequireAuth from "./Authentication/RequireAuth";
 import useAuth from "./Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { Toaster } from "./components/ui/toaster";
+import { projectRequests } from "./requests/ProjectRequests";
+import { userRequests } from "@/requests/UserRequests";
+import { taskRequests } from "./requests/TaskRequests";
 
 function App() {
   const { authed } = useAuth();
@@ -28,9 +29,10 @@ function App() {
   const { setTasks } = useTasksStore();
 
   const initData = async () => {
-    const projects = await getAllProjects();
-    const tasks = await getAllTasks();
-    const users = await getAllUsers();
+    const projects = await projectRequests.getItemsRequest();
+    const tasks = await taskRequests.getItemsRequest();
+    const users = await userRequests.getItemsRequest();
+
     const userToken = secureLocalStorage.getItem("user-token");
     const activeProject = secureLocalStorage.getItem("active-project");
 

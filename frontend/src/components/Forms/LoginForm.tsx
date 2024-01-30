@@ -67,15 +67,21 @@ const LoginForm: React.FC<ILoginForm> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   const onLoginHandler = async (userDetails: any) => {
+    console.log("hello", userDetails);
     const response = await loginHandler(userDetails);
-    const token = response.data.data;
+    const user = response.user;
+    console.log("response:", response);
+    const token = response.token;
 
     if (token) {
+      console.log("setting token", token);
       secureLocalStorage.clear();
       secureLocalStorage.setItem("user-token", token);
 
       const response = await verifyToken(token);
-      setActiveUser(response.data);
+      console.log("response", response);
+      console.log("user", user);
+      setActiveUser(user);
 
       toast({
         title: "Successfully logged in",
@@ -87,7 +93,7 @@ const LoginForm: React.FC<ILoginForm> = ({
         login();
         navigate("/myTasks");
       }, 500);
-    } else if (response.data.status === "error") {
+    } else {
       toast({
         title: "Login Failed",
         description: "Incorrect Username or Password",

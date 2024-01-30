@@ -1,21 +1,42 @@
-import { deleteItem, fetchData, sendData } from "@/API/api";
+import { deleteItem, fetchData, sendData, updateItem } from "@/API/api";
 
-export const addItemRequest = (endpoint: string, row: any) => {
-  return sendData(`${endpoint}/addItem`, row);
-};
+export class ItemRequests<T> {
+  endpoint;
+  
+  constructor(endpoint: string) {
+    this.endpoint = endpoint;
+  }
 
-export const editItemRequest = (endpoint: string, row: any) => {
-  return sendData(`${endpoint}/editItem`, row);
-};
+  addItemRequest = (data: T) => {
+    return sendData<T>(`${this.endpoint}/add`, data);
+  };
 
-export const deleteItemRequest = (endpoint: string, id: any) => {
-  return deleteItem(`${endpoint}/deleteItem`, id);
-};
+  editItemRequest = (data: T) => {
+    return updateItem<T>(`${this.endpoint}/edit`, data);
+  };
 
-export const bulkAddItemsRequest = (endpoint: string, rows: any[]) => {
-  return sendData(`${endpoint}/bulkAddItem`, rows);
-};
+  bulkEditItemsRequest = (data: T[]) => {
+    return updateItem<T[]>(`${this.endpoint}/edit/bulk`, data);
+  };
 
-export const getItemsRequest = (endpoint: string) => {
-  return fetchData(`${endpoint}/getItems`);
-};
+  deleteItemRequest = (id: any) => {
+    return deleteItem<T>(`${this.endpoint}/delete`, id);
+  };
+
+  bulkAddItemsRequest = (data: T[]) => {
+    return sendData<T[]>(`${this.endpoint}/bulkAdd`, data);
+  };
+
+  getItemsRequest = () => {
+    console.log("endpoint", `${this.endpoint}/getItems`);
+    return fetchData<T[]>(`${this.endpoint}/getItems`);
+  };
+
+  getItemsByRequest = <T>(id: string, by: string): Promise<T[]> => {
+    return fetchData<T[]>(`${this.endpoint}/${by}/getItems/${id}`);
+  };
+
+  getItemRequest = (id: string): Promise<T> => {
+    return fetchData<T>(`${this.endpoint}/getItem/${id}`);
+  };
+}

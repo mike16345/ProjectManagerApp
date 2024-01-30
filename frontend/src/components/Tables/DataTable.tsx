@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FilterIcon } from "lucide-react";
+import { useToast } from "../ui/use-toast";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -38,11 +39,20 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const handleAlert = (
+    title: string,
+    description: string,
+    severity: "success" | "destructive" | "default" = "default"
+  ) => {
+    toast({ title: title, description: description, variant: severity });
+  };
 
   const table = useReactTable({
     data,

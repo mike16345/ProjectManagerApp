@@ -33,12 +33,14 @@ const LoginPage: React.FC = () => {
 
     try {
       const user = await getUserByEmail(googleUser.email);
+      console.log("user exists:", user);
       setActiveUser(user.data);
       setTimeout(() => {
         login();
         navigate("/myTasks");
       }, 500);
     } catch (error) {
+      console.log("register");
       const response = await registerHandler(googleUser);
       if (response.token) {
         const user = await verifyToken(response.token);

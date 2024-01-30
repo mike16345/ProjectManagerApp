@@ -35,10 +35,21 @@ class projectController {
     res.send(project);
   };
 
-  updateProject = async (req: Request, res: Response) => {
+  getProjectsByUser = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const project = await projectServices.updateProject(id, req.body);
+    const projects = await projectServices.getUserProjects(id);
+
+    res.send(projects);
+  };
+
+  updateProject = async (req: Request, res: Response) => {
+    const project = await projectServices.updateProject(req.body);
     res.send(project);
+  };
+
+  updateManyProjects = async (req: Request, res: Response) => {
+    const projects = await projectServices.updateManyProjects(req.body);
+    res.send(projects);
   };
 
   deleteProject = async (req: Request, res: Response) => {

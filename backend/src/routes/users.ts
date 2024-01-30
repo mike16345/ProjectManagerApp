@@ -1,4 +1,3 @@
-import { create } from "zustand";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { User, genToken } from "../models/userModel";
@@ -9,19 +8,19 @@ import { UserController } from "../controllers/userController";
 const router = express.Router();
 
 // Get all users
-router.get("/", UserController.getUsers);
+router.get("/getItems", UserController.getUsers);
 
 // Update user
-router.put("/:id", UserController.updateUser);
+router.put("/edit/", UserController.updateUser);
 
 // Get user by id
-router.get("/:id", UserController.getUserByEmail);
+router.get("/getItem/:id", UserController.getUser);
 
 //Delete user
 router.delete("/:id", UserController.deleteUser);
 
 // Get user by email
-router.get("/:email", UserController.getUserByEmail);
+// router.get("/:email", UserController.getUserByEmail);
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
@@ -58,16 +57,22 @@ router.post("/login", async (req: Request, res: Response) => {
   if (await bcrypt.compare(password, passwordObj.password)) {
     const newToken = genToken(user._id);
 
-    return res.json({ status: "ok", data: user });
+    return res.json({
+      status: "ok",
+      user: user,
+      token: newToken,
+      isNew: false,
+    });
   } else {
     return res.json({ status: "error", data: "Invalid password!" });
   }
 });
 
 router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
+  console.log("here");
   const user = await User.findOne({ _id: req.tokenData.id }, { password: 0 });
-
-  res.json(user);
+  console.log("user:", user);
+  return res.json(user);
 });
 
 export default router;

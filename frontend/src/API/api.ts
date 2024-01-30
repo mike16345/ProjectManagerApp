@@ -23,10 +23,22 @@ export async function sendData<T>(
     throw error;
   }
 }
-
-export async function deleteItem(endpoint: string, id: string) {
+export async function updateItem<T>(
+  endpoint: string,
+  data: any,
+  headers?: any
+): Promise<T> {
   try {
-    const response = await axiosInstance.post(`/${endpoint}?id=${id}`);
+    const response = await axiosInstance.put<T>(endpoint);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteItem<T>(endpoint: string, id: string): Promise<T> {
+  try {
+    const response = await axiosInstance.delete(`${endpoint}?id=${id}`);
     return response.data;
   } catch (error) {
     throw error;

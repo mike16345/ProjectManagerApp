@@ -29,7 +29,7 @@ class userController {
     res.send(users);
   };
 
-  getUserByEmail = async (req: Request, res: Response) => {
+  getUser = async (req: Request, res: Response) => {
     const id = req.params.id;
     const user = await userServices.getUser(id);
     res.send(user);
@@ -42,15 +42,16 @@ class userController {
   };
 
   updateUser = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    const user = await userServices.updateUser(id, req.body);
+    console.log("req", req);
+    const user = await userServices.updateUser(req.body._id, req.body);
     res.send(user);
   };
 
   deleteUser = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    await userServices.deleteUser(id);
-
+    const id = req.query.id;
+    console.log("id", id);
+    const resp = await userServices.deleteUser(id as string);
+    console.log("resp", resp);
     res.send("User deleted");
   };
 }
