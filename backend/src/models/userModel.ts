@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = "dsfasefs$$WT#T#$T#$T$#^%GESG$%U*&^IVSDGRTG$E%";
 
 const userSchema: Schema<IUser> = new Schema({
-  id: String,
   name: String,
   email: String,
   type: String,
@@ -33,7 +32,6 @@ export const genToken = (id: string) => {
 };
 
 export const UserSchemaValidation = Joi.object({
-  id: Joi.string(),
   name: Joi.string().min(2).max(25).required(),
   email: Joi.string().min(2).max(30).required().email(),
 });

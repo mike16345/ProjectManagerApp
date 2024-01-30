@@ -26,12 +26,12 @@ export class ItemRequests<T> {
   deleteItemFromRequest = (id: string, from: string) => {
     return deleteItem<T>(`${this.endpoint}/${from}`, id);
   };
+
   bulkAddItemsRequest = (data: T[]) => {
     return sendData<T[]>(`${this.endpoint}/bulkAdd`, data);
   };
 
   getItemsRequest = () => {
-    console.log("endpoint", `${this.endpoint}/getItems`);
     return fetchData<T[]>(`${this.endpoint}/getItems`);
   };
 

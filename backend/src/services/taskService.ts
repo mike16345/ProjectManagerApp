@@ -5,7 +5,6 @@ export class TaskService {
   async createTask(data: any) {
     try {
       const newTask = await Task.create(data);
-      console.log("Task created", newTask);
       return newTask;
     } catch (error) {
       console.log(error);
@@ -51,9 +50,9 @@ export class TaskService {
       console.log(error);
     }
   }
-  async updateTask(id: string, data: any) {
+  async updateTask(data: any) {
     try {
-      const task = await Task.findByIdAndUpdate({ _id: id }, data, {
+      const task = await Task.findByIdAndUpdate({ _id: data._id }, data, {
         new: true,
       });
 
@@ -70,7 +69,7 @@ export class TaskService {
     try {
       const updatedTasks = await Promise.all(
         data.map(async (task) => {
-          return await this.updateTask(task._id, task);
+          return await this.updateTask(task);
         })
       );
 

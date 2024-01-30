@@ -14,6 +14,7 @@ import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
 import { projectRequests } from "@/requests/ProjectRequests";
 import { BY_PROJECT_ENDPOINT, taskRequests } from "@/requests/TaskRequests";
 import { useTasksStore } from "@/store/tasksStore";
+import { refreshData } from "@/requests/dataRefresher";
 
 const allTasks: IAllTasks = {
   [TaskStatus.TODO]: [],
@@ -35,8 +36,19 @@ const ProjectOverview: React.FC = () => {
   const { toast } = useToast();
 
   const filterUsers = () => {
+    console.log("Users", users);
+
     return users.filter((user) =>
-      user.projects.every((projectID) => projectID !== activeProject?._id)
+      user.projects.every((projectID) => {
+        if (projectID === activeProject?._id && user.isAdmin) {
+          console.log(
+            `User : ${user.name} project id ${projectID} is equal to ${
+              activeProject?._id
+            } = ${activeProject?._id === projectID}`
+          );
+        }
+        return projectID !== activeProject?._id;
+      })
     );
   };
 
@@ -85,8 +97,9 @@ const ProjectOverview: React.FC = () => {
     toast({
       title: "User added to project",
       variant: "success",
-      duration: 3000,
+      duration: 2000,
     });
+    await refreshData();
     setAvailableUsers(filterUsers());
   };
 
@@ -105,9 +118,6 @@ const ProjectOverview: React.FC = () => {
       (user) => user.email !== userToDelete.email
     );
 
-    const filteredTasks = Object.values(taskArr).map((tasks: ITask[]) => {
-      tasks.forEach(() => {});
-    });
     activeProject.users = filteredProjectUsers;
     await projectRequests.editItemRequest(activeProject);
     await removeProjectFromUser(userToDelete.email);
@@ -115,6 +125,7 @@ const ProjectOverview: React.FC = () => {
     setAvailableUsers(filterUsers());
 
     if (activeProject) getTasksFromAPI(activeProject._id!);
+    refreshData();
   };
 
   const removeUserFromTasks = async (userEmail: string) => {
@@ -166,11 +177,9 @@ const ProjectOverview: React.FC = () => {
   };
 
   const onCreateIssue = async (newTask: ITask) => {
-    console.log("New task", newTask);
     newTask.status = taskTypeToAdd;
     try {
       const task = await taskRequests.addItemRequest(newTask);
-      console.log("task", task);
       toast({
         title: "Task Created",
         description: "Successfully created task",
@@ -233,6 +242,7 @@ const ProjectOverview: React.FC = () => {
       });
 
       if (activeProject) getTasksFromAPI(activeProject._id!);
+      refreshData();
     } catch (error) {
       toast({
         title: "Could not delete task",

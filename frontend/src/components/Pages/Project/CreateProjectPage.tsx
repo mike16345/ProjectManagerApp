@@ -70,7 +70,7 @@ const formSchema = z.object({
 export const CreateProjectPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { activeUser, users } = useUsersStore();
+  const { activeUser, users, setUsers } = useUsersStore();
 
   const { projects, setActiveProject, setProjects } = useProjectsStore();
   const [deadline, setDeadline] = useState(false);
@@ -140,20 +140,31 @@ export const CreateProjectPage = () => {
   };
 
   const handleCreateProject = async (newProject: IProject) => {
-    const project = await projectRequests.addItemRequest(newProject);
-    setProjects([...projects, project]);
-    setActiveProject(project);
+    try {
+      const project = await projectRequests.addItemRequest(newProject);
+      setProjects([...projects, project]);
+      setActiveProject(project);
+      newProject.users.forEach((user) => {
+        user.projects = [...user.projects, project._id!];
+      });
 
-    newProject.users.forEach(async (user) => {
-      user.projects = [...user.projects, project._id!];
-    });
-    
-    await userRequests.bulkEditItemsRequest(newProject.users);
-    toast({
-      title: "Successfully created project",
-      variant: "success",
-      duration: 2000,
-    });
+      await userRequests.bulkEditItemsRequest(newProject.users);
+      await userRequests.getItemsRequest().then((users) => {
+        setUsers(users);
+      });
+      toast({
+        title: "Successfully created project",
+        variant: "success",
+        duration: 2000,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Failed to create project",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
 
     navigate("/project_overview");
   };

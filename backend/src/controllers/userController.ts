@@ -40,8 +40,13 @@ class userController {
   };
 
   updateUser = async (req: Request, res: Response) => {
-    const user = await userServices.updateUser(req.body._id, req.body);
+    const user = await userServices.updateUser(req.body);
     res.send(user);
+  };
+
+  updateManyUsers = async (req: Request, res: Response) => {
+    const users = await userServices.updateManyUsers(req.body);
+    res.send(users);
   };
 
   deleteUser = async (req: Request, res: Response) => {

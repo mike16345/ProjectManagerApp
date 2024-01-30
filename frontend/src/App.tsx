@@ -17,28 +17,18 @@ import useAuth from "./Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { Toaster } from "./components/ui/toaster";
-import { projectRequests } from "./requests/ProjectRequests";
-import { userRequests } from "@/requests/UserRequests";
-import { taskRequests } from "./requests/TaskRequests";
+import { refreshData } from "./requests/dataRefresher";
 
 function App() {
   const { authed } = useAuth();
 
-  const { activeUser, setActiveUser, setUsers } = useUsersStore();
-  const { setProjects, setActiveProject } = useProjectsStore();
-  const { setTasks } = useTasksStore();
+  const { activeUser, setActiveUser } = useUsersStore();
+  const { setActiveProject } = useProjectsStore();
 
   const initData = async () => {
-    const projects = await projectRequests.getItemsRequest();
-    const tasks = await taskRequests.getItemsRequest();
-    const users = await userRequests.getItemsRequest();
-
+    refreshData();
     const userToken = secureLocalStorage.getItem("user-token");
     const activeProject = secureLocalStorage.getItem("active-project");
-
-    setProjects(projects);
-    setTasks(tasks);
-    setUsers(users);
 
     if (userToken) {
       const response = await verifyToken(userToken as string);

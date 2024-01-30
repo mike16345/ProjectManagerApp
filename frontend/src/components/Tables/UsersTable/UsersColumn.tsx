@@ -14,10 +14,13 @@ import { When } from "react-if";
 import { Checkbox } from "@/components/ui/checkbox";
 import { userRequests } from "@/requests/UserRequests";
 import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
+import { taskRequests } from "@/requests/TaskRequests";
+import { refreshData } from "@/requests/dataRefresher";
 
 const handleMakeUserAdmin = async (user: IUser) => {
   user.isAdmin = true;
   await userRequests.editItemRequest(user);
+  refreshData();
 };
 
 const handleDeleteUser = async (user: IUser) => {
@@ -30,8 +33,13 @@ const handleDeleteUser = async (user: IUser) => {
     project.users = project.users.filter((u) => u._id !== user._id);
   }
 
+  user.projects.forEach(async (project) => {
+    await taskRequests.removeAssignedUserFromTasks(user._id, project);
+  });
+
   await projectRequests.bulkEditItemsRequest(userProjects);
   await userRequests.deleteItemRequest(user._id);
+  refreshData();
 };
 
 export const columns: ColumnDef<IUser>[] = [

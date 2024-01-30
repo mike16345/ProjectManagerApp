@@ -13,6 +13,9 @@ router.get("/getItems", UserController.getUsers);
 // Update user
 router.put("/edit/", UserController.updateUser);
 
+// Update user
+router.put("/edit/bulk", UserController.updateManyUsers);
+
 // Get user by id
 router.get("/getItem/:id", UserController.getUser);
 
@@ -35,7 +38,7 @@ router.post("/register", async (req: Request, res: Response) => {
       });
     }
 
-    const newToken = genToken(user._id);
+    const newToken = genToken(user._id.toString());
 
     return res.json({ isNew: true, status: "registered", data: newToken });
   } catch (error) {
@@ -55,7 +58,7 @@ router.post("/login", async (req: Request, res: Response) => {
   if (!passwordObj) return;
 
   if (await bcrypt.compare(password, passwordObj.password)) {
-    const newToken = genToken(user._id);
+    const newToken = genToken(user._id.toString());
 
     return res.json({
       status: "ok",

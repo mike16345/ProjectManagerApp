@@ -12,8 +12,6 @@ const taskSchema: Schema<ITask> = new Schema({
 });
 
 export const TaskSchemaValidation = Joi.object({
-  id: Joi.string(),
-
   name: Joi.string().min(2).max(100).required(),
 
   assignee: Joi.object().optional(),

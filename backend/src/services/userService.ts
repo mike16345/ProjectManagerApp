@@ -45,17 +45,31 @@ export class UserService {
       console.log(error);
     }
   }
-  async updateUser(id: string, data: any) {
+  async updateUser(data: any) {
     try {
-      const user = await User.findByIdAndUpdate({ _id: id }, data, {
+      const user = await User.findByIdAndUpdate({ _id: data._id }, data, {
         new: true,
       });
 
       if (!user) {
         return "User not available";
       }
-      
+
       return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateManyUsers(data: any[]) {
+    try {
+      const updatedUsers = await Promise.all(
+        data.map(async (user) => {
+          return await this.updateUser(user);
+        })
+      );
+      
+      return updatedUsers;
     } catch (error) {
       console.log(error);
     }
