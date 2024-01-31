@@ -39,7 +39,11 @@ const ProfileModal: React.FC = () => {
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel className="flex flex-col justify-center gap-1">
+            <div className="text-primary">My Account</div>
+            <div className=" text-muted-foreground">{activeUser?.email}</div>
+          </DropdownMenuLabel>
+
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem className=" cursor-pointer">
@@ -53,7 +57,10 @@ const ProfileModal: React.FC = () => {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
 
-            <ModeToggle />
+            <div className="flex items-center  justify-between ">
+              <span className="ml-2 text-sm">Theme</span>
+              <ModeToggle />
+            </div>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem

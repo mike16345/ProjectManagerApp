@@ -12,35 +12,6 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { When } from "react-if";
 import { Checkbox } from "@/components/ui/checkbox";
-import { userRequests } from "@/requests/UserRequests";
-import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
-import { taskRequests } from "@/requests/TaskRequests";
-import { refreshData } from "@/requests/dataRefresher";
-
-const handleMakeUserAdmin = async (user: IUser) => {
-  user.isAdmin = true;
-  await userRequests.editItemRequest(user);
-  refreshData();
-};
-
-const handleDeleteUser = async (user: IUser) => {
-  const userProjects = await projectRequests.getItemsByRequest(
-    user._id,
-    BY_USER_ENDPOINT
-  );
-
-  for (const project of userProjects) {
-    project.users = project.users.filter((u) => u._id !== user._id);
-  }
-
-  user.projects.forEach(async (project) => {
-    await taskRequests.removeAssignedUserFromTasks(user._id, project);
-  });
-
-  await projectRequests.bulkEditItemsRequest(userProjects);
-  await userRequests.deleteItemRequest(user._id);
-  await refreshData();
-};
 
 export const columns: ColumnDef<IUser>[] = [
   {
@@ -103,8 +74,13 @@ export const columns: ColumnDef<IUser>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ table, row }) => {
       const user = row.original;
+      const handleDeleteUser = table.options.meta?.handleDeleteData;
+      const handleViewUser = table.options.meta?.handleViewData;
+      const handleMakeUserAdmin = table.options.meta?.handleSetData;
+      const handleViewUserProjects = table.options.meta?.handleViewNestedData;
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -115,15 +91,30 @@ export const columns: ColumnDef<IUser>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <When condition={!user.isAdmin}>
-              <DropdownMenuItem onClick={() => handleMakeUserAdmin(user)}>
+              <DropdownMenuItem
+                onClick={() => handleMakeUserAdmin && handleMakeUserAdmin(user)}
+              >
                 {!user.isAdmin && "Make Admin"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </When>
-            <DropdownMenuItem>View user</DropdownMenuItem>
-            <DropdownMenuItem>View projects</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeleteUser(user)}>
+            <DropdownMenuItem
+              onClick={() => handleViewUser && handleViewUser(user)}
+            >
+              View user
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                handleViewUserProjects && handleViewUserProjects(user.projects)
+              }
+            >
+              View projects
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleDeleteUser && handleDeleteUser(user)}
+            >
               Delete User
             </DropdownMenuItem>
           </DropdownMenuContent>

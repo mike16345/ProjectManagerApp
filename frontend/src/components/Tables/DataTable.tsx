@@ -27,32 +27,42 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { FilterIcon } from "lucide-react";
+import { FilterIcon, Trash, Trash2, Trash2Icon } from "lucide-react";
 import { useToast } from "../ui/use-toast";
+import { TableMeta, RowData } from "@tanstack/react-table";
+import { When } from "react-if";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  handleViewData: (data: TData) => void;
+  handleSetData: (data: TData) => void;
+  handleDeleteData: (data: TData) => void;
+  handleViewNestedData: (data: any | any[]) => void;
+}
+
+declare module "@tanstack/table-core" {
+  interface TableMeta<TData extends RowData> {
+    handleViewData: (data: TData) => void;
+    handleSetData: (data: TData) => void;
+    handleDeleteData: (data: TData) => void;
+    handleViewNestedData: (data: any | any[]) => void;
+  }
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  handleViewData,
+  handleDeleteData,
+  handleViewNestedData,
+  handleSetData,
 }: DataTableProps<TData, TValue>) {
-  const { toast } = useToast();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const handleAlert = (
-    title: string,
-    description: string,
-    severity: "success" | "destructive" | "default" = "default"
-  ) => {
-    toast({ title: title, description: description, variant: severity });
-  };
 
   const table = useReactTable({
     data,
@@ -64,6 +74,12 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    meta: {
+      handleViewData: (data: TData) => handleViewData(data),
+      handleDeleteData: (data: TData) => handleDeleteData(data),
+      handleViewNestedData: (data: TData) => handleViewNestedData(data),
+      handleSetData: (data: TData) => handleSetData(data),
+    },
 
     state: {
       sorting,
@@ -73,6 +89,12 @@ export function DataTable<TData, TValue>({
     },
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const handleDeleteRows = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    selectedRows.forEach(async (row) => await handleDeleteData(row.original));
+    setRowSelection({});
+  };
 
   return (
     <div>
@@ -117,8 +139,18 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="mb-2 text-sm text-muted-foreground self-end">
-          Page {pageNumber} of {table.getPageCount()}
+        <div className="mb-3 text-sm  flex items-center justify-between ">
+          <div className="text-muted-foreground">
+            Page {pageNumber} of {table.getPageCount()}
+          </div>
+          <When condition={Object.keys(rowSelection).length > 0}>
+            <div
+              onClick={handleDeleteRows}
+              className="cursor-pointer hover:scale-[1.03] text-foreground "
+            >
+              <Trash2Icon className="cursor-pointer" />
+            </div>
+          </When>
         </div>
       </div>
       <div className="rounded-md border max-h-[75vh] overflow-auto">

@@ -12,9 +12,15 @@ import {
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useProjectsStore } from "@/store/projectsStore";
+import { table } from "console";
 
 const handleDeleteProject = async (project: IProject) => {
   useProjectsStore.getState().deleteProject(project);
+};
+
+const handleViewProject = (project: IProject) => {
+  useProjectsStore.getState().setActiveProject(project);
+  window.location.href = "/project_overview/";
 };
 
 export const columns: ColumnDef<IProject>[] = [
@@ -75,8 +81,11 @@ export const columns: ColumnDef<IProject>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ table, row }) => {
       const project = row.original;
+      const handleDeleteProject = table.options.meta?.handleDeleteData;
+      const handleViewProject = table.options.meta?.handleViewData;
+      const handleViewProjectUsers = table.options.meta?.handleViewNestedData;
 
       return (
         <DropdownMenu>
@@ -89,9 +98,23 @@ export const columns: ColumnDef<IProject>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View users</DropdownMenuItem>
-            <DropdownMenuItem>View project</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDeleteProject(project)}>
+            <DropdownMenuItem
+              onClick={() => handleViewProject && handleViewProject(project)}
+            >
+              View project
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                handleViewProjectUsers && handleViewProjectUsers(project.users)
+              }
+            >
+              View users
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                handleDeleteProject && handleDeleteProject(project)
+              }
+            >
               Delete Project
             </DropdownMenuItem>
           </DropdownMenuContent>
