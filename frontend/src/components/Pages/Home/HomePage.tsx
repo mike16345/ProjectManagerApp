@@ -1,86 +1,15 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useUsersStore } from "@/store/usersStore";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
-import { IProject, ITask } from "@/interfaces";
-import ProjectPreviewBox from "../Project/AllProjectsPage/ProjectPreviewBox";
+import { Deadline, IProject, ITask } from "@/interfaces";
 import { taskRequests } from "@/requests/TaskRequests";
-import { Else, If, Then, When } from "react-if";
-import Task from "@/components/Task/Task";
-import { useNavigate } from "react-router-dom";
+import { DataCarousel } from "@/components/DataCarousel/DataCarousel";
+
 import secureLocalStorage from "react-secure-storage";
-
-interface IDataCarousel<T> {
-  data: T[];
-  type: "Tasks" | "Projects";
-}
-
-export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
-  const navigate = useNavigate();
-
-  return (
-    <If condition={data.length > 0}>
-      <Then>
-        <Carousel className="w-full max-w-md ">
-          <div className=" flex justify-center items-center">
-            <CarouselPrevious />
-            <CarouselContent className="">
-              {data.map((item, index) => (
-                <CarouselItem
-                  className="  flex items-center justify-center  "
-                  key={index}
-                >
-                  <If condition={type === "Projects"}>
-                    <Then>
-                      <ProjectPreviewBox
-                        className="w-full h-full"
-                        project={item}
-                        isMyProject={true}
-                      />
-                    </Then>
-                    <Else>
-                      <Task
-                        task={item}
-                        setTaskToEdit={(task: ITask) => {}}
-                        isMyTasks={true}
-                      />
-                    </Else>
-                  </If>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselNext />
-          </div>
-        </Carousel>
-      </Then>
-      <Else>
-        <div className="flex flex-col">
-          <div className=" h-32 w-32 flex-center p-4">
-            <p className="text-center text-gray-500">No {type} found.</p>
-          </div>
-          <If condition={type === "Projects"}>
-            <Then>
-              <Button onClick={() => navigate("/allProjects")}>
-                Create/Join a Project
-              </Button>
-            </Then>
-          </If>
-        </div>
-      </Else>
-    </If>
-  );
-};
 
 const threeDaysInMilliseconds = 72 * 60 * 60 * 1000; // 72 hours in milliseconds
 
@@ -90,6 +19,8 @@ export const HomePage = () => {
 
   const [userProjects, setUserProjects] = useState<IProject[]>([]);
   const [userTasks, setUserTasks] = useState<ITask[]>([]);
+  const [deadlines, setDeadlines] = useState<Date[]>([]);
+  const deadlineStyle = { backgroundColor: "red" };
 
   const checkForUpcomingDeadlines = (userProjects: IProject[]) => {
     for (let i = 0; i < userProjects.length; i++) {
@@ -107,6 +38,22 @@ export const HomePage = () => {
     return false;
   };
 
+  const getDeadlineDays = (userProjects: IProject[]) => {
+    const deadlines = userProjects
+      .map((proj) => {
+        if (proj.deadline) {
+          return proj.deadline.endDate;
+        }
+      })
+      .filter((date) => date !== undefined)
+      .map((date) => {
+        return new Date(date);
+      });
+
+    console.log("deadlineDays: ", deadlines);
+    setDeadlines(deadlines);
+  };
+
   useEffect(() => {
     projectRequests
       .getItemsByRequest(activeUser?._id!, BY_USER_ENDPOINT)
@@ -115,6 +62,7 @@ export const HomePage = () => {
         const showedNotification =
           secureLocalStorage.getItem("deadline-update");
         const isDeadline = checkForUpcomingDeadlines(projects);
+        getDeadlineDays(projects);
         if (!showedNotification) {
           toast({
             title: `${
@@ -148,49 +96,47 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <div className=" flex flex-col m-8 gap-2 ">
-      <div className="flex justify-between items-center">
-        <div className="text-3xl font-bold">
-          Hello {activeUser?.name || "User"}
-        </div>
-        <Button onClick={() => console.log("Go to profile page")}>
-          My Profile
-        </Button>
+    <div>
+      <div className="text-3xl font-bold m-6">
+        Hello {activeUser?.name || "User"}
       </div>
-      <div className=" flex items-center justify-between h-96">
-        <div className="flex flex-col gap-2">
-          <span className="text-xl font-semibold">Upcoming Projects</span>
-          <div className="border  rounded p-4">
-            <DataCarousel type="Projects" data={userProjects || []} />
+      <div className=" grid grid-cols-1 md:grid-cols-2 place-items-center m-8 gap-8 ">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-xl font-semibold">Upcoming Projects</span>
+            <div className="border  rounded p-4">
+              <DataCarousel type="Projects" data={userProjects || []} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-xl font-semibold">Upcoming Tasks</span>
+            <div className="border  rounded p-4">
+              <DataCarousel type="Tasks" data={userTasks || []} />
+            </div>
           </div>
         </div>
-        <Calendar />
-      </div>
-      <div className=" flex items-center justify-between">
+
         <div className="flex flex-col gap-2">
-          <span className="text-xl font-semibold">Upcoming Tasks</span>
-          <div className="border  rounded p-4">
-            <DataCarousel type="Tasks" data={userTasks || []} />
-          </div>
-        </div>
-        <div className="flex flex-col justify-center items-start w-[300px]   ">
-          <span className="text-xl font-semibold">Statistics</span>
-          <div className="flex flex-col justify-center border w-full p-4">
-            <div className=" flex justify-between items-center">
-              <span>Projects:</span>
-              <span>{userProjects.length}</span>
-            </div>
-            <div className=" flex justify-between items-center">
-              <span>Tasks:</span>
-              <span>{userTasks.length}</span>
-            </div>
-            <div className=" flex justify-between items-center">
-              <span>Tasks completed on time:</span>
-              <span>5</span>
-            </div>
-            <div className=" flex justify-between items-center ">
-              <span>Missed deadlines:</span>
-              <span>5</span>
+          <div className="text-xl font-semibold ">Deadlines</div>
+          <Calendar
+            modifiers={{ deadline: deadlines }}
+            modifiersStyles={{ deadline: deadlineStyle }}
+          />
+          <div className="flex flex-col justify-center items-start w-[300px]   ">
+            <span className="text-xl font-semibold">Statistics</span>
+            <div className="flex flex-col justify-center border w-full p-4">
+              <div className=" flex justify-between items-center">
+                <span>Projects:</span>
+                <span>{userProjects.length}</span>
+              </div>
+              <div className=" flex justify-between ">
+                <span>Tasks:</span>
+                <span>{userTasks.length}</span>
+              </div>
+              <div className=" flex justify-between items-center">
+                <span>Tasks completed on time:</span>
+                <span>5</span>
+              </div>
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ export interface IProject {
   name: string;
   users: IUser[];
   description?: string;
-  deadline?: Deadline | null;
+  deadline?: Deadline;
   projectLead: IUser;
   projectType: ProjectType;
   date_created?: string;
@@ -43,7 +43,7 @@ export interface IGoogleUser extends IUser {
 
 export interface Deadline {
   startDate: Date;
-  endDate: Date | null;
+  endDate: Date;
 }
 
 export interface IAllTasks {
