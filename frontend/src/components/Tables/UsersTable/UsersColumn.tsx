@@ -107,7 +107,7 @@ export const columns: ColumnDef<IUser>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                handleViewUserProjects && handleViewUserProjects(user.projects)
+                handleViewUserProjects && handleViewUserProjects(user, user._id)
               }
             >
               View projects

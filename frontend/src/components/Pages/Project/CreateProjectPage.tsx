@@ -91,9 +91,6 @@ export const CreateProjectPage = () => {
     console.log("values: ", values);
     const projectLead = JSON.parse(values.projectLead);
 
-    console.log("project Lead: ", projectLead);
-    console.log("users: ", users);
-
     const project: IProject = {
       name: values.name,
       users: projectUsers,
@@ -112,7 +109,6 @@ export const CreateProjectPage = () => {
         ? !projectUsers.some((projectUser) => projectUser._id === user._id)
         : projectUsers.some((projectUser) => projectUser._id === user._id)
     );
-    console.log("filtered users: ", filtered);
     return filtered;
   };
 
@@ -202,7 +198,7 @@ export const CreateProjectPage = () => {
             name="description"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Task Description</FormLabel>
+                <FormLabel>Project Description</FormLabel>
                 <FormControl>
                   <Textarea
                     className=" w-1/2 focus-visible:ring-0 focus-visible:border-primary"

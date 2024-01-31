@@ -12,12 +12,18 @@ import { userRequests } from "@/requests/UserRequests";
 import { refreshData } from "@/requests/dataRefresher";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import ViewDataDialog from "@/components/Tables/ViewDataDialog";
+import { useState } from "react";
 
 const AdminPage = () => {
   const navigate = useNavigate();
   const { users } = useUsersStore();
   const { projects, setActiveProject, deleteProject } = useProjectsStore();
   const { toast } = useToast();
+  const [dialogData, setDialogData] = useState<any[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isProjects, setIsProjects] = useState(false);
+  const [currItemId, setCurrentItemId] = useState("");
 
   const handleAlert = (
     title: string,
@@ -54,7 +60,12 @@ const AdminPage = () => {
     refreshData();
   };
 
-  const handleViewProjectUsers = (users: IUser[]): void => {};
+  const handleViewProjectUsers = (users: IUser[], project_id: string): void => {
+    setDialogData(users);
+    setCurrentItemId(project_id);
+    setIsProjects(true);
+    setOpenDialog(true);
+  };
 
   const handleDeleteUser = async (user: IUser) => {
     const userProjects = await projectRequests.getItemsByRequest(
@@ -80,12 +91,64 @@ const AdminPage = () => {
     );
   };
 
+  const handleDeleteUserFromProject = async (
+    user: IUser,
+    project_id: string
+  ) => {
+    console.log("user projects", user.projects);
+    console.log("user name", user.name);
+    const updatedUserProjects = user.projects.filter((project: string) => {
+      return project !== project_id;
+    });
+    user.projects = [...updatedUserProjects];
+    console.log("Projects updated", user.projects);
+    const updatedProject = await projectRequests
+      .getItemRequest(project_id)
+      .then((project) => {
+        project.users = project.users.filter((u) => u._id !== user._id);
+        return project;
+      });
+
+    await projectRequests.editItemRequest(updatedProject);
+    await userRequests.editItemRequest(user);
+
+    isProjects
+      ? setDialogData(updatedProject.users)
+      : setDialogData(user.projects);
+    refreshData();
+  };
+
   const handleViewUser = (user: IUser) => {};
 
-  const handleViewUserProjects = (userProjects: IProject[]) => {};
+  const handleViewUserProjects = async (user: IUser, id: string) => {
+    const userProjs = await projectRequests.getItemsByRequest(
+      id,
+      BY_USER_ENDPOINT
+    );
+    setCurrentItemId(user._id);
+    setDialogData(userProjs);
+    setOpenDialog(true);
+    setIsProjects(false);
+  };
+
+  const handleDeleteProjFromUser = async (project: IProject, proj: string) => {
+    const user = await userRequests.getItemRequest(currItemId);
+    handleDeleteUserFromProject(user, proj);
+  };
 
   return (
     <div className=" m-12">
+      {openDialog && (
+        <ViewDataDialog
+          open={openDialog}
+          currItemId={isProjects ? currItemId : undefined}
+          data={dialogData}
+          setOpen={setOpenDialog}
+          handleDeleteItem={
+            isProjects ? handleDeleteUserFromProject : handleDeleteProjFromUser
+          }
+        />
+      )}
       <Tabs defaultValue="Users" className="w-full">
         <TabsList>
           <TabsTrigger value="Users">Users</TabsTrigger>
@@ -115,5 +178,4 @@ const AdminPage = () => {
     </div>
   );
 };
-
 export default AdminPage;

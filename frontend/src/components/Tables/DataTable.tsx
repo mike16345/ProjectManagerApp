@@ -38,7 +38,7 @@ interface DataTableProps<TData, TValue> {
   handleViewData: (data: TData) => void;
   handleSetData: (data: TData) => void;
   handleDeleteData: (data: TData) => void;
-  handleViewNestedData: (data: any | any[]) => void;
+  handleViewNestedData: (data: any | any[], id: string) => void;
 }
 
 declare module "@tanstack/table-core" {
@@ -46,7 +46,7 @@ declare module "@tanstack/table-core" {
     handleViewData: (data: TData) => void;
     handleSetData: (data: TData) => void;
     handleDeleteData: (data: TData) => void;
-    handleViewNestedData: (data: any | any[]) => void;
+    handleViewNestedData: (data: any | any[], id: string) => void;
   }
 }
 
@@ -77,7 +77,8 @@ export function DataTable<TData, TValue>({
     meta: {
       handleViewData: (data: TData) => handleViewData(data),
       handleDeleteData: (data: TData) => handleDeleteData(data),
-      handleViewNestedData: (data: TData) => handleViewNestedData(data),
+      handleViewNestedData: (data: TData, id: string) =>
+        handleViewNestedData(data, id),
       handleSetData: (data: TData) => handleSetData(data),
     },
 
