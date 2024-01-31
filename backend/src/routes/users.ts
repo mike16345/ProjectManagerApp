@@ -23,7 +23,7 @@ router.get("/getItem/:id", UserController.getUser);
 router.delete("/delete/projects/", UserController.removeProjectFromUsers);
 
 //Delete user
-router.delete("/:id", UserController.deleteUser);
+router.delete("/delete", UserController.deleteUser);
 
 // Get user by email
 router.get("/byEmail/getItem/:email", UserController.getUserByEmail);

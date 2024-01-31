@@ -38,7 +38,6 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
           <Button
             onClick={(e) => {
               e.stopPropagation();
-              console.log("clicked project");
             }}
             size={"sm"}
           >

@@ -1,7 +1,6 @@
 import { userServices } from "../services/userService";
 import { Request, Response } from "express";
 import { UserSchemaValidation } from "../models/userModel";
-import { IUser } from "../interfaces";
 
 class userController {
   addUser = async (req: Request, res: Response) => {
@@ -50,15 +49,12 @@ class userController {
   };
 
   removeProjectFromUsers = async (req: Request, res: Response) => {
-    
     const users = await userServices.removeProjectFromUsers(req.body);
-    console.log("users removed");
     res.send(users);
   };
 
   deleteUser = async (req: Request, res: Response) => {
     const id = req.query.id;
-    console.log("deleting user :", id);
     const resp = await userServices.deleteUser(id as string);
     res.send(resp);
   };

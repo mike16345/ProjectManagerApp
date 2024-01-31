@@ -36,17 +36,8 @@ const ProjectOverview: React.FC = () => {
   const { toast } = useToast();
 
   const filterUsers = () => {
-    console.log("Users", users);
-
     return users.filter((user) =>
       user.projects.every((projectID) => {
-        if (projectID === activeProject?._id && user.isAdmin) {
-          console.log(
-            `User : ${user.name} project id ${projectID} is equal to ${
-              activeProject?._id
-            } = ${activeProject?._id === projectID}`
-          );
-        }
         return projectID !== activeProject?._id;
       })
     );
@@ -73,9 +64,12 @@ const ProjectOverview: React.FC = () => {
     setTaskArr(cloned);
   };
 
-  const getTasksFromAPI = async (id: string) => {
-    const tasks = await taskRequests.getItemsByRequest(id, BY_PROJECT_ENDPOINT);
-    console.log("tasks", tasks);
+  const getTasksFromAPI = async () => {
+    if (!activeProject) return;
+    const tasks = await taskRequests.getItemsByRequest(
+      activeProject._id!,
+      BY_PROJECT_ENDPOINT
+    );
     filterToColumns(tasks);
   };
 
@@ -125,7 +119,7 @@ const ProjectOverview: React.FC = () => {
     await removeUserFromTasks(userToDelete._id);
     setAvailableUsers(filterUsers());
 
-    if (activeProject) getTasksFromAPI(activeProject._id!);
+    getTasksFromAPI();
     refreshData();
   };
 
@@ -178,41 +172,31 @@ const ProjectOverview: React.FC = () => {
   };
 
   const onCreateIssue = async (newTask: ITask) => {
-    newTask.status = taskTypeToAdd;
     try {
-      const task = await taskRequests.addItemRequest(newTask);
+      await taskRequests.addItemRequest(newTask);
       toast({
         title: "Task Created",
         description: "Successfully created task",
         duration: 2000,
         variant: "success",
       });
-      setTaskArr({
-        ...taskArr,
-        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], task],
-      });
+      getTasksFromAPI();
     } catch (error) {
       toast({
         title: "Could not create task",
         description: "Failed to create task",
         duration: 2000,
-
         variant: "destructive",
       });
     }
     setIsCreatingTask(false);
   };
 
-  const onEditTask = async (taskToUpdate: any) => {
+  const onEditTask = async (taskToUpdate: ITask) => {
     try {
       console.log("updating task", taskToUpdate);
-      const task = await taskRequests.editItemRequest(taskToUpdate);
-      console.log("task", task);
-      // Fix update task Arr
-      setTaskArr({
-        ...taskArr,
-        [taskTypeToAdd]: [...taskArr[taskTypeToAdd], task],
-      });
+      await taskRequests.editItemRequest(taskToUpdate);
+      getTasksFromAPI();
       toast({
         title: "Task Updated!",
         description: "Successfully updated task",
@@ -244,7 +228,7 @@ const ProjectOverview: React.FC = () => {
         variant: "success",
       });
 
-      if (activeProject) getTasksFromAPI(activeProject._id!);
+      getTasksFromAPI();
       refreshData();
     } catch (error) {
       toast({
@@ -270,8 +254,7 @@ const ProjectOverview: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!activeProject) return;
-    getTasksFromAPI(activeProject._id!);
+    getTasksFromAPI();
   }, []);
 
   useMemo(() => {

@@ -36,7 +36,6 @@ class taskController {
   };
 
   updateTask = async (req: Request, res: Response) => {
-    console.log("body:", req.body);
     const task = await taskServices.updateTask(req.body);
     res.send(task);
   };
@@ -62,13 +61,13 @@ class taskController {
       req.body.projectId as string,
       req.body.userId
     );
-    console.log(tasks);
     res.send(tasks);
   };
 
   deleteTask = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    await taskServices.deleteTask(id);
+    const id = req.query.id;
+    console.log("id", id);
+    await taskServices.deleteTask(id as string);
 
     res.send("Task deleted");
   };

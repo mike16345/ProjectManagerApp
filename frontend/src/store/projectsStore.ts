@@ -23,18 +23,13 @@ export const useProjectsStore = create<IProjectsStore>((set, get) => ({
     set({ activeProject: project });
   },
   async deleteProject(project) {
-    // 65ad181093fd68f77236fe4a
-    // 65ad181093fd68f77236fe4a
-    console.log("project id:", project._id);
-    const res = await userRequests.removeProjectFromUsers(project._id!);
-    console.log("res:", res);
+    await userRequests.removeProjectFromUsers(project._id!);
 
     project.users.forEach(async (user) => {
       await taskRequests.removeAssignedUserFromTasks(user._id, project._id!);
     });
 
-    const resp = await projectRequests.deleteItemRequest(project._id);
-    console.log("resp:", resp);
+    await projectRequests.deleteItemRequest(project._id);
     await refreshData();
   },
 }));

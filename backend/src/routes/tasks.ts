@@ -24,7 +24,7 @@ router.put("/edit", TaskController.updateTask);
 router.put("/edit/bulk", TaskController.updateManyTasks);
 
 // Delete Task
-router.delete("/:id", TaskController.deleteTask);
+router.delete("/delete", TaskController.deleteTask);
 
 // Remove user from tasks
 router.put("/assignee", express.json(), TaskController.removeUserFromTasks);
