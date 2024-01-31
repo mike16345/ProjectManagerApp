@@ -67,7 +67,7 @@ export class ProjectService {
   async getUserProjects(id: string) {
     try {
       const projects = await Project.find({ "users._id": id });
-      
+
       return projects;
     } catch (error) {
       console.log(error);

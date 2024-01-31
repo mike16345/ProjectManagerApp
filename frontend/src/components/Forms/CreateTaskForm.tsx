@@ -93,13 +93,26 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const assignee = JSON.parse(values.assignee);
+    if (taskToEdit) {
+      onCreateTask({
+        ...taskToEdit,
+        name: values.name,
+        description: values.description || "",
+        assignee: assignee,
+        status:
+          (values.status as TaskStatus) || (taskToEdit.status as TaskStatus),
+        priority: values.priority as Priority,
+      });
+      return;
+    }
+
     const task: ITask = {
       name: values.name,
       assignee: assignee || ({} as IUser),
       priority: values.priority as Priority,
       description: values.description || "",
       status: values.status as TaskStatus,
-      project_id: taskToEdit?.project_id || activeProject?._id!,
+      project_id: activeProject?._id!,
     };
 
     onCreateTask(task);

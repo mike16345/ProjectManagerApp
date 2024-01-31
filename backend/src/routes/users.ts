@@ -11,13 +11,16 @@ const router = express.Router();
 router.get("/getItems", UserController.getUsers);
 
 // Update user
-router.put("/edit/", UserController.updateUser);
+router.put("/edit", UserController.updateUser);
 
 // Update user
 router.put("/edit/bulk", UserController.updateManyUsers);
 
 // Get user by id
 router.get("/getItem/:id", UserController.getUser);
+
+// Delete project from users
+router.delete("/delete/projects/", UserController.removeProjectFromUsers);
 
 //Delete user
 router.delete("/:id", UserController.deleteUser);
@@ -72,9 +75,7 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
-  console.log("here");
   const user = await User.findOne({ _id: req.tokenData.id }, { password: 0 });
-  console.log("user:", user);
   return res.json(user);
 });
 

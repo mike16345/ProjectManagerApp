@@ -39,7 +39,7 @@ const handleDeleteUser = async (user: IUser) => {
 
   await projectRequests.bulkEditItemsRequest(userProjects);
   await userRequests.deleteItemRequest(user._id);
-  refreshData();
+  await refreshData();
 };
 
 export const columns: ColumnDef<IUser>[] = [

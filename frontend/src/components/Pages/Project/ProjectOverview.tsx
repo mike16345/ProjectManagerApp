@@ -75,6 +75,7 @@ const ProjectOverview: React.FC = () => {
 
   const getTasksFromAPI = async (id: string) => {
     const tasks = await taskRequests.getItemsByRequest(id, BY_PROJECT_ENDPOINT);
+    console.log("tasks", tasks);
     filterToColumns(tasks);
   };
 
@@ -204,8 +205,10 @@ const ProjectOverview: React.FC = () => {
 
   const onEditTask = async (taskToUpdate: any) => {
     try {
+      console.log("updating task", taskToUpdate);
       const task = await taskRequests.editItemRequest(taskToUpdate);
-
+      console.log("task", task);
+      // Fix update task Arr
       setTaskArr({
         ...taskArr,
         [taskTypeToAdd]: [...taskArr[taskTypeToAdd], task],
@@ -230,7 +233,7 @@ const ProjectOverview: React.FC = () => {
     setIsCreatingTask(false);
   };
 
-  const handleDeleteTask = async (id: number) => {
+  const handleDeleteTask = async (id: string) => {
     try {
       await taskRequests.deleteItemRequest(id);
 

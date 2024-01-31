@@ -40,6 +40,7 @@ export async function updateItem<T>(
 
 export async function deleteItem<T>(endpoint: string, id: string): Promise<T> {
   try {
+    console.log(`Endpoint: ${endpoint}?id=${id}`);
     const response = await axiosInstance.delete(`${endpoint}?id=${id}`);
     return response.data;
   } catch (error) {

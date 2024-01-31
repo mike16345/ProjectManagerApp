@@ -10,8 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { When } from "react-if";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useProjectsStore } from "@/store/projectsStore";
+
+const handleDeleteProject = async (project: IProject) => {
+  useProjectsStore.getState().deleteProject(project);
+};
 
 export const columns: ColumnDef<IProject>[] = [
   {
@@ -84,17 +88,12 @@ export const columns: ColumnDef<IProject>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <When condition={project.name}>
-              <DropdownMenuItem
-                onClick={() => console.log("Doing project action")}
-              >
-                {!project && "Do project action"}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </When>
+            <DropdownMenuSeparator />
             <DropdownMenuItem>View users</DropdownMenuItem>
             <DropdownMenuItem>View project</DropdownMenuItem>
-            <DropdownMenuItem>Delete Project</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteProject(project)}>
+              Delete Project
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

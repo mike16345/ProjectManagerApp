@@ -49,12 +49,18 @@ class userController {
     res.send(users);
   };
 
+  removeProjectFromUsers = async (req: Request, res: Response) => {
+    
+    const users = await userServices.removeProjectFromUsers(req.body);
+    console.log("users removed");
+    res.send(users);
+  };
+
   deleteUser = async (req: Request, res: Response) => {
     const id = req.query.id;
-    console.log("id", id);
+    console.log("deleting user :", id);
     const resp = await userServices.deleteUser(id as string);
-    console.log("resp", resp);
-    res.send("User deleted");
+    res.send(resp);
   };
 }
 

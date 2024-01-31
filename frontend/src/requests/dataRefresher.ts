@@ -5,10 +5,11 @@ import { useUsersStore } from "@/store/usersStore";
 import { useProjectsStore } from "@/store/projectsStore";
 import { useTasksStore } from "@/store/tasksStore";
 
-export const refreshData = () => {
-  taskRequests
-    .getItemsRequest()
-    .then((tasks) => useTasksStore.getState().setTasks(tasks));
+export const refreshData = async () => {
+  taskRequests.getItemsRequest().then((tasks) => {
+    console.log("tasks:", tasks);
+    useTasksStore.getState().setTasks(tasks);
+  });
 
   projectRequests
     .getItemsRequest()

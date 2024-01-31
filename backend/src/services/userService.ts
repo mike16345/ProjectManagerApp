@@ -61,6 +61,15 @@ export class UserService {
     }
   }
 
+  async removeProjectFromUsers(projectId: any) {
+    const updatedUsers = await User.updateMany(
+      { projects: projectId },
+      { $pull: { projects: projectId } }
+    );
+
+    return updatedUsers;
+  }
+
   async updateManyUsers(data: any[]) {
     try {
       const updatedUsers = await Promise.all(
@@ -68,7 +77,7 @@ export class UserService {
           return await this.updateUser(user);
         })
       );
-      
+
       return updatedUsers;
     } catch (error) {
       console.log(error);

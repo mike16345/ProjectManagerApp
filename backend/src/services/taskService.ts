@@ -5,6 +5,7 @@ export class TaskService {
   async createTask(data: any) {
     try {
       const newTask = await Task.create(data);
+      console.log("new task", newTask);
       return newTask;
     } catch (error) {
       console.log(error);
@@ -50,6 +51,7 @@ export class TaskService {
       console.log(error);
     }
   }
+
   async updateTask(data: any) {
     try {
       const task = await Task.findByIdAndUpdate({ _id: data._id }, data, {

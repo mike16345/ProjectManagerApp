@@ -53,10 +53,11 @@ class projectController {
   };
 
   deleteProject = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    await projectServices.deleteProject(id);
-
-    res.send("Project deleted");
+    const id = req.query.id;
+    console.log("deleting project", id);
+    const resp = await projectServices.deleteProject(id as string);
+    console.log("resp:", resp);
+    res.send(resp);
   };
 }
 
