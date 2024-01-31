@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IGoogleUser } from "@/interfaces";
 import { useToast } from "../ui/use-toast";
+import { userRequests } from "@/requests/UserRequests";
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -68,13 +69,13 @@ const LoginForm: React.FC<ILoginForm> = ({
 
   const onLoginHandler = async (userDetails: any) => {
     console.log("hello", userDetails);
-    const response = await loginHandler(userDetails);
-    const user = response.user;
+    const response = await userRequests.loginHandler(userDetails);
     console.log("response:", response);
+    const user = response.user;
     const token = response.token;
 
     if (token) {
-      // Place in Try catch 
+      // Place in Try catch
       secureLocalStorage.clear();
       secureLocalStorage.setItem("user-token", token);
 

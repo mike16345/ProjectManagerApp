@@ -65,7 +65,7 @@ interface CreateTaskFormProps {
   confirmButtonText: string;
   onCreateTask: (task: ITask) => void;
   availableUsers: Array<IUser>;
-  handleDeleteTask: (taskId: number) => void;
+  handleDeleteTask: (taskId: string) => void;
 }
 
 export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({

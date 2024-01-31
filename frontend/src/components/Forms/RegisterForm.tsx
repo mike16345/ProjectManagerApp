@@ -33,6 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "../ui/use-toast";
 import { useUsersStore } from "@/store/usersStore";
 import { getImage, getImageNames } from "@/utils/utils";
+import { userRequests } from "@/requests/UserRequests";
 
 const registerFormSchema = z.object({
   name: z
@@ -88,11 +89,11 @@ const RegisterForm: React.FC<IRegisterForm> = ({
     const picture = getImage(imageNames[randIndex]);
 
     const newUser: IUser = { ...userDetails, picture: picture, type: "local" };
-    const { token } = await registerHandler(newUser);
-
-    if (!token) return;
-    const user = await verifyToken(token);
-    setActiveUser(user.data);
+    const res = await userRequests.registerHandler(newUser);
+    console.log("res:", res);
+    if (!res.token) return;
+    const user = await userRequests.verifyToken(res.token);
+    setActiveUser(user);
 
     toast({
       title: "Account Created!",
@@ -101,7 +102,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
       duration: 2000,
     });
     secureLocalStorage.clear();
-    secureLocalStorage.setItem("user-token", token);
+    secureLocalStorage.setItem("user-token", res.token);
 
     setTimeout(() => {
       login();

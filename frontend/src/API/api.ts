@@ -1,8 +1,15 @@
 import axiosInstance from "./apiConfig";
 
-export async function fetchData<T>(endpoint: string): Promise<T> {
+export async function fetchData<T>(
+  endpoint: string,
+  data: any,
+  headers?: any
+): Promise<T> {
   try {
-    const response = await axiosInstance.get<T>(endpoint);
+    const response = await axiosInstance.get<T>(endpoint, {
+      headers: headers,
+      data: data,
+    });
     return response.data;
   } catch (error) {
     throw error;

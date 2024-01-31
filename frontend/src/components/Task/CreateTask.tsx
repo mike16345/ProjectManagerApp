@@ -17,7 +17,7 @@ interface CreateTaskNewProps {
   confirmButtonText: string;
   availableUsers: Array<IUser>;
   onCreateTask: (task: ITask) => void;
-  handleDeleteTask: (taskId: number) => void;
+  handleDeleteTask: (taskId: string) => void;
 }
 
 export const CreateTask: React.FC<CreateTaskNewProps> = ({

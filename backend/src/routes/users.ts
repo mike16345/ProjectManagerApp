@@ -43,7 +43,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
     const newToken = genToken(user._id.toString());
 
-    return res.json({ isNew: true, status: "registered", data: newToken });
+    return res.json({ isNew: true, status: "registered", token: newToken });
   } catch (error) {
     res.status(400).json({ error: "did not work" });
   }

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { cloneDeep } from "lodash";
 import ProjectWrapper from "./ProjectWrapper";
 import TaskColumnWrapper from "../../Task/TaskColumnWrapper";
-
-import { removeAssignedUserFromTasks } from "../../../API/ProjectAPIcalls";
 import { useProjectsStore } from "../../../store/projectsStore";
 import { TaskStatus } from "../../../enums/TaskStatus";
 import { IAllTasks, ITask, IUser } from "../../../interfaces";
@@ -13,7 +11,6 @@ import { CreateTask } from "@/components/Task/CreateTask";
 import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
 import { projectRequests } from "@/requests/ProjectRequests";
 import { BY_PROJECT_ENDPOINT, taskRequests } from "@/requests/TaskRequests";
-import { useTasksStore } from "@/store/tasksStore";
 import { refreshData } from "@/requests/dataRefresher";
 
 const allTasks: IAllTasks = {
@@ -26,7 +23,6 @@ const allTasks: IAllTasks = {
 const ProjectOverview: React.FC = () => {
   const { activeProject, setActiveProject } = useProjectsStore();
   const { activeUser, users } = useUsersStore();
-  const { tasks } = useTasksStore();
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
