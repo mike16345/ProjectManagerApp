@@ -1,23 +1,23 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { verifyToken } from "./API/UserAPIcalls";
+import { useUsersStore } from "./store/usersStore";
+import { When } from "react-if";
+import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
+import { useProjectsStore } from "./store/projectsStore";
+import { Toaster } from "./components/ui/toaster";
+import { refreshData } from "./requests/dataRefresher";
+
 import LoginPage from "./components/Pages/LoginPage/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
 import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
 import AllProjectPage from "./components/Pages/Project/AllProjectsPage/AllProjectsPage";
-import { useUsersStore } from "./store/usersStore";
-import { When } from "react-if";
-import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
-import { useProjectsStore } from "./store/projectsStore";
-import { useTasksStore } from "./store/tasksStore";
 import AdminPage from "./components/Pages/AdminPage/AdminPage";
 import RequireAuth from "./Authentication/RequireAuth";
 import useAuth from "./Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import "./App.css";
-import { Toaster } from "./components/ui/toaster";
-import { refreshData } from "./requests/dataRefresher";
+import { userRequests } from "./requests/UserRequests";
 
 function App() {
   const { authed } = useAuth();
@@ -31,8 +31,8 @@ function App() {
     const activeProject = secureLocalStorage.getItem("active-project");
 
     if (userToken) {
-      const response = await verifyToken(userToken as string);
-      setActiveUser(response.data);
+      const user = await userRequests.verifyToken(userToken as string);
+      setActiveUser(user);
     }
 
     if (activeProject) {

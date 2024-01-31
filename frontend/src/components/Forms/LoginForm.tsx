@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { loginHandler, verifyToken } from "../../API/UserAPIcalls";
 
 import GoogleLogin from "../Pages/LoginPage/GoogleLogin";
 import { Else, If, Then } from "react-if";
 import useAuth from "@/Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useUsersStore } from "@/store/usersStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -68,31 +67,28 @@ const LoginForm: React.FC<ILoginForm> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   const onLoginHandler = async (userDetails: any) => {
-    console.log("hello", userDetails);
-    const response = await userRequests.loginHandler(userDetails);
-    console.log("response:", response);
-    const user = response.user;
-    const token = response.token;
+    try {
+      const { user, token } = await userRequests.loginHandler(userDetails);
 
-    if (token) {
-      // Place in Try catch
-      secureLocalStorage.clear();
-      secureLocalStorage.setItem("user-token", token);
+      if (token) {
+        secureLocalStorage.clear();
+        secureLocalStorage.setItem("user-token", token);
 
-      await verifyToken(token);
-      setActiveUser(user);
+        await userRequests.verifyToken(token);
+        setActiveUser(user);
 
-      toast({
-        title: "Successfully logged in",
-        variant: "success",
-        duration: 2000,
-      });
+        toast({
+          title: "Successfully logged in",
+          variant: "success",
+          duration: 2000,
+        });
 
-      setTimeout(() => {
-        login();
-        navigate("/myTasks");
-      }, 500);
-    } else {
+        setTimeout(() => {
+          login();
+          navigate("/myTasks");
+        }, 500);
+      }
+    } catch (error) {
       toast({
         title: "Login Failed",
         description: "Incorrect Username or Password",
@@ -123,7 +119,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                       <FormControl>
                         <Input
                           type="email"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                          className=" w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -142,7 +138,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                         <div className=" flex justify-between items-center">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                            className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />

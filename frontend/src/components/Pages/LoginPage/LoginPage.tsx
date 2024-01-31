@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { registerHandler, verifyToken } from "../../../API/UserAPIcalls";
 
 import { Else, If, Then } from "react-if";
 import { IGoogleUser } from "../../../interfaces";
@@ -40,13 +39,13 @@ const LoginPage: React.FC = () => {
         navigate("/myTasks");
       }, 500);
     } catch (error) {
-      const response = await registerHandler(googleUser);
+      const response = await userRequests.registerHandler(googleUser);
       if (response.token) {
-        const user = await verifyToken(response.token);
+        const user = await userRequests.verifyToken(response.token);
 
         secureLocalStorage.clear();
         secureLocalStorage.setItem("user-token", response.token);
-        setActiveUser(user.data);
+        setActiveUser(user);
       }
 
       if (

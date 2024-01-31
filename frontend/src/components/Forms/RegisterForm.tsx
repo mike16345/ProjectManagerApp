@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { registerHandler, verifyToken } from "@/API/UserAPIcalls";
 
 import GoogleLogin from "@/components/Pages/LoginPage/GoogleLogin";
 import { Else, If, Then } from "react-if";
@@ -10,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { EyeIcon, EyeOffIcon, LockIcon, Mail, User2Icon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import {
   Form,
   FormControl,
