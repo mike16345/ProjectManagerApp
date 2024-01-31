@@ -89,7 +89,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
 
     const newUser: IUser = { ...userDetails, picture: picture, type: "local" };
     const res = await userRequests.registerHandler(newUser);
-    console.log("res:", res);
+
     if (!res.token) return;
     const user = await userRequests.verifyToken(res.token);
     setActiveUser(user);
@@ -105,12 +105,11 @@ const RegisterForm: React.FC<IRegisterForm> = ({
 
     setTimeout(() => {
       login();
-      navigate("/myTasks");
     }, 500);
   };
 
   return (
-    <div className="  flex flex-col justify-center items-center mt-12 mb-12">
+    <div className=" flex flex-col justify-center items-center min-h-screen overflow-hidden">
       <div className=" bg-secondary  lg:max-w-lg">
         <Form {...registerForm}>
           <form onSubmit={registerForm.handleSubmit(onSubmit)}>
@@ -131,7 +130,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type="name"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                          className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Name"
                           {...field}
                         />
@@ -149,7 +148,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type="email"
-                          className=" w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                          className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -168,7 +167,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                         <div className=" flex justify-between items-center">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                            className="   w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />
@@ -201,7 +200,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type={showPassword ? "text" : "password"}
-                          className="  w-[77vh] focus-visible:ring-0 focus-visible:border-primary"
+                          className="   w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Confirm Password"
                           {...field}
                         />

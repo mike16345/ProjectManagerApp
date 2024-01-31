@@ -21,7 +21,8 @@ const ProfileModal: React.FC = () => {
   const { toast } = useToast();
 
   const onLogOutHandler = () => {
-    secureLocalStorage.removeItem("user-token");
+    secureLocalStorage.clear();
+
     logout();
     toast({
       title: "Successfully Logged Out",

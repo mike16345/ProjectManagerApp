@@ -11,9 +11,9 @@ export const ProjectSchemaValidation = Joi.object({
 
   projectLead: Joi.object(),
 
-  deadline: Joi.object().optional(),
+  deadline: Joi.object().optional().allow(null),
 
-  description: Joi.string(),
+  description: Joi.string().optional().allow(""),
 
   users: Joi.array(),
 });

@@ -7,7 +7,6 @@ import { useTasksStore } from "@/store/tasksStore";
 
 export const refreshData = async () => {
   taskRequests.getItemsRequest().then((tasks) => {
-    console.log("tasks:", tasks);
     useTasksStore.getState().setTasks(tasks);
   });
 

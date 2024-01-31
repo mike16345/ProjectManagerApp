@@ -85,15 +85,22 @@ const LoginForm: React.FC<ILoginForm> = ({
 
         setTimeout(() => {
           login();
-          navigate("/myTasks");
         }, 500);
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Incorrect Username or Password",
+          duration: 1500,
+        });
       }
     } catch (error) {
       toast({
-        title: "Login Failed",
-        description: "Incorrect Username or Password",
-        duration: 1500,
+        title: "Something went wrong",
+        description: "Try again later.",
+        variant: "destructive",
+        duration: 2000,
       });
+      console.log(error);
     }
   };
 

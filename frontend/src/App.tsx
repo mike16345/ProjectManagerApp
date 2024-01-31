@@ -12,12 +12,13 @@ import Navbar from "./components/Navbar/Navbar";
 import ProjectOverview from "./components/Pages/Project/ProjectOverview";
 import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
 import AllProjectPage from "./components/Pages/Project/AllProjectsPage/AllProjectsPage";
-import AdminPage from "./components/Pages/AdminPage/AdminPage";
+import AdminPage from "./components/Pages/Admin/AdminPage";
 import RequireAuth from "./Authentication/RequireAuth";
 import useAuth from "./Authentication/useAuth";
 import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { userRequests } from "./requests/UserRequests";
+import { HomePage } from "./components/Pages/Home/HomePage";
 
 function App() {
   const { authed } = useAuth();
@@ -45,12 +46,24 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div>
       <When condition={authed}>
         <Navbar />
       </When>
       <Toaster />
       <Routes>
+        <Route
+          path="/"
+          element={authed ? <Navigate to={"/home"} /> : <LoginPage />}
+        />
+        <Route
+          path="/home"
+          element={
+            <RequireAuth>
+              <HomePage />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/admin"
           element={
@@ -62,7 +75,7 @@ function App() {
           }
         />
         <Route
-          path="createProject"
+          path="/createProject"
           element={
             <RequireAuth>
               <CreateProjectPage />
@@ -70,7 +83,7 @@ function App() {
           }
         />
         <Route
-          path="project_overview"
+          path="/project_overview"
           element={
             <RequireAuth>
               <ProjectOverview />
@@ -78,19 +91,16 @@ function App() {
           }
         />
         <Route
-          path="myTasks"
+          path="/myTasks"
           element={
             <RequireAuth>
               <MyTasksPage />
             </RequireAuth>
           }
         />
+
         <Route
-          path="/"
-          element={authed ? <Navigate to="/myTasks" /> : <LoginPage />}
-        />
-        <Route
-          path="allProjects"
+          path="/allProjects"
           element={
             <RequireAuth>
               <AllProjectPage />
@@ -98,7 +108,7 @@ function App() {
           }
         />
       </Routes>
-    </>
+    </div>
   );
 }
 

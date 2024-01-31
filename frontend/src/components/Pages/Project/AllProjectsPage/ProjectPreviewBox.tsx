@@ -9,6 +9,7 @@ import secureLocalStorage from "react-secure-storage";
 interface IProjectPreviewBox {
   isMyProject: boolean;
   project: IProject;
+  className?: string;
 }
 const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   project,
@@ -27,9 +28,9 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   return (
     <div
       onClick={onProjectClickHandler}
-      className={`flex flex-col border-2 hover:shadow-lg rounded p-2 gap-4 w-52  cursor-pointer   `}
+      className={`flex flex-col border-2 hover:shadow-lg rounded p-2 gap-10 w-52  cursor-pointer   `}
     >
-      <div className="flex flex-col items-start justify-between">
+      <div className="flex flex-col items-start gap-0">
         <span className="font-semibold text-lg">{project.name}</span>
         <span className="text-sm">{project.date_created?.slice(0, 10)!}</span>
       </div>

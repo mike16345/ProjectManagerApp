@@ -3,8 +3,7 @@ import { IProject, IUser, Option } from "../../../interfaces";
 import { enumToArray } from "../../../utils/utils";
 import { useUsersStore } from "../../../store/usersStore";
 import { useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 import { useProjectsStore } from "../../../store/projectsStore";
 import "react-datepicker/dist/react-datepicker.css";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
@@ -27,6 +26,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,12 +44,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Profile } from "@/components/Profile/Profile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { projectRequests } from "@/requests/ProjectRequests";
 import { userRequests } from "@/requests/UserRequests";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
 const TODAY = new Date();
 
@@ -59,9 +62,7 @@ const formSchema = z.object({
     .min(3, { message: "Name must be at least 3 characters." })
     .max(20, { message: "Name must be under 20 characters." }),
   users: z.array(z.string()),
-  deadline: z
-    .object({ startDate: z.date(), endDate: z.date().optional() })
-    .optional(),
+  deadline: z.object({ startDate: z.date(), endDate: z.date() }).nullish(),
   projectLead: z.string(),
   description: z.string().optional(),
   projectType: z.string(),
@@ -74,6 +75,12 @@ export const CreateProjectPage = () => {
 
   const { projects, setActiveProject, setProjects } = useProjectsStore();
   const [deadline, setDeadline] = useState(false);
+
+  const [date, setDate] = useState<DateRange>({
+    from: new Date(),
+    to: new Date(),
+  });
+
   const [projectUsers, setProjectUsers] = useState<IUser[]>([activeUser!]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -97,7 +104,10 @@ export const CreateProjectPage = () => {
       projectLead: projectLead,
       projectType: values.projectType as ProjectType,
       description: values.description || "",
-      deadline: values.deadline,
+      deadline:
+        date.from && date.to && deadline
+          ? { startDate: date.from, endDate: date.to }
+          : null,
     };
 
     handleCreateProject(project);
@@ -114,9 +124,6 @@ export const CreateProjectPage = () => {
 
   const [availableUsers, setAvailableUsers] = useState(filterUsers(true));
 
-  const [dateRange, setDateRange] = useState([TODAY, null]);
-  const [startDate, endDate] = dateRange;
-
   const projectTypesOptions: Option[] = enumToArray(ProjectType).map((type) => {
     return {
       name: type,
@@ -124,20 +131,10 @@ export const CreateProjectPage = () => {
     };
   });
 
-  const handleDeadlineChange = (nextValue: string) => {
-    setDeadline(nextValue === "true");
-  };
-
-  const handleSetDeadlineRange = (dateRange: [Date, Date | null]) => {
-    if (deadline) {
-      setDateRange(dateRange);
-      return { startDate: dateRange[0], endDate: dateRange[1] };
-    }
-  };
-
   const handleCreateProject = async (newProject: IProject) => {
     try {
       const project = await projectRequests.addItemRequest(newProject);
+      console.log("project", project);
       setProjects([...projects, project]);
       setActiveProject(project);
       newProject.users.forEach((user) => {
@@ -210,54 +207,70 @@ export const CreateProjectPage = () => {
               </FormItem>
             )}
           />
-          {/* <FormField
+          <FormField
             control={form.control}
             name="deadline"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Task Description</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={handleDeadlineChange}
-                    value={!deadline ? "false" : "true"}
-                    className=" flex-center gap-2"
-                  >
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroupItem value={"false"} />
-                        <FormLabel className="text-sm">No</FormLabel>
-                      </FormControl>
-                    </FormItem>
-                    <FormItem>
-                      <FormControl>
-                        <RadioGroupItem value={"true"} />
-                        <FormLabel className="text-sm">Yes</FormLabel>
-                      </FormControl>
-                    </FormItem>
-                  </RadioGroup>
+              <FormItem className="flex flex-col">
+                <FormLabel>Deadline</FormLabel>
+                <div className={cn("grid gap-2")}>
                   <When condition={deadline}>
-                    <DatePicker
-                      onChange={(range) =>
-                        form.setValue("deadline", handleSetDeadlineRange(range))
-                      }
-                      minDate={TODAY}
-                      dateFormat={"dd/MM/yyyy"}
-                      showIcon={true}
-                      value={`${startDate?.toDateString()} - ${
-                        endDate ? endDate.toDateString() : ""
-                      }`}
-                      className=" border rounded w-1/4  text-black cursor-pointer"
-                      selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
-                      withPortal
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-[300px] justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date?.from ? (
+                            date.to ? (
+                              <>
+                                {format(date.from, "LLL dd, y")} -{" "}
+                                {format(date.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(date.from, "LLL dd, y")
+                            )
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={date?.from}
+                          disabled={{ before: TODAY }}
+                          fromMonth={date?.from}
+                          selected={date}
+                          onSelect={setDate}
+                          numberOfMonths={2}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </When>
-                </FormControl>
+                  <Button
+                    type="button"
+                    className="mt-1 w-40"
+                    onClick={() => setDeadline(() => !deadline)}
+                  >
+                    {!deadline ? "Set deadline" : "No deadline"}
+                  </Button>
+                </div>
+                <FormDescription>
+                  <p className="text-sm text-muted-foreground">
+                    Deadline is optional.
+                  </p>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
           <FormField
             control={form.control}
