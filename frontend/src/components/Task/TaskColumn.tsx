@@ -32,7 +32,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
   tasks,
 }) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 ">
       <div className=" flex gap-2 items-center justify-between">
         <div className=" flex-center gap-4">
           <div
@@ -51,9 +51,9 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
           <IoMdAdd size={20} />
         </button>
       </div>
-      <Separator />
+      <Separator className="mb-2" />
 
-      <div className="flex flex-col gap-2 max-h-[75vh] px-8 overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-col gap-2 max-h-[50vh] px-8 overflow-x-hidden overflow-y-auto">
         {tasks.map((task, index) => (
           <Task
             isMyTasks={false}

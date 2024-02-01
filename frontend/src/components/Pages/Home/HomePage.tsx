@@ -6,18 +6,22 @@ import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
 import { IProject, ITask } from "@/interfaces";
 import { taskRequests } from "@/requests/TaskRequests";
 import { DataCarousel } from "@/components/DataCarousel/DataCarousel";
-
-import secureLocalStorage from "react-secure-storage";
 import { isDeadlineNear } from "@/utils/utils";
+import secureLocalStorage from "react-secure-storage";
 
 export const HomePage = () => {
   const { activeUser } = useUsersStore();
+
   const { toast } = useToast();
 
   const [userProjects, setUserProjects] = useState<IProject[]>([]);
   const [userTasks, setUserTasks] = useState<ITask[]>([]);
   const [deadlines, setDeadlines] = useState<Date[]>([]);
-  const deadlineStyle = { backgroundColor: "red" };
+
+  const deadlineStyle = {
+    backgroundColor: "red",
+    "border-radius": "9999px",
+  };
 
   const checkForUpcomingDeadlines = (userProjects: IProject[]) => {
     for (let i = 0; i < userProjects.length; i++) {

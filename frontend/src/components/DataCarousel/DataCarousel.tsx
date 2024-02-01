@@ -13,6 +13,10 @@ import ProjectPreviewBox from "@/components/Pages/Project/AllProjectsPage/Projec
 import { Else, If, Then } from "react-if";
 import Task from "@/components/Task/Task";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../ui/use-toast";
+import { useTasksStore } from "@/store/tasksStore";
+import { useProjectsStore } from "@/store/projectsStore";
+import { projectRequests } from "@/requests/ProjectRequests";
 
 interface IDataCarousel<T> {
   data: T[];
@@ -21,7 +25,29 @@ interface IDataCarousel<T> {
 
 export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
   const navigate = useNavigate();
-
+  const { toast } = useToast();
+  const { setActiveProject } = useProjectsStore();
+  const { setTaskToEdit } = useTasksStore();
+  const handleTaskClick = (task: ITask) => {
+    projectRequests
+      .getItemRequest(task.project_id)
+      .then((project) => {
+        setActiveProject(project);
+        setTaskToEdit(task);
+        navigate("/project_overview");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast({
+          title: "Could not find task project",
+          description: "There was an error finding task project",
+          duration: 2000,
+          variant: "destructive",
+        });
+        setTaskToEdit(null);
+      });
+  };
+  
   return (
     <If condition={data.length > 0}>
       <Then>
@@ -45,7 +71,7 @@ export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
                     <Else>
                       <Task
                         task={item}
-                        setTaskToEdit={(task: ITask) => {}}
+                        setTaskToEdit={(task: ITask) => handleTaskClick(task)}
                         isMyTasks={true}
                       />
                     </Else>

@@ -14,9 +14,9 @@ const Task: FC<TaskProps> = ({ isMyTasks, task, setTaskToEdit }) => {
   return (
     <div
       onClick={() => setTaskToEdit(task)}
-      className={` border rounded p-2 gap-3 flex flex-col hover:shadow-lg justify-between w-40 h-[7.5rem] cursor-pointer  `}
+      className={` border-2 rounded p-2 gap-10 flex flex-col hover:shadow-lg justify-between w-48  cursor-pointer  `}
     >
-      <div className="  font-semibold text-ellipsis line-clamp-2">
+      <div className=" text-lg font-semibold text-ellipsis line-clamp-2">
         {task.name}
       </div>
       <div className=" flex items-center  justify-between">
