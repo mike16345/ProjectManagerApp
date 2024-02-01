@@ -10,8 +10,6 @@ import { DataCarousel } from "@/components/DataCarousel/DataCarousel";
 import secureLocalStorage from "react-secure-storage";
 import { isDeadlineNear } from "@/utils/utils";
 
-const threeDaysInMilliseconds = 72 * 60 * 60 * 1000;
-
 export const HomePage = () => {
   const { activeUser } = useUsersStore();
   const { toast } = useToast();

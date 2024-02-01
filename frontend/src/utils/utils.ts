@@ -22,13 +22,16 @@ const images = {
   "venom-spiderman": venomSpidey,
 };
 
-export const getImageNames = () => {
-  return Object.keys(images);
+type ImageName = keyof typeof images;
+
+export const getImageNames = (): ImageName[] => {
+  return Object.keys(images) as ImageName[];
 };
 
-export const getImage = (name: string) => {
+export const getImage = (name: ImageName) => {
   return images[name];
 };
+
 export const enumToArray = (enumClass: object) => {
   return Object.values(enumClass);
 };
@@ -38,5 +41,6 @@ export const threeDaysInMilliseconds = 72 * 60 * 60 * 1000;
 export const isDeadlineNear = (dueDate: Date) => {
   const now = new Date();
   const diff = Math.abs(dueDate.getTime() - now.getTime());
+
   return diff < threeDaysInMilliseconds;
 };

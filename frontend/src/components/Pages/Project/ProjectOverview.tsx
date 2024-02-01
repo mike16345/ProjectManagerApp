@@ -12,6 +12,8 @@ import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
 import { projectRequests } from "@/requests/ProjectRequests";
 import { BY_PROJECT_ENDPOINT, taskRequests } from "@/requests/TaskRequests";
 import { refreshData } from "@/requests/dataRefresher";
+import secureLocalStorage from "react-secure-storage";
+import { useTasksStore } from "@/store/tasksStore";
 
 const allTasks: IAllTasks = {
   [TaskStatus.TODO]: [],
@@ -21,15 +23,15 @@ const allTasks: IAllTasks = {
 };
 
 const ProjectOverview: React.FC = () => {
+  const { toast } = useToast();
+
   const { activeProject, setActiveProject } = useProjectsStore();
   const { activeUser, users } = useUsersStore();
+  const { taskToEdit, setTaskToEdit } = useTasksStore();
 
   const [taskArr, setTaskArr] = useState(allTasks);
   const [taskTypeToAdd, setTaskTypeToAdd] = useState(TaskStatus.TODO);
-  const [isCreatingTask, setIsCreatingTask] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<ITask | null>(null);
-
-  const { toast } = useToast();
+  const [isCreatingTask, setIsCreatingTask] = useState(taskToEdit !== null);
 
   const filterUsers = () => {
     return users.filter((user) =>
@@ -39,7 +41,7 @@ const ProjectOverview: React.FC = () => {
     );
   };
 
-  const [availableUsers, setAvailableUsers] = useState<IUser[]>(filterUsers());
+  const [availableUsers, setAvailableUsers] = useState<IUser[]>([]);
 
   const filterToColumns = (tasks: any[]) => {
     const cloned = cloneDeep(taskArr);
@@ -81,6 +83,7 @@ const ProjectOverview: React.FC = () => {
       users: [...activeProject.users, user],
     };
     setActiveProject(updatedProject);
+
     await projectRequests.editItemRequest(updatedProject);
     user.projects = [...user.projects, updatedProject._id!];
     await userRequests.editItemRequest(user);
@@ -91,6 +94,7 @@ const ProjectOverview: React.FC = () => {
       duration: 2000,
     });
     await refreshData();
+    console.log("");
     setAvailableUsers(filterUsers());
   };
 
@@ -110,35 +114,34 @@ const ProjectOverview: React.FC = () => {
     );
 
     activeProject.users = filteredProjectUsers;
+
     await projectRequests.editItemRequest(activeProject);
     await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete._id);
-    setAvailableUsers(filterUsers());
-
-    getTasksFromAPI();
-    refreshData();
+    await getTasksFromAPI();
+    await refreshData();
   };
 
-  const removeUserFromTasks = async (userEmail: string) => {
+  const removeUserFromTasks = async (userId: string) => {
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
 
     try {
       await taskRequests.removeAssignedUserFromTasks(
-        userEmail,
+        userId,
         activeProject._id!
       );
 
       toast({
-        title: `Successfully unassigned ${userEmail} from task`,
+        title: `Successfully unassigned user from task`,
         variant: "success",
-        duration: 3000,
+        duration: 2000,
       });
     } catch (error) {
       toast({
         title: `Failed to remove user from task`,
         variant: "destructive",
         description: "Try again later",
-        duration: 3000,
+        duration: 2000,
       });
       console.error(error);
     }
@@ -224,8 +227,8 @@ const ProjectOverview: React.FC = () => {
         variant: "success",
       });
 
-      getTasksFromAPI();
-      refreshData();
+      await getTasksFromAPI();
+      await refreshData();
     } catch (error) {
       toast({
         title: "Could not delete task",
@@ -255,9 +258,12 @@ const ProjectOverview: React.FC = () => {
 
   useMemo(() => {
     if (!activeProject) return;
-    const filtered = filterUsers();
-    setAvailableUsers(filtered);
-  }, [activeProject?.users]);
+    secureLocalStorage.setItem("active-project", JSON.stringify(activeProject));
+  }, [activeProject]);
+
+  useMemo(() => {
+    setAvailableUsers(filterUsers());
+  }, [users]);
 
   return (
     <div className="w-full p-4">

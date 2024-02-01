@@ -19,12 +19,15 @@ import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { userRequests } from "./requests/UserRequests";
 import { HomePage } from "./components/Pages/Home/HomePage";
+import { CreateTask } from "./components/Task/CreateTask";
+import { useTasksStore } from "./store/tasksStore";
 
 function App() {
   const { authed } = useAuth();
 
   const { activeUser, setActiveUser } = useUsersStore();
-  const { setActiveProject } = useProjectsStore();
+  const { activeProject, setActiveProject } = useProjectsStore();
+  const { taskToEdit } = useTasksStore();
 
   const initData = async () => {
     refreshData();
