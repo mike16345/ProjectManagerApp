@@ -34,6 +34,16 @@ export class ProjectService {
     }
   }
 
+  async removeUserFromProject(projectId: string, userId: string) {
+    const project = await Project.findByIdAndUpdate(
+      projectId,
+      { $pull: { users: { _id: userId } } },
+      { new: true }
+    );
+    console.log(project);
+    return project;
+  }
+
   async updateProject(data: any) {
     try {
       const project = await Project.findByIdAndUpdate({ _id: data._id }, data, {

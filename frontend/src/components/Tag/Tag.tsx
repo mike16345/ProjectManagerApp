@@ -5,22 +5,24 @@ interface TagProps {
   priority: Priority;
   isMyTasks: boolean;
 }
+
 const priorityToBgColor = (priority: Priority) => {
   switch (priority) {
     case Priority.EPIC:
-      return "bg-red-500";
+      return "bg-red-600";
     case Priority.HIGH:
-      return "bg-yellow-500";
+      return "bg-amber-600";
     case Priority.LOW:
       return "bg-green-500";
     default:
       return "bg-gray-400";
   }
 };
+
 const Tag: FC<TagProps> = ({ priority, isMyTasks }) => {
   return (
     <p
-      className={` font-bold rounded p-1 text-sm ${priorityToBgColor(
+      className={` font-black  bg- rounded px-2 py-[2px] text-sm ${priorityToBgColor(
         priority
       )} `}
     >

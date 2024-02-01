@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Else, If, Then, When } from "react-if";
 import { useUsersStore } from "@/store/usersStore";
 import secureLocalStorage from "react-secure-storage";
+import { projectRequests } from "@/requests/ProjectRequests";
+import { useToast } from "@/components/ui/use-toast";
+import { userRequests } from "@/requests/UserRequests";
+import { taskRequests } from "@/requests/TaskRequests";
+import { refreshData } from "@/requests/dataRefresher";
 
 interface IProjectPreviewBox {
   isMyProject: boolean;
@@ -16,13 +21,51 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   isMyProject,
 }) => {
   const navigate = useNavigate();
-  const { setActiveProject } = useProjectsStore();
+  const { setActiveProject, deleteProject } = useProjectsStore();
   const { activeUser } = useUsersStore();
+  const { toast } = useToast();
 
   const onProjectClickHandler = () => {
     setActiveProject(project);
     secureLocalStorage.setItem("active-project", JSON.stringify(project));
     navigate("/project_overview");
+  };
+
+  const handleDeleteProject = async () => {
+    await deleteProject(project)
+      .then(() => {
+        toast({
+          title: "Project deleted",
+          description: "Successfully deleted project!",
+          duration: 2000,
+          variant: "success",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        toast({
+          title: "Could not delete project",
+          description: "There was an error deleting project",
+          duration: 2000,
+          variant: "destructive",
+        });
+      });
+  };
+
+  const handleLeaveProject = async () => {
+    if (!activeUser) return;
+
+    activeUser.projects = activeUser?.projects.filter((projectId) => {
+      return projectId !== project._id;
+    });
+
+    await userRequests.editItemRequest(activeUser);
+    await projectRequests.removeUserFromProject(activeUser._id, project._id!);
+    await taskRequests.removeAssignedUserFromTasks(
+      activeUser._id,
+      project._id!
+    );
+    await refreshData();
   };
 
   return (
@@ -46,15 +89,15 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
           </Button>
         </Then>
         <Else>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("clicked project");
+                handleLeaveProject();
               }}
               size={"sm"}
             >
-              Leave
+              Leave Project
             </Button>
             <When
               condition={
@@ -64,7 +107,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("clicked project");
+                  handleDeleteProject();
                 }}
                 variant={"destructive"}
                 className="flex-grow"

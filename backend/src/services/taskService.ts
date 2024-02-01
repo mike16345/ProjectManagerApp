@@ -5,7 +5,7 @@ export class TaskService {
   async createTask(data: any) {
     try {
       const newTask = await Task.create(data);
-      console.log("new task", newTask);
+
       return newTask;
     } catch (error) {
       console.log(error);
@@ -25,7 +25,7 @@ export class TaskService {
     try {
       const task = await Task.findById({ _id: id });
       if (!task) {
-        return "Task not available";
+        return "Could not find task with id " + id;
       }
 
       return task;

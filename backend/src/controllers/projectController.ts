@@ -52,6 +52,14 @@ class projectController {
     res.send(projects);
   };
 
+  removeUserFromProject = async (req: Request, res: Response) => {
+    const project = await projectServices.removeUserFromProject(
+      req.body.projectId,
+      req.body.userId
+    );
+    res.send(project);
+  };
+
   deleteProject = async (req: Request, res: Response) => {
     const id = req.query.id;
     const resp = await projectServices.deleteProject(id as string);

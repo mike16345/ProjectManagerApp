@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProjectPreviewBox from "./ProjectPreviewBox";
 import { IProject } from "../../../../interfaces";
 import { When } from "react-if";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useProjectsStore } from "../../../../store/projectsStore";
 import { Button } from "@/components/ui/button";
 import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
+
 const AllProjectPage = () => {
   const navigate = useNavigate();
   const { activeUser } = useUsersStore();
@@ -26,9 +27,9 @@ const AllProjectPage = () => {
     navigate("/createProject");
   };
 
-  useEffect(() => {
+  useMemo(() => {
     fetchUsersProject();
-  }, []);
+  }, [projects]);
 
   return (
     <div className="  flex flex-col gap-6 m-8 ">
@@ -62,7 +63,11 @@ const AllProjectPage = () => {
             <ProjectPreviewBox
               key={index}
               project={project}
-              isMyProject={false}
+              isMyProject={
+                activeUser?.projects.find(
+                  (project_id) => project._id === project_id
+                ) !== undefined
+              }
             />
           ))}
         </div>

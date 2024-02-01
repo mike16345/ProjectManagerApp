@@ -17,7 +17,7 @@ const statusToColor = (status: TaskStatus) => {
     case TaskStatus.TODO:
       return "bg-red-500";
     case TaskStatus.CODE_REVIEW:
-      return "bg-yellow-500";
+      return "bg-yellow-600";
     case TaskStatus.IN_PROGRESS:
       return "bg-blue-500";
     case TaskStatus.DONE:
@@ -38,7 +38,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
           <div
             className={` ${statusToColor(
               header
-            )} rounded px-3 py-1 text-primary font-semibold cursor-pointer`}
+            )} rounded px-2 py-1 text-primary-foreground font-bold cursor-pointer`}
           >
             {header}
           </div>

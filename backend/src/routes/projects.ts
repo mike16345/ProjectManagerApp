@@ -1,3 +1,4 @@
+import { removeUserFromTasks } from "./../services/taskService";
 import express, { Request, Response } from "express";
 import { Project, ProjectSchemaValidation } from "../models/projectModel";
 import { User } from "../models/userModel";
@@ -16,6 +17,9 @@ router.put("/edit", ProjectController.updateProject);
 
 // Update many projects
 router.put("/edit/bulk", ProjectController.updateManyProjects);
+
+// Remove User from Project
+router.put("/user", express.json(), ProjectController.removeUserFromProject);
 
 // Get all projects
 router.get("/getItems", ProjectController.getProjects);

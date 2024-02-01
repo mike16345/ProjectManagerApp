@@ -109,13 +109,10 @@ const ProjectOverview: React.FC = () => {
   const onDeleteUserFromProjHandler = async (userToDelete: IUser) => {
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
 
-    const filteredProjectUsers = activeProject.users.filter(
-      (user) => user.email !== userToDelete.email
+    await projectRequests.removeUserFromProject(
+      activeUser?._id!,
+      activeProject._id!
     );
-
-    activeProject.users = filteredProjectUsers;
-
-    await projectRequests.editItemRequest(activeProject);
     await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete._id);
     await getTasksFromAPI();
@@ -153,6 +150,7 @@ const ProjectOverview: React.FC = () => {
         email,
         BY_EMAIL_ENDPOINT
       );
+
       const currentProjectId = activeProject?._id;
       const updatedUserProjects = user.projects.filter((project: string) => {
         return project !== currentProjectId;

@@ -10,7 +10,7 @@ interface IProjectsStore {
   projects: IProject[];
   setProjects: (projects: IProject[]) => void;
   setActiveProject: (project: IProject) => void;
-  deleteProject: (project: IProject) => void;
+  deleteProject: (project: IProject) => Promise<void>;
 }
 
 export const useProjectsStore = create<IProjectsStore>((set, get) => ({

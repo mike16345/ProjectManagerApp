@@ -165,94 +165,99 @@ const MyTasksPage: React.FC = () => {
   }, [priorityFilter, projectTasks, statusFilter]);
 
   return (
-    <div className=" flex flex-col gap-4 justify-start m-6">
+    <div className=" flex flex-col gap-4 justify-start m-7">
       <div className="flex items-center justify-between">
         <div className=" text-3xl font-extrabold ">My Tasks</div>
-        <div className=" flex  gap-4 items-center">
-          <Select
-            onValueChange={(value) => setProjectToDisplay(JSON.parse(value))}
-          >
-            <SelectTrigger className=" w-52 ring-0 focus:ring-0 focus:border-2">
-              <Button variant="outline" className=" w-52">
-                <FilterIcon size={15} className="mr-2 " /> Choose project to
-                view
-              </Button>
-            </SelectTrigger>
-            <SelectContent className="cursor-pointer">
-              {projects.map((project, index) => (
-                <SelectItem
-                  className="cursor-pointer"
-                  key={index}
-                  value={JSON.stringify(project)}
-                >
-                  {project.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className=" w-52">
-                <FilterIcon size={15} className="mr-2" /> Filter By Priority
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-52">
-              {enumToArray(Priority).map(
-                (priority: keyof typeof priorityFilter, index) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={index}
-                      onSelect={(e) => e.preventDefault()}
-                      className="capitalize"
-                      checked={priorityFilter[priority]}
-                      onCheckedChange={(value) =>
-                        setPriorityFilter({
-                          ...priorityFilter,
-                          [priority]: value,
-                        })
-                      }
-                    >
-                      {priority}
-                    </DropdownMenuCheckboxItem>
-                  );
-                }
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className=" w-52">
-                <FilterIcon size={15} className="mr-2" /> Filter By Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-52">
-              {enumToArray(TaskStatus).map(
-                (status: keyof typeof statusFilter, index) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      onSelect={(e) => e.preventDefault()}
-                      key={index}
-                      className="capitalize"
-                      checked={statusFilter[status]}
-                      onCheckedChange={(value) =>
-                        setStatusFilter({ ...statusFilter, [status]: value })
-                      }
-                    >
-                      {status}
-                    </DropdownMenuCheckboxItem>
-                  );
-                }
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
       <div className="flex flex-col gap-12">
         <div>
           <div className="flex flex-col gap-4">
-            <p className=" text-xl font-semibold">
-              Project: {projectToDisplay && projectToDisplay.name}
-            </p>
+            <div className=" flex items-center justify-between">
+              <p className=" text-xl font-semibold">
+                Project: {projectToDisplay && projectToDisplay.name}
+              </p>
+              <div className=" flex gap-4 items-center">
+                <Select
+                  onValueChange={(value) =>
+                    setProjectToDisplay(JSON.parse(value))
+                  }
+                >
+                  <SelectTrigger className=" w-52 ring-0 focus:ring-0 focus:border-2">
+                    Choose project to view
+                  </SelectTrigger>
+                  <SelectContent className="cursor-pointer">
+                    {projects.map((project, index) => (
+                      <SelectItem
+                        className="cursor-pointer"
+                        key={index}
+                        value={JSON.stringify(project)}
+                      >
+                        {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className=" w-52">
+                      <FilterIcon size={15} className="mr-2" /> Filter By
+                      Priority
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-52">
+                    {enumToArray(Priority).map(
+                      (priority: keyof typeof priorityFilter, index) => {
+                        return (
+                          <DropdownMenuCheckboxItem
+                            key={index}
+                            onSelect={(e) => e.preventDefault()}
+                            className="capitalize"
+                            checked={priorityFilter[priority]}
+                            onCheckedChange={(value) =>
+                              setPriorityFilter({
+                                ...priorityFilter,
+                                [priority]: value,
+                              })
+                            }
+                          >
+                            {priority}
+                          </DropdownMenuCheckboxItem>
+                        );
+                      }
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className=" w-52">
+                      <FilterIcon size={15} className="mr-2" /> Filter By Status
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-52">
+                    {enumToArray(TaskStatus).map(
+                      (status: keyof typeof statusFilter, index) => {
+                        return (
+                          <DropdownMenuCheckboxItem
+                            onSelect={(e) => e.preventDefault()}
+                            key={index}
+                            className="capitalize"
+                            checked={statusFilter[status]}
+                            onCheckedChange={(value) =>
+                              setStatusFilter({
+                                ...statusFilter,
+                                [status]: value,
+                              })
+                            }
+                          >
+                            {status}
+                          </DropdownMenuCheckboxItem>
+                        );
+                      }
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
             <div
               className={`flex flex-wrap gap-6 max-h-[60vh] overflow-y-auto border p-2 ${
                 tasksToDisplay.length === 0 &&

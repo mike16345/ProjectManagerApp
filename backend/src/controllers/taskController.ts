@@ -58,7 +58,7 @@ class taskController {
 
   removeUserFromTasks = async (req: Request, res: Response) => {
     const tasks = await taskServices.removeUserFromTasks(
-      req.body.projectId as string,
+      req.body.projectId,
       req.body.userId
     );
     res.send(tasks);
@@ -66,7 +66,6 @@ class taskController {
 
   deleteTask = async (req: Request, res: Response) => {
     const id = req.query.id;
-    console.log("id", id);
     await taskServices.deleteTask(id as string);
 
     res.send("Task deleted");
