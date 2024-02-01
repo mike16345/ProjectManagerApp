@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { IProject } from "../interfaces";
 import { userRequests } from "@/requests/UserRequests";
-import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
+import { projectRequests } from "@/requests/ProjectRequests";
 import { taskRequests } from "@/requests/TaskRequests";
 import { refreshData } from "@/requests/dataRefresher";
 

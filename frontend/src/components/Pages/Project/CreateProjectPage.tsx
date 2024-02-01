@@ -95,7 +95,6 @@ export const CreateProjectPage = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values: ", values);
     const projectLead = JSON.parse(values.projectLead);
 
     const project: IProject = {

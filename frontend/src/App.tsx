@@ -49,16 +49,17 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <>
+      <Toaster />
       <When condition={authed}>
         <Navbar />
       </When>
-      <Toaster />
       <Routes>
         <Route
           path="/"
           element={authed ? <Navigate to={"/home"} /> : <LoginPage />}
         />
+
         <Route
           path="/home"
           element={
@@ -67,6 +68,7 @@ function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="/admin"
           element={
@@ -77,6 +79,7 @@ function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="/createProject"
           element={
@@ -85,6 +88,7 @@ function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="/project_overview"
           element={
@@ -93,6 +97,7 @@ function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="/myTasks"
           element={
@@ -111,7 +116,7 @@ function App() {
           }
         />
       </Routes>
-    </div>
+    </>
   );
 }
 

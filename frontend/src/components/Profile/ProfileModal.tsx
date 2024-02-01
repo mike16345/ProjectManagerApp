@@ -1,5 +1,5 @@
 import React from "react";
-import { Profile } from "../Profile/Profile";
+import { Profile } from "./Profile";
 import { useUsersStore } from "../../store/usersStore";
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/theme/mode-toggle";
-import secureLocalStorage from "react-secure-storage";
 import useAuth from "@/Authentication/useAuth";
 import { useToast } from "../ui/use-toast";
 
@@ -21,8 +20,6 @@ const ProfileModal: React.FC = () => {
   const { toast } = useToast();
 
   const onLogOutHandler = () => {
-    secureLocalStorage.clear();
-
     logout();
     toast({
       title: "Successfully Logged Out",

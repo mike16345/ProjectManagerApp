@@ -39,7 +39,8 @@ function useAuth(): AuthContext {
     },
     logout() {
       return new Promise<void>((resolve) => {
-        secureLocalStorage.removeItem("user-token");
+        secureLocalStorage.clear();
+        sessionStorage.clear();
         setAuthed(false);
         resolve();
       });

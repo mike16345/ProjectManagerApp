@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProfileModal from "./ProfileModal";
+import ProfileModal from "../Profile/ProfileModal";
 import SearchBar from "./SearchBar";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";

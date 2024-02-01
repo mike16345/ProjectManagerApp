@@ -7,7 +7,6 @@ import { IProject, ITask } from "@/interfaces";
 import { taskRequests } from "@/requests/TaskRequests";
 import { DataCarousel } from "@/components/DataCarousel/DataCarousel";
 import { isDeadlineNear } from "@/utils/utils";
-import secureLocalStorage from "react-secure-storage";
 
 export const HomePage = () => {
   const { activeUser } = useUsersStore();
@@ -54,14 +53,19 @@ export const HomePage = () => {
   };
 
   useEffect(() => {
+    const showedNotification = sessionStorage.getItem("deadline-update");
+    const showedWelcomeNotification = sessionStorage.getItem(
+      "welcome-notification"
+    );
+
     projectRequests
       .getItemsByRequest(activeUser?._id!, BY_USER_ENDPOINT)
       .then((projects) => {
-        setUserProjects(projects);
-        const showedNotification =
-          secureLocalStorage.getItem("deadline-update");
         const isDeadline = checkForUpcomingDeadlines(projects);
+
+        setUserProjects(projects);
         getDeadlineDays(projects);
+
         if (!showedNotification) {
           toast({
             title: `${
@@ -78,7 +82,7 @@ export const HomePage = () => {
             duration: 5000,
           });
 
-          secureLocalStorage.setItem("deadline-update", "true");
+          sessionStorage.setItem("deadline-update", "true");
         }
       });
 
@@ -88,10 +92,13 @@ export const HomePage = () => {
         setUserTasks(task);
       });
 
-    toast({
-      title: `Welcome back ${activeUser?.name || "User"}!`,
-      duration: 1000,
-    });
+    if (!showedWelcomeNotification) {
+      toast({
+        title: `Welcome back ${activeUser?.name || "User"}!`,
+        duration: 1000,
+      });
+      sessionStorage.setItem("welcome-notification", "true");
+    }
   }, []);
 
   return (
