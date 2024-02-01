@@ -32,3 +32,11 @@ export const getImage = (name: string) => {
 export const enumToArray = (enumClass: object) => {
   return Object.values(enumClass);
 };
+
+export const threeDaysInMilliseconds = 72 * 60 * 60 * 1000;
+
+export const isDeadlineNear = (dueDate: Date) => {
+  const now = new Date();
+  const diff = Math.abs(dueDate.getTime() - now.getTime());
+  return diff < threeDaysInMilliseconds;
+};

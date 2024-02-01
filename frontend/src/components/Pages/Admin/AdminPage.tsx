@@ -95,13 +95,10 @@ const AdminPage = () => {
     user: IUser,
     project_id: string
   ) => {
-    console.log("user projects", user.projects);
-    console.log("user name", user.name);
     const updatedUserProjects = user.projects.filter((project: string) => {
       return project !== project_id;
     });
     user.projects = [...updatedUserProjects];
-    console.log("Projects updated", user.projects);
     const updatedProject = await projectRequests
       .getItemRequest(project_id)
       .then((project) => {

@@ -1,17 +1,16 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useUsersStore } from "@/store/usersStore";
 import { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
-import { Deadline, IProject, ITask } from "@/interfaces";
+import { IProject, ITask } from "@/interfaces";
 import { taskRequests } from "@/requests/TaskRequests";
 import { DataCarousel } from "@/components/DataCarousel/DataCarousel";
 
 import secureLocalStorage from "react-secure-storage";
+import { isDeadlineNear } from "@/utils/utils";
 
-const threeDaysInMilliseconds = 72 * 60 * 60 * 1000; // 72 hours in milliseconds
+const threeDaysInMilliseconds = 72 * 60 * 60 * 1000;
 
 export const HomePage = () => {
   const { activeUser } = useUsersStore();
@@ -27,10 +26,9 @@ export const HomePage = () => {
       const project = userProjects[i];
       if (project.deadline?.endDate) {
         const deadline = new Date(project.deadline.endDate);
-        const now = new Date();
-        const timeDifference = deadline.getTime() - now.getTime();
+        const isDeadline = isDeadlineNear(deadline);
 
-        if (timeDifference > 0 && timeDifference <= threeDaysInMilliseconds) {
+        if (isDeadline) {
           return true;
         }
       }
@@ -41,16 +39,15 @@ export const HomePage = () => {
   const getDeadlineDays = (userProjects: IProject[]) => {
     const deadlines = userProjects
       .map((proj) => {
-        if (proj.deadline) {
+        if (proj.deadline && proj.deadline.endDate !== undefined) {
           return proj.deadline.endDate;
         }
       })
       .filter((date) => date !== undefined)
       .map((date) => {
-        return new Date(date);
+        return new Date(date!);
       });
 
-    console.log("deadlineDays: ", deadlines);
     setDeadlines(deadlines);
   };
 

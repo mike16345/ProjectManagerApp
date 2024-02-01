@@ -13,6 +13,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useProjectsStore } from "@/store/projectsStore";
 import { table } from "console";
+import { isDeadlineNear } from "@/utils/utils";
 
 const handleDeleteProject = async (project: IProject) => {
   useProjectsStore.getState().deleteProject(project);
@@ -78,6 +79,24 @@ export const columns: ColumnDef<IProject>[] = [
   {
     accessorKey: "date_created",
     header: "Date Created",
+    cell: ({ row }) => {
+      const project = row.original;
+
+      return project?.date_created?.slice(0, 10);
+    },
+  },
+  {
+    header: "Deadline",
+    cell: ({ row }) => {
+      const project = row.original;
+      const deadline = project?.deadline?.endDate;
+      if (deadline) {
+        const isNear = isDeadlineNear(new Date(deadline)) 
+        return <p className={` ${isNear && "text-destructive"}`}>{deadline.slice(0, 10)}</p>;
+      } else {
+        return "No deadline";
+      }
+    },
   },
   {
     id: "actions",
