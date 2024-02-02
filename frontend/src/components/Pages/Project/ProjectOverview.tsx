@@ -264,7 +264,7 @@ const ProjectOverview: React.FC = () => {
   }, [users]);
 
   return (
-    <div className="m-4 overflow-hidden ">
+    <div>
       <ProjectWrapper
         availableUsers={availableUsers}
         deleteUser={onDeleteUserFromProjHandler}

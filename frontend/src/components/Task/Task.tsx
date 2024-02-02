@@ -14,11 +14,15 @@ const Task: FC<TaskProps> = ({ isMyTasks, task, setTaskToEdit }) => {
   return (
     <div
       onClick={() => setTaskToEdit(task)}
-      className={` border-2 rounded p-2 gap-10 flex flex-col hover:shadow-lg justify-between w-48  cursor-pointer  `}
+      className={`flex flex-col  border-2 hover:shadow-lg  rounded p-2 gap-6  justify-between w-48  cursor-pointer  `}
     >
-      <div className=" text-lg font-semibold text-ellipsis line-clamp-2">
-        {task.name}
+      <div className="flex flex-col items-start gap-0">
+        <span className="font-semibold text-lg text-ellipsis line-clamp-1">
+          {task.name}
+        </span>
+        <span className="text-sm">{task.date_created?.slice(0, 10)!}</span>
       </div>
+
       <div className=" flex items-center  justify-between">
         <Tag isMyTasks={isMyTasks} priority={task.priority} />
         <When condition={task.assignee !== "none@gmail.com"}>

@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ITask } from "@/interfaces";
 import ProjectPreviewBox from "@/components/Pages/Project/AllProjectsPage/ProjectPreviewBox";
-import { Else, If, Then } from "react-if";
+import { Else, If, Then, When } from "react-if";
 import Task from "@/components/Task/Task";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
@@ -47,13 +47,15 @@ export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
         setTaskToEdit(null);
       });
   };
-  
+
   return (
     <If condition={data.length > 0}>
       <Then>
         <Carousel className="w-full max-w-md ">
-          <div className=" flex justify-center items-center">
-            <CarouselPrevious />
+          <div className=" flex justify-center gap-2 items-center">
+            <When condition={data.length > 1}>
+              <CarouselPrevious />
+            </When>
             <CarouselContent className="">
               {data.map((item, index) => (
                 <CarouselItem
@@ -62,11 +64,7 @@ export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
                 >
                   <If condition={type === "Projects"}>
                     <Then>
-                      <ProjectPreviewBox
-                        className="w-full h-full"
-                        project={item}
-                        isMyProject={true}
-                      />
+                      <ProjectPreviewBox project={item} isMyProject={true} />
                     </Then>
                     <Else>
                       <Task
@@ -79,15 +77,17 @@ export const DataCarousel: React.FC<IDataCarousel<any>> = ({ data, type }) => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselNext />
+            <When condition={data.length > 1}>
+              <CarouselNext />
+            </When>
           </div>
         </Carousel>
       </Then>
       <Else>
+        <div className=" h-32 w-32 flex items-center justify-center p-4">
+          <p className="text-center text-gray-500">No {type} found.</p>
+        </div>
         <div className="flex flex-col">
-          <div className=" h-32 w-32 flex-center p-4">
-            <p className="text-center text-gray-500">No {type} found.</p>
-          </div>
           <If condition={type === "Projects"}>
             <Then>
               <Button onClick={() => navigate("/allProjects")}>

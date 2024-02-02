@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
 
   const onLogoClickHandler = () => {
     if (activeProject?._id) {
-      navigate("project_overview");
+      navigate("/home");
     }
   };
 

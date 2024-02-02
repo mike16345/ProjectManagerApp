@@ -1,3 +1,4 @@
+import { INotification } from "./../../backend/src/interfaces";
 import { Priority } from "./enums/Priority";
 import { ProjectType } from "./enums/ProjectType";
 import { TaskStatus } from "./enums/TaskStatus";
@@ -21,6 +22,7 @@ export interface ITask {
   priority: Priority;
   status: TaskStatus;
   project_id: string;
+  date_created?: string;
 }
 
 export interface IUser {
@@ -28,6 +30,7 @@ export interface IUser {
   name: string;
   email: string;
   type: string;
+  notifications: INotification[];
   picture: string;
   projects: string[];
   isAdmin: boolean;

@@ -29,6 +29,7 @@ export const useProjectsStore = create<IProjectsStore>((set, get) => ({
       await taskRequests.removeAssignedUserFromTasks(user._id, project._id!);
     });
 
+    await taskRequests.deleteProjectTasks(project._id!);
     await projectRequests.deleteItemRequest(project._id);
     await refreshData();
   },

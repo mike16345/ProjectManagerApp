@@ -24,7 +24,7 @@ export class UserService {
     try {
       const user = await User.findById({ _id: id }).lean();
       if (!user) {
-        return "User not available";
+        return null;
       }
 
       return user;
@@ -37,7 +37,7 @@ export class UserService {
     try {
       const user = await User.findOne({ email }).lean();
       if (!user) {
-        return "User not available";
+        return null;
       }
 
       return user;

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useProjectsStore } from "../../../../store/projectsStore";
 import { Button } from "@/components/ui/button";
 import { BY_USER_ENDPOINT, projectRequests } from "@/requests/ProjectRequests";
+import { Separator } from "@/components/ui/separator";
 
 const AllProjectPage = () => {
   const navigate = useNavigate();
@@ -32,20 +33,24 @@ const AllProjectPage = () => {
   }, [projects]);
 
   return (
-    <div className="  flex flex-col gap-6 m-8 ">
-      <When condition={activeUser !== null}>
-        <Button
-          className=" font-extrabold hover:scale-105 w-32 h-12 "
-          onClick={handleAddNewProject}
-        >
-          Add project
-        </Button>
-      </When>
+    <div className="  flex flex-col gap-3 m-6 ">
+      <div className="flex items-center justify-between">
+        <div className=" text-4xl font-bold ">Projects</div>
+
+        <When condition={activeUser !== null}>
+          <Button
+            className=" font-black hover:scale-105 w-32 h-10 "
+            onClick={handleAddNewProject}
+          >
+            Create Project
+          </Button>
+        </When>
+      </div>
 
       <When condition={activeUser && activeUser.projects.length > 0}>
-        <div className="w-full h-full ">
-          <div className=" text-2xl font-bold ">My Projects:</div>
-          <div className=" border  rounded  p-2 flex flex-wrap gap-2">
+        <div className="w-full h-full">
+          <div className=" text-lg mb-2 font-semibold ">My Projects:</div>
+          <div className=" flex flex-wrap  gap-4 max-h-[60vh] overflow-y-auto ">
             {myProjects.map((project, index) => (
               <ProjectPreviewBox
                 key={index}
@@ -55,10 +60,11 @@ const AllProjectPage = () => {
             ))}
           </div>
         </div>
+        <Separator />
       </When>
       <div>
-        <div className=" text-2xl font-bold ">All Projects:</div>
-        <div className=" border  rounded  p-2 flex flex-wrap gap-2">
+        <div className=" text-2xl mb-2 font-bold ">All Projects:</div>
+        <div className="  max-h-[60vh] overflow-y-auto   flex flex-wrap gap-4">
           {projects.map((project, index) => (
             <ProjectPreviewBox
               key={index}

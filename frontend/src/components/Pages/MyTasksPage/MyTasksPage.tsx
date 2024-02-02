@@ -27,6 +27,7 @@ import {
 import { FilterIcon } from "lucide-react";
 import { enumToArray } from "@/utils/utils";
 import { TaskStatus } from "@/enums/TaskStatus";
+import { Separator } from "@/components/ui/separator";
 
 const MyTasksPage: React.FC = () => {
   const navigate = useNavigate();
@@ -165,7 +166,7 @@ const MyTasksPage: React.FC = () => {
   }, [priorityFilter, projectTasks, statusFilter]);
 
   return (
-    <div className=" flex flex-col gap-4 justify-start m-7">
+    <div className=" flex flex-col gap-4 justify-start m-4">
       <div className="flex items-center justify-between">
         <div className=" text-3xl font-extrabold ">My Tasks</div>
       </div>
@@ -258,8 +259,9 @@ const MyTasksPage: React.FC = () => {
                 </DropdownMenu>
               </div>
             </div>
+            <Separator />
             <div
-              className={`flex flex-wrap gap-6 max-h-[60vh] overflow-y-auto border p-2 ${
+              className={`flex flex-wrap gap-6 max-h-[60vh] overflow-y-auto  p-2 ${
                 tasksToDisplay.length === 0 &&
                 " items-center justify-center h-[25vh] "
               }`}

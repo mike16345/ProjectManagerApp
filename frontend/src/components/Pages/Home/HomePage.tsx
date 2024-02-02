@@ -19,7 +19,7 @@ export const HomePage = () => {
 
   const deadlineStyle = {
     backgroundColor: "red",
-    "border-radius": "9999px",
+    borderRadius: "9999px",
   };
 
   const checkForUpcomingDeadlines = (userProjects: IProject[]) => {
@@ -78,7 +78,7 @@ export const HomePage = () => {
                 ? "Check your calendar!"
                 : "No deadlines in the next few days!"
             }`,
-            variant: isDeadline ? "destructive" : "success",
+            variant: isDeadline ? "destructive" : "default",
             duration: 5000,
           });
 
@@ -103,34 +103,35 @@ export const HomePage = () => {
 
   return (
     <div>
-      <div className="text-3xl font-bold m-6">
+      <div className="text-3xl font-bold ">
         Hello {activeUser?.name || "User"}
       </div>
-      <div className=" grid grid-cols-1 md:grid-cols-2 place-items-center m-8 gap-8 ">
+      <div className=" grid grid-cols-1 md:grid-cols-2 place-items-center  gap-4 ">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <span className="text-xl font-semibold">Upcoming Projects</span>
-            <div className="border  rounded p-4">
+            <div className=" p-4">
               <DataCarousel type="Projects" data={userProjects || []} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-xl font-semibold">Upcoming Tasks</span>
-            <div className="border  rounded p-4">
+            <div className="p-4">
               <DataCarousel type="Tasks" data={userTasks || []} />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <div className="text-xl font-semibold ">Deadlines</div>
           <Calendar
+            className="p-1"
             modifiers={{ deadline: deadlines }}
             modifiersStyles={{ deadline: deadlineStyle }}
           />
-          <div className="flex flex-col justify-center items-start w-[300px]   ">
+          <div className="flex flex-col justify-center gap-2 items-start w-[300px]   ">
             <span className="text-xl font-semibold">Statistics</span>
-            <div className="flex flex-col justify-center border w-full p-4">
+            <div className="flex flex-col justify-center border w-full p-3">
               <div className=" flex justify-between items-center">
                 <span>Projects:</span>
                 <span>{userProjects.length}</span>

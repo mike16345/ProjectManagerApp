@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { userRequests } from "@/requests/UserRequests";
 import { taskRequests } from "@/requests/TaskRequests";
 import { refreshData } from "@/requests/dataRefresher";
+import { INotification } from "../../../../../../backend/src/interfaces";
 
 interface IProjectPreviewBox {
   isMyProject: boolean;
@@ -19,6 +20,7 @@ interface IProjectPreviewBox {
 const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
   project,
   isMyProject,
+  className,
 }) => {
   const navigate = useNavigate();
   const { setActiveProject, deleteProject } = useProjectsStore();
@@ -68,10 +70,26 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
     await refreshData();
   };
 
+  const handleRequestToJoinProject = async () => {
+    if (!activeUser) return;
+    const projectLead = project.projectLead;
+
+    const notification: INotification = {
+      title: "Request to join project",
+      from: activeUser._id,
+      type: "request",
+      projectId: project._id!,
+      isNew: true,
+      date_created: new Date(),
+    };
+    projectLead.notifications.push(notification);
+    await userRequests.editItemRequest(projectLead);
+  };
+
   return (
     <div
       onClick={onProjectClickHandler}
-      className={`flex flex-col border-2 hover:shadow-lg rounded p-2 gap-10 w-52  cursor-pointer   `}
+      className={`flex flex-col border-2 hover:shadow-lg rounded p-2 gap-10 w-52  cursor-pointer  `}
     >
       <div className="flex flex-col items-start gap-0">
         <span className="font-semibold text-lg">{project.name}</span>
@@ -82,6 +100,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
           <Button
             onClick={(e) => {
               e.stopPropagation();
+              handleRequestToJoinProject();
             }}
             size={"sm"}
           >

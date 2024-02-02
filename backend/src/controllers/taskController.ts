@@ -64,6 +64,13 @@ class taskController {
     res.send(tasks);
   };
 
+  deleteProjectTasks = async (req: Request, res: Response) => {
+    const id = req.query.id;
+    console.log("id", id);
+    const tasks = await taskServices.deleteProjectTasks(id as string);
+    res.send(tasks);
+  };
+
   deleteTask = async (req: Request, res: Response) => {
     const id = req.query.id;
     await taskServices.deleteTask(id as string);

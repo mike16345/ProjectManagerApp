@@ -99,6 +99,20 @@ export class TaskService {
       console.log(error);
     }
   }
+
+  async deleteProjectTasks(projectId: string) {
+    try {
+      const tasks = await Task.deleteMany({ project_id: projectId });
+
+      if (!tasks) {
+        return "Failed to delete project tasks.";
+      }
+
+      return tasks;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export const taskServices = new TaskService();

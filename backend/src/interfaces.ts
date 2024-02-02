@@ -4,9 +4,19 @@ export interface IUser {
   email: string;
   type: string;
   picture: string;
+  notifications: INotification[];
   projects: string[];
   isAdmin: boolean;
   date_created: Date;
+}
+
+export interface INotification {
+  title: string;
+  from: string;
+  isNew: boolean;
+  date_created: Date;
+  projectId: string;
+  type: string;
 }
 
 export interface IProject extends Document {
@@ -28,4 +38,5 @@ export interface ITask {
   priority: string;
   status: string;
   project_id: string;
+  date_created: Date;
 }

@@ -3,7 +3,7 @@ import TaskColumn from "./TaskColumn";
 import { IAllTasks, ITask } from "../../interfaces";
 import { TaskStatus } from "../../enums/TaskStatus";
 import { Separator } from "../ui/separator";
-import { When } from "react-if";
+import { Else, If, Then, When } from "react-if";
 import { enumToArray } from "@/utils/utils";
 
 interface TaskColumnWrapperProps {
@@ -19,22 +19,33 @@ const TaskColumnWrapper: React.FC<TaskColumnWrapperProps> = ({
 }) => {
   const taskStatuses = enumToArray(TaskStatus) as TaskStatus[];
 
+  const isTasksEmpty = () => {
+    for (var i = 0; i < taskStatuses.length; i++) {
+      if (tasks[taskStatuses[i]].length > 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   return (
-    <div className=" flex w-full justify-around p-2 ">
+    <div className=" flex justify-evenly h-full overflow-hidden">
+      <If condition={isTasksEmpty()}>
+        <Then>
+          <div className="fixed bottom-1/3 text-center ">
+            {"Looks kind of empty here"}
+          </div>
+        </Then>
+      </If>
       {taskStatuses.map((status, index) => {
         return (
-          <div key={index} className="flex gap-12">
-            <TaskColumn
-              key={status}
-              header={status}
-              onAddTaskClickHandler={() => handleAddNewTask(status)}
-              onTaskClickHandler={onTaskClickHandler}
-              tasks={tasks[status]}
-            />
-            <When condition={index !== taskStatuses.length - 1}>
-              <Separator className="mt-12 w-[2px]" orientation="vertical" />
-            </When>
-          </div>
+          <TaskColumn
+            key={index}
+            header={status}
+            onAddTaskClickHandler={() => handleAddNewTask(status)}
+            onTaskClickHandler={onTaskClickHandler}
+            tasks={tasks[status]}
+          />
         );
       })}
     </div>

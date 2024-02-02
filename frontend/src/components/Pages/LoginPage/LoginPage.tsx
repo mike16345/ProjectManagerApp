@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useUsersStore } from "@/store/usersStore";
 import LoginForm from "@/components/Forms/LoginForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
-import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
+import { userRequests } from "@/requests/UserRequests";
 
 const LoginPage: React.FC = () => {
   const [register, setRegister] = useState(false);
@@ -27,37 +27,19 @@ const LoginPage: React.FC = () => {
       type: "googleUser",
     };
 
-    try {
-      const user = await userRequests.getItemByRequest(
-        googleUser.email,
-        BY_EMAIL_ENDPOINT
-      );
+    const response = await userRequests.registerHandler(googleUser);
+
+    if (response.token) {
+      const user = await userRequests.verifyToken(response.token);
+
+      secureLocalStorage.setItem("user-token", response.token);
       setActiveUser(user);
-
-      setTimeout(() => {
-        login();
-        navigate("/myTasks");
-      }, 500);
-    } catch (error) {
-      const response = await userRequests.registerHandler(googleUser);
-      if (response.token) {
-        const user = await userRequests.verifyToken(response.token);
-
-        secureLocalStorage.clear();
-        secureLocalStorage.setItem("user-token", response.token);
-        setActiveUser(user);
-      }
-
-      if (
-        response.status === "registered" ||
-        response.status === "existing_user"
-      ) {
-        setTimeout(() => {
-          login();
-          navigate("/myTasks");
-        }, 500);
-      }
     }
+
+    setTimeout(() => {
+      login();
+      navigate("/home");
+    }, 500);
   };
 
   return (

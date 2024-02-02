@@ -9,7 +9,14 @@ const userSchema: Schema<IUser> = new Schema({
   name: String,
   email: String,
   type: String,
-  projects: Array,
+  projects: {
+    type: [],
+    default: [],
+  },
+  notifications: {
+    type: [],
+    default: [],
+  },
   picture: String,
   isAdmin: {
     type: Boolean,

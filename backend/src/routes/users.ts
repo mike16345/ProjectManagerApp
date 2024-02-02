@@ -39,6 +39,19 @@ router.post("/register", async (req: Request, res: Response) => {
         _id: user._id,
         password: password,
       });
+    } else if (req.body.type === "googleUser") {
+      const googleUser = await User.findOne({ email: req.body.email });
+
+      if (googleUser) {
+        const newToken = genToken(googleUser._id.toString());
+        console.log("google user", googleUser);
+
+        return res.json({
+          isNew: false,
+          status: "registered",
+          token: newToken,
+        });
+      }
     }
 
     const newToken = genToken(user._id.toString());

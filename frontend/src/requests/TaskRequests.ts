@@ -1,6 +1,6 @@
 import { ITask } from "@/interfaces";
 import { ItemRequests } from "./ItemRequests";
-import { updateItem } from "@/API/api";
+import { deleteItem, updateItem } from "@/API/api";
 
 const TASKS_ENDPOINT = "tasks";
 
@@ -16,6 +16,10 @@ export class TaskRequests extends ItemRequests<ITask> {
       userId: userId,
       projectId: projectId,
     });
+  }
+
+  deleteProjectTasks(projectId: string) {
+    return deleteItem(`${this.endpoint}/delete/project`, projectId);
   }
 }
 export const taskRequests = new TaskRequests(TASKS_ENDPOINT);

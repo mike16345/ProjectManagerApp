@@ -24,8 +24,8 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   };
 
   return (
-    <div className=" flex flex-col gap-4  ">
-      <div className="flex justify-between p-2 items-center">
+    <div className=" flex flex-col gap-4 p-8 max-h-[85vh] overflow-hidden ">
+      <div className="flex justify-between  items-center">
         <div className=" flex flex-col gap-2">
           <div className=" text-4xl font-bold text-primary ">
             {activeProject?.name || "No Name"}

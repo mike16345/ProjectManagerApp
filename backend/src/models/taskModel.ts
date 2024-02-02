@@ -9,6 +9,10 @@ const taskSchema: Schema<ITask> = new Schema({
   priority: String,
   status: String,
   project_id: String,
+  date_created: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 export const TaskSchemaValidation = Joi.object({
