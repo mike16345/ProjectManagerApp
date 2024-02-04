@@ -15,13 +15,12 @@ const SearchBar: React.FC<SearchBarProps> = (props) => {
   };
 
   const search = () => {
-    console.log("searching");
     props.onInput(searchInput);
   };
 
   return (
-    <div className=" flex-center">
-      <div className="relative flex items-center max-w-2xl">
+    <div className=" flex flex-col md:flex-row md:items-center md:justify-center">
+      <div className="relative flex items-center ">
         <SearchIcon
           onClick={search}
           className="absolute right-2 top-1/2 h-4 w-4 cursor-pointer -translate-y-1/2 transform"

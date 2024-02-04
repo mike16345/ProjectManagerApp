@@ -14,12 +14,17 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import ViewDataDialog from "@/components/Tables/ViewDataDialog";
 import { useState } from "react";
+import { CommandItem } from "@/components/ui/command";
+import { Trash2Icon } from "lucide-react";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+
+  const { toast } = useToast();
+
   const { users } = useUsersStore();
   const { projects, setActiveProject, deleteProject } = useProjectsStore();
-  const { toast } = useToast();
+
   const [dialogData, setDialogData] = useState<any[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [isProjects, setIsProjects] = useState(false);
@@ -128,22 +133,47 @@ const AdminPage = () => {
     setIsProjects(false);
   };
 
-  const handleDeleteProjFromUser = async (project: IProject, proj: string) => {
+  const handleDeleteProjFromUser = async (proj: string) => {
     const user = await userRequests.getItemRequest(currItemId);
     handleDeleteUserFromProject(user, proj);
   };
 
+  const renderUser = (item: IUser, index: number) => {
+    return (
+      <CommandItem className="flex items-center justify-between" key={index}>
+        <span className="text-sm font-semibold  hover:underline cursor-pointer">
+          {item.name}
+        </span>
+        <Trash2Icon
+          className="cursor-pointer"
+          onClick={() => handleDeleteUserFromProject(item, item._id)}
+        />
+      </CommandItem>
+    );
+  };
+
+  const renderProject = (item: IProject, index: number) => {
+    return (
+      <CommandItem className="flex items-center justify-between" key={index}>
+        <span className="text-sm font-semibold  hover:underline cursor-pointer">
+          {item.name}
+        </span>
+        <Trash2Icon
+          className="cursor-pointer"
+          onClick={() => handleDeleteProjFromUser(item._id!)}
+        />
+      </CommandItem>
+    );
+  };
+
   return (
-    <div className=" m-12">
+    <div className=" p-8">
       {openDialog && (
         <ViewDataDialog
           open={openDialog}
-          currItemId={isProjects ? currItemId : undefined}
+          renderItem={isProjects ? renderProject : renderUser}
           data={dialogData}
           setOpen={setOpenDialog}
-          handleDeleteItem={
-            isProjects ? handleDeleteUserFromProject : handleDeleteProjFromUser
-          }
         />
       )}
       <Tabs defaultValue="Users" className="w-full">

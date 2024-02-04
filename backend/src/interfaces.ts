@@ -11,6 +11,7 @@ export interface IUser {
 }
 
 export interface INotification {
+  _id: string;
   title: string;
   from: string;
   isNew: boolean;

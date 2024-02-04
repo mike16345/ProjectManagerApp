@@ -72,20 +72,25 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
 
   const handleRequestToJoinProject = async () => {
     if (!activeUser) return;
-    const projectLead = project.projectLead;
+    const projectLead = await userRequests.getItemRequest(
+      project.projectLead._id
+    );
 
     const notification: INotification = {
-      title: "Request to join project",
+      name: "Request to join project",
       from: activeUser._id,
       type: "request",
       projectId: project._id!,
       isNew: true,
       date_created: new Date(),
     };
+
     projectLead.notifications.push(notification);
     await userRequests.editItemRequest(projectLead);
   };
+  console.log("project lead", project);
 
+  console.log("project lead", project.projectLead);
   return (
     <div
       onClick={onProjectClickHandler}
@@ -99,12 +104,15 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
         <Then>
           <Button
             onClick={(e) => {
+              1;
               e.stopPropagation();
               handleRequestToJoinProject();
             }}
             size={"sm"}
           >
-            Request to join
+            {project.projectLead
+              ? "Request to join"
+              : "Take ownership of the project"}
           </Button>
         </Then>
         <Else>

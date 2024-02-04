@@ -102,7 +102,7 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="px-8 py-4">
       <div className="text-3xl font-bold ">
         Hello {activeUser?.name || "User"}
       </div>
@@ -110,13 +110,13 @@ export const HomePage = () => {
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <span className="text-xl font-semibold">Upcoming Projects</span>
-            <div className=" p-4">
+            <div className="">
               <DataCarousel type="Projects" data={userProjects || []} />
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-xl font-semibold">Upcoming Tasks</span>
-            <div className="p-4">
+            <div className="">
               <DataCarousel type="Tasks" data={userTasks || []} />
             </div>
           </div>

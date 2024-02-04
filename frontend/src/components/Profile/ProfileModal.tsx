@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Profile } from "./Profile";
 import { useUsersStore } from "../../store/usersStore";
 import {
@@ -13,9 +13,12 @@ import {
 import { ModeToggle } from "@/theme/mode-toggle";
 import useAuth from "@/Authentication/useAuth";
 import { useToast } from "../ui/use-toast";
+import Notifications from "../Notifications/Notifications";
 
 const ProfileModal: React.FC = () => {
   const { activeUser } = useUsersStore();
+  const [openNotifications, setOpenNotifications] = useState(false);
+
   const { logout } = useAuth();
   const { toast } = useToast();
 
@@ -47,10 +50,13 @@ const ProfileModal: React.FC = () => {
             <DropdownMenuItem className=" cursor-pointer">
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex hover:bg-current items-center cursor-pointer justify-between ">
+            <DropdownMenuItem
+              onClick={() => setOpenNotifications(true)}
+              className="flex hover:bg-current items-center cursor-pointer justify-between "
+            >
               Notifications
               <span className="rounded bg-destructive w-5 h-5 text-center text-primary">
-                5
+                {activeUser?.notifications.length}
               </span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -69,6 +75,7 @@ const ProfileModal: React.FC = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <Notifications open={openNotifications} setOpen={setOpenNotifications} />
     </div>
   );
 };

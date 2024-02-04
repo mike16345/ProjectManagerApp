@@ -1,29 +1,25 @@
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { SetStateAction } from "react";
 
 import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Trash2Icon } from "lucide-react";
 
 interface IViewDataDialog<T> {
   open: boolean;
-  currItemId?: string;
   data: T[];
-  handleDeleteItem: (item: T, id: string) => Promise<void>;
+  renderItem: (item: T, index: number) => JSX.Element;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const ViewDataDialog: React.FC<IViewDataDialog<any>> = ({
   data,
   open,
-  currItemId,
+  renderItem,
   setOpen,
-  handleDeleteItem,
 }) => {
   return (
     <>
@@ -32,24 +28,7 @@ const ViewDataDialog: React.FC<IViewDataDialog<any>> = ({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup>
-            {data.map((item, index) => {
-              return (
-                <CommandItem
-                  className="flex items-center justify-between"
-                  key={index}
-                >
-                  <span className="text-sm font-semibold  hover:underline cursor-pointer">
-                    {item.name}
-                  </span>
-                  <Trash2Icon
-                    className="cursor-pointer"
-                    onClick={() =>
-                      handleDeleteItem(item, currItemId || item._id)
-                    }
-                  />
-                </CommandItem>
-              );
-            })}
+            {data.map((item, index) => renderItem(item, index))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
