@@ -55,7 +55,13 @@ const ProfileModal: React.FC = () => {
               className="flex hover:bg-current items-center cursor-pointer justify-between "
             >
               Notifications
-              <span className="rounded bg-destructive w-5 h-5 text-center text-primary">
+              <span
+                className={`${
+                  activeUser &&
+                  activeUser.notifications.length > 0 &&
+                  "bg-destructive"
+                } rounded  w-5 h-5 text-center font-medium text-primary`}
+              >
                 {activeUser?.notifications.length}
               </span>
             </DropdownMenuItem>

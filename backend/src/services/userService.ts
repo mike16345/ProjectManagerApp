@@ -1,3 +1,4 @@
+import { Password } from "../models/passwordModel";
 import { User } from "../models/userModel";
 
 export class UserService {
@@ -90,7 +91,7 @@ export class UserService {
       if (!user) {
         return "user not available";
       }
-
+      const password = await Password.findByIdAndDelete(id);
       return user;
     } catch (error) {
       console.log(error);

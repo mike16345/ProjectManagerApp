@@ -13,7 +13,6 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { isDeadlineNear } from "@/utils/utils";
 
-
 export const columns: ColumnDef<IProject>[] = [
   {
     id: "select",
@@ -58,7 +57,11 @@ export const columns: ColumnDef<IProject>[] = [
     cell: ({ row }) => {
       const project = row.original;
 
-      return project.projectLead.name;
+      if (project.projectLead) {
+        return project.projectLead.name;
+      } else {
+        return "No Project Lead";
+      }
     },
   },
   {
@@ -82,8 +85,12 @@ export const columns: ColumnDef<IProject>[] = [
       const deadline = project?.deadline?.endDate;
 
       if (deadline) {
-        const isNear = isDeadlineNear(new Date(deadline)) 
-        return <p className={` ${isNear && "text-destructive"}`}>{deadline.slice(0, 10)}</p>;
+        const isNear = isDeadlineNear(new Date(deadline));
+        return (
+          <p className={` ${isNear && "text-destructive"}`}>
+            {deadline.slice(0, 10)}
+          </p>
+        );
       } else {
         return "No deadline";
       }

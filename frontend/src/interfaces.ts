@@ -9,7 +9,7 @@ export interface IProject {
   users: IUser[];
   description?: string;
   deadline?: Deadline;
-  projectLead: IUser;
+  projectLead: IUser | null;
   projectType: ProjectType;
   date_created?: string;
 }

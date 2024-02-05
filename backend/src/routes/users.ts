@@ -30,34 +30,34 @@ router.get("/byEmail/getItem/:email", UserController.getUserByEmail);
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
-    const user = await User.create(req.body);
+    const user = await User.findOne({ email: req.body.email });
 
-    if (req.body.type === "local") {
-      const password = await bcrypt.hash(req.body.password, 10);
+    if (user && user.type === "googleUser") {
+      const newToken = genToken(user._id.toString());
 
-      await Password.create({
-        _id: user._id,
-        password: password,
+      return res.json({
+        isNew: false,
+        status: "registered",
+        token: newToken,
       });
-    } else if (req.body.type === "googleUser") {
-      const googleUser = await User.findOne({ email: req.body.email });
-
-      if (googleUser) {
-        const newToken = genToken(googleUser._id.toString());
-        console.log("google user", googleUser);
-
-        return res.json({
-          isNew: false,
-          status: "registered",
-          token: newToken,
-        });
-      }
+    } else if (user && user.type === "local") {
+      return res.send("User already exists!");
     }
 
-    const newToken = genToken(user._id.toString());
+    const newUser = await User.create(req.body);
+    if (newUser && newUser.type !== "googleUser") {
+      const password = await bcrypt.hash(req.body.password, 10);
+      await Password.create({
+        _id: newUser._id,
+        password: password,
+      });
+    }
+
+    const newToken = genToken(newUser._id.toString());
 
     return res.json({ isNew: true, status: "registered", token: newToken });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: "did not work" });
   }
 });

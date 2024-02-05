@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <div className=" bg-secondary text-primary p-3 z-10 sticky top-0 flex items-center justify-between">
+    <div className=" bg-secondary text-primary px-3 py-2 z-10 sticky top-0 flex gap-4 flex-wrap md:justify-between items-center ">
       <h1
         className=" text-4xl cursor-pointer font-bold "
         onClick={onLogoClickHandler}

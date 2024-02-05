@@ -53,6 +53,7 @@ const AdminPage = () => {
   };
 
   const handleViewProject = (project: IProject) => {
+    console.log(project.name);
     setActiveProject(project);
     navigate("/project_overview/");
   };
@@ -80,6 +81,9 @@ const AdminPage = () => {
 
     for (const project of userProjects) {
       project.users = project.users.filter((u) => u._id !== user._id);
+      if (project.projectLead && project.projectLead._id === user._id) {
+        project.projectLead = null;
+      }
     }
 
     user.projects.forEach(async (project) => {
@@ -155,7 +159,10 @@ const AdminPage = () => {
   const renderProject = (item: IProject, index: number) => {
     return (
       <CommandItem className="flex items-center justify-between" key={index}>
-        <span className="text-sm font-semibold  hover:underline cursor-pointer">
+        <span
+          onClick={() => handleViewProject(item)}
+          className="text-sm font-semibold  hover:underline cursor-pointer"
+        >
           {item.name}
         </span>
         <Trash2Icon
@@ -171,7 +178,7 @@ const AdminPage = () => {
       {openDialog && (
         <ViewDataDialog
           open={openDialog}
-          renderItem={isProjects ? renderProject : renderUser}
+          renderItem={isProjects ? renderUser : renderProject}
           data={dialogData}
           setOpen={setOpenDialog}
         />

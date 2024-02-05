@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import ViewDataDialog from "../Tables/ViewDataDialog";
 import { useUsersStore } from "@/store/usersStore";
 import { userRequests } from "@/requests/UserRequests";
@@ -15,6 +15,9 @@ import { Button } from "@/components/ui/button";
 import { CommandItem } from "../ui/command";
 import { Trash2Icon } from "lucide-react";
 import { INotification } from "../../../../backend/src/interfaces";
+import { IProject, IUser } from "@/interfaces";
+import { projectRequests } from "@/requests/ProjectRequests";
+import { When } from "react-if";
 
 interface NotificationProps {
   notification: INotification | null;
@@ -27,14 +30,43 @@ const Notification: React.FC<NotificationProps> = ({
   notification,
   setOpenModal,
 }) => {
+  const [sender, setSender] = useState<IUser | null>(null);
+  const [project, setProject] = useState<IProject | null>(null);
+
+  const getSender = async () => {
+    if (!notification) return;
+    await userRequests.getItemRequest(notification.from).then((user) => {
+      setSender(user);
+    });
+  };
+
+  const getProject = async () => {
+    if (!notification) return;
+    await projectRequests
+      .getItemRequest(notification?.projectId)
+      .then((project) => {
+        console.log("project", project);
+        setProject(project);
+      });
+  };
+
+  const initNotificationData = async () => {
+    await getSender();
+    await getProject();
+  };
+
+  useEffect(() => {
+    initNotificationData();
+  }, []);
+
   return (
-    <div>
+    <When condition={project !== null && sender !== null}>
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Request to join project</DialogTitle>
             <DialogDescription>
-              {`Would you like to add "${notification}" to the project?`}
+              {`${sender?.name} would like to join "${project?.name}"  project?`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className=" flex-center gap-1">
@@ -49,7 +81,7 @@ const Notification: React.FC<NotificationProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </When>
   );
 };
 
@@ -59,7 +91,7 @@ interface INotifications {
 }
 
 const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
-  const { activeUser } = useUsersStore();
+  const { activeUser, setActiveUser } = useUsersStore();
 
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationToView, setNotificationToView] =
@@ -73,7 +105,9 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
     );
 
     activeUser.notifications = filteredNotifications;
-    await userRequests.editItemRequest(activeUser);
+    await userRequests.editItemRequest(activeUser).then((user) => {
+      setActiveUser(user);
+    });
   };
 
   const renderNotification = (item: INotification, index: number) => {
@@ -83,6 +117,7 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
           onClick={() => {
             setOpenNotification(true);
             setNotificationToView(item);
+            item.isNew = false;
           }}
           className="text-sm font-semibold  hover:underline cursor-pointer"
         >
@@ -95,6 +130,7 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
       </CommandItem>
     );
   };
+
   return (
     <>
       <ViewDataDialog
@@ -103,11 +139,13 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
         open={open}
         setOpen={setOpen}
       />
-      <Notification
-        openModal={openNotification}
-        setOpenModal={setOpenNotification}
-        notification={notificationToView}
-      />
+      <When condition={openNotification}>
+        <Notification
+          openModal={openNotification}
+          setOpenModal={setOpenNotification}
+          notification={notificationToView}
+        />
+      </When>
     </>
   );
 };

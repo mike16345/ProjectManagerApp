@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
       <If condition={!register}>
         <Then>
           <LoginForm
@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
           />
         </Else>
       </If>
-    </div>
+    </>
   );
 };
 

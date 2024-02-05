@@ -19,6 +19,7 @@ import secureLocalStorage from "react-secure-storage";
 import "./App.css";
 import { userRequests } from "./requests/UserRequests";
 import { HomePage } from "./components/Pages/Home/HomePage";
+import { projectRequests } from "./requests/ProjectRequests";
 
 function App() {
   const { authed } = useAuth();
@@ -29,11 +30,19 @@ function App() {
   const initData = async () => {
     refreshData();
     const userToken = secureLocalStorage.getItem("user-token");
-    const activeProject = secureLocalStorage.getItem("active-project");
+    const activeProject = sessionStorage.getItem("active-project");
 
     if (userToken) {
       const user = await userRequests.verifyToken(userToken as string);
       setActiveUser(user);
+      if (!activeProject && user.projects.length > 0) {
+        await projectRequests
+          .getItemRequest(user.projects[0])
+          .then((project) => {
+            setActiveProject(project);
+          });
+        return;
+      }
     }
 
     if (activeProject) {

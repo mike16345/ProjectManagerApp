@@ -3,6 +3,8 @@ import AllUsersTable from "../../AllUsersTable/AllUsersTable";
 import { useProjectsStore } from "../../../store/projectsStore";
 import UserSelectMenu from "../../Menu/UserSelectMenu";
 import { IUser } from "../../../interfaces";
+import { When } from "react-if";
+import { useUsersStore } from "@/store/usersStore";
 
 interface ProjectWrapperProps {
   addUser: (user: IUser) => void;
@@ -18,9 +20,17 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   children,
 }) => {
   const { activeProject } = useProjectsStore();
+  const { activeUser } = useUsersStore();
 
   const addUserHandler = (user: IUser) => {
     addUser(user);
+  };
+  const isProjectLead = () => {
+    if (!activeProject || !activeProject.projectLead) return false;
+    return (
+      activeProject.projectLead.email.localeCompare(activeUser?.email || "") ===
+      0
+    );
   };
 
   return (
@@ -38,10 +48,12 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
             />
           </div>
         </div>
-        <div className=" flex flex-col  justify-center gap-1">
-          <h2>Add users to the project</h2>
-          <UserSelectMenu onSelect={addUserHandler} users={availableUsers} />
-        </div>
+        <When condition={isProjectLead() || activeUser?.isAdmin}>
+          <div className=" flex flex-col  justify-center gap-1">
+            <h2>Add users to the project</h2>
+            <UserSelectMenu onSelect={addUserHandler} users={availableUsers} />
+          </div>
+        </When>
       </div>
       {children}
     </div>

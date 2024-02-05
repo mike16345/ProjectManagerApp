@@ -44,3 +44,11 @@ export const isDeadlineNear = (dueDate: Date) => {
 
   return diff < threeDaysInMilliseconds;
 };
+
+export const generateID = () => {
+  return (
+    Math.random() * 10000000 +
+    (Math.random() * 10000000) / Math.random() +
+    1
+  ).toString();
+};

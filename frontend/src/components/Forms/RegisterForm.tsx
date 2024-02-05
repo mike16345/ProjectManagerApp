@@ -56,7 +56,6 @@ const RegisterForm: React.FC<IRegisterForm> = ({
   setRegister,
 }) => {
   const { login } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { setActiveUser } = useUsersStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -90,7 +89,15 @@ const RegisterForm: React.FC<IRegisterForm> = ({
     const newUser: IUser = { ...userDetails, picture: picture, type: "local" };
     const res = await userRequests.registerHandler(newUser);
 
-    if (!res.token) return;
+    if (!res.token) {
+      toast({
+        title: res as string,
+        description: "Email is already in use!",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const user = await userRequests.verifyToken(res.token);
     setActiveUser(user);
 
@@ -109,12 +116,12 @@ const RegisterForm: React.FC<IRegisterForm> = ({
   };
 
   return (
-    <div className=" flex flex-col justify-center items-center min-h-screen overflow-hidden">
-      <div className=" bg-secondary  lg:max-w-lg">
+    <div className=" flex flex-col justify-center items-center  overflow-hidden w-full h-full">
+      <div className=" bg-secondary  lg:max-w-xl">
         <Form {...registerForm}>
           <form onSubmit={registerForm.handleSubmit(onSubmit)}>
             <Card>
-              <CardHeader className="space-y-1 p-2">
+              <CardHeader className="space-y- p-2">
                 <CardTitle className="text-2xl text-center">Register</CardTitle>
                 <CardDescription className="text-center">
                   Fill in your information to create an account.
@@ -126,11 +133,12 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel htmlFor="Name">Name</FormLabel>
                       <FormControl>
                         <Input
+                          id="Name"
                           type="name"
-                          className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                          className="  w-[90%] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Name"
                           {...field}
                         />
@@ -144,11 +152,12 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel htmlFor="Email">Email</FormLabel>
                       <FormControl>
                         <Input
+                          id="Email"
                           type="email"
-                          className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                          className="  w-[90%] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -162,12 +171,13 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel htmlFor="Password">Password</FormLabel>
                       <FormControl>
-                        <div className=" flex justify-between items-center">
+                        <div className=" flex  items-center">
                           <Input
+                            id="Password"
                             type={showPassword ? "text" : "password"}
-                            className="   w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                            className="  w-full focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />
@@ -175,13 +185,13 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                             <Then>
                               <EyeIcon
                                 onClick={() => setShowPassword(true)}
-                                className="ml-2 cursor-pointer"
+                                className=" ml-2 cursor-pointer"
                               />
                             </Then>
                             <Else>
                               <EyeOffIcon
                                 onClick={() => setShowPassword(false)}
-                                className="ml-2 cursor-pointer"
+                                className=" ml-2 cursor-pointer"
                               />
                             </Else>
                           </If>
@@ -200,7 +210,7 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                       <FormControl>
                         <Input
                           type={showPassword ? "text" : "password"}
-                          className="   w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                          className="   w-[90%] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Confirm Password"
                           {...field}
                         />
@@ -210,11 +220,15 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                   )}
                 />
               </CardContent>
-              <CardFooter className="flex flex-col gap-2">
-                <Button type="submit" className="w-full">
-                  Register
-                </Button>
-                <span className="mt-2 text-xs text-center text-primary">
+              <CardFooter className="flex flex-col gap-1">
+                <div className="flex gap-2 items-center">
+                  <Button type="submit" className="w-full">
+                    Register
+                  </Button>
+                  <GoogleLogin onSuccessHandler={onGoogleLoginSuccess} />
+                </div>
+                <Separator className="mt-2 " />
+                <span className=" text-xs text-center text-primary">
                   Already have an account?{" "}
                   <span
                     onClick={setRegister}
@@ -223,8 +237,6 @@ const RegisterForm: React.FC<IRegisterForm> = ({
                     Login
                   </span>
                 </span>
-                <Separator className="mb-2 " />
-                <GoogleLogin onSuccessHandler={onGoogleLoginSuccess} />
               </CardFooter>
             </Card>
           </form>

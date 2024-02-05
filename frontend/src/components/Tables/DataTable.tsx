@@ -27,9 +27,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { FilterIcon, Trash, Trash2, Trash2Icon } from "lucide-react";
-import { useToast } from "../ui/use-toast";
-import { TableMeta, RowData } from "@tanstack/react-table";
+import { FilterIcon, Trash2Icon } from "lucide-react";
+import { RowData } from "@tanstack/react-table";
 import { When } from "react-if";
 
 interface DataTableProps<TData, TValue> {

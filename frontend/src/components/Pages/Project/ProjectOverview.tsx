@@ -12,7 +12,6 @@ import { BY_EMAIL_ENDPOINT, userRequests } from "@/requests/UserRequests";
 import { projectRequests } from "@/requests/ProjectRequests";
 import { BY_PROJECT_ENDPOINT, taskRequests } from "@/requests/TaskRequests";
 import { refreshData } from "@/requests/dataRefresher";
-import secureLocalStorage from "react-secure-storage";
 import { useTasksStore } from "@/store/tasksStore";
 
 const allTasks: IAllTasks = {
@@ -99,7 +98,7 @@ const ProjectOverview: React.FC = () => {
   };
 
   const isProjectLead = () => {
-    if (!activeProject) return false;
+    if (!activeProject || !activeProject.projectLead) return false;
     return (
       activeProject.projectLead.email.localeCompare(activeUser?.email || "") ===
       0
@@ -191,7 +190,6 @@ const ProjectOverview: React.FC = () => {
 
   const onEditTask = async (taskToUpdate: ITask) => {
     try {
-      console.log("updating task", taskToUpdate);
       await taskRequests.editItemRequest(taskToUpdate);
       getTasksFromAPI();
       toast({
@@ -256,7 +254,7 @@ const ProjectOverview: React.FC = () => {
 
   useMemo(() => {
     if (!activeProject) return;
-    secureLocalStorage.setItem("active-project", JSON.stringify(activeProject));
+    sessionStorage.setItem("active-project", JSON.stringify(activeProject));
   }, [activeProject]);
 
   useMemo(() => {
@@ -264,7 +262,7 @@ const ProjectOverview: React.FC = () => {
   }, [users]);
 
   return (
-    <div>
+    <>
       <ProjectWrapper
         availableUsers={availableUsers}
         deleteUser={onDeleteUserFromProjHandler}
@@ -286,7 +284,7 @@ const ProjectOverview: React.FC = () => {
         taskToEdit={taskToEdit}
         handleDeleteTask={handleDeleteTask}
       />
-    </div>
+    </>
   );
 };
 

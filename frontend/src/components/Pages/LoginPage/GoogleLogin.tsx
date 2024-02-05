@@ -13,6 +13,7 @@ interface IGoogleLogin {
 const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   const [user, setUser] = useState<TokenResponse | null>(null);
   const { toast } = useToast();
+  
   const login = useGoogleLogin({
     onSuccess: (codeResponse: TokenResponse) => {
       setUser(codeResponse);
@@ -50,16 +51,14 @@ const GoogleLogin: React.FC<IGoogleLogin> = ({ onSuccessHandler }) => {
   }, [user]);
 
   return (
-    <div className="w-full">
-      <Button
-        type="button"
-        className=" flex justify-center bg-primary  text-secondary font-semibold items-center w-full  "
-        onClick={() => login()}
-      >
-        <FcGoogle className="mr-4" />
-        Sign in with Google
-      </Button>
-    </div>
+    <Button
+      type="button"
+      className=" flex justify-center bg-primary  text-secondary font-semibold items-center   "
+      onClick={() => login()}
+    >
+      <FcGoogle className="mr-4" />
+      Sign in with Google
+    </Button>
   );
 };
 

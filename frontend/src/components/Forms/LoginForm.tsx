@@ -105,8 +105,8 @@ const LoginForm: React.FC<ILoginForm> = ({
   };
 
   return (
-    <div className=" flex flex-col justify-center items-center min-h-screen overflow-hidden">
-      <div className=" bg-secondary lg:max-w-lg">
+    <div className=" flex flex-col justify-center items-center w-full h-full ">
+      <div className=" bg-secondary ">
         <Form {...loginForm}>
           <form onSubmit={loginForm.handleSubmit(onSubmit)}>
             <Card>
@@ -126,7 +126,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                       <FormControl>
                         <Input
                           type="email"
-                          className=" w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                          className="w-[90%] focus-visible:ring-0 focus-visible:border-primary"
                           placeholder="Email"
                           {...field}
                         />
@@ -145,7 +145,7 @@ const LoginForm: React.FC<ILoginForm> = ({
                         <div className=" flex justify-between items-center">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            className="  w-[25vw] focus-visible:ring-0 focus-visible:border-primary"
+                            className="  w-full focus-visible:ring-0 focus-visible:border-primary"
                             placeholder="Password"
                             {...field}
                           />
@@ -170,21 +170,23 @@ const LoginForm: React.FC<ILoginForm> = ({
                   )}
                 />
               </CardContent>
-              <CardFooter className="flex flex-col gap-2">
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-                <span className="mt-2 text-xs text-center text-primary">
+              <CardFooter className="flex flex-col items-center justify-center gap-1">
+                <div className="flex gap-2">
+                  <Button type="submit" className="w-full">
+                    Login
+                  </Button>
+                  <GoogleLogin onSuccessHandler={onGoogleLoginSuccess} />
+                </div>
+                <Separator className="mt-2" />
+                <span className=" text-xs text-center text-primary">
                   Don't have an account?{" "}
                   <span
                     onClick={setRegister}
-                    className=" text-blue-500 cursor-pointer text-sm hover:underline"
+                    className=" text-blue-500 cursor-pointer text-xs hover:underline"
                   >
                     Register
                   </span>
                 </span>
-                <Separator />
-                <GoogleLogin onSuccessHandler={onGoogleLoginSuccess} />
               </CardFooter>
             </Card>
           </form>
