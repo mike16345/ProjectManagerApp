@@ -4,8 +4,8 @@ import Joi from "joi";
 
 const taskSchema: Schema<ITask> = new Schema({
   name: String,
-  description: String,
-  assignee: Object,
+  description: { type: String, required: false },
+  assignee: { type: Object, required: false },
   priority: String,
   status: String,
   project_id: String,
@@ -18,9 +18,9 @@ const taskSchema: Schema<ITask> = new Schema({
 export const TaskSchemaValidation = Joi.object({
   name: Joi.string().min(2).max(100).required(),
 
-  assignee: Joi.object().optional(),
+  assignee: Joi.object().optional().allow(null),
 
-  description: Joi.string().max(250),
+  description: Joi.string().optional(),
 
   priority: Joi.string().min(2).max(100).required(),
 

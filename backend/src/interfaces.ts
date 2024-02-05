@@ -34,7 +34,7 @@ export interface IProject extends Document {
 export interface ITask {
   id: string;
   name: string;
-  assignee: string;
+  assignee: IUser;
   description: string;
   priority: string;
   status: string;
