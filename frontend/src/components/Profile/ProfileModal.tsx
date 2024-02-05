@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Profile } from "./Profile";
 import { useUsersStore } from "../../store/usersStore";
 import {
@@ -18,6 +18,7 @@ import Notifications from "../Notifications/Notifications";
 const ProfileModal: React.FC = () => {
   const { activeUser } = useUsersStore();
   const [openNotifications, setOpenNotifications] = useState(false);
+  const [totalNotifications, setTotalNotifications] = useState(0);
 
   const { logout } = useAuth();
   const { toast } = useToast();
@@ -31,8 +32,16 @@ const ProfileModal: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    if (!activeUser) return;
+    const filteredNotifications = activeUser.notifications.filter(
+      (noti) => noti.isNew
+    );
+    setTotalNotifications(filteredNotifications.length);
+  }, []);
+
   return (
-    <div>
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className=" flex-center">
@@ -57,17 +66,14 @@ const ProfileModal: React.FC = () => {
               Notifications
               <span
                 className={`${
-                  activeUser &&
-                  activeUser.notifications.length > 0 &&
-                  "bg-destructive"
+                  totalNotifications > 0 && "bg-destructive"
                 } rounded  w-5 h-5 text-center font-medium text-primary`}
               >
-                {activeUser?.notifications.length}
+                {totalNotifications}
               </span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-
-            <div className="flex items-center  justify-between ">
+            <div className="flex items-center justify-between ">
               <span className="ml-2 text-sm">Theme</span>
               <ModeToggle />
             </div>
@@ -82,7 +88,7 @@ const ProfileModal: React.FC = () => {
         </DropdownMenuContent>
       </DropdownMenu>
       <Notifications open={openNotifications} setOpen={setOpenNotifications} />
-    </div>
+    </>
   );
 };
 

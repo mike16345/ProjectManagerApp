@@ -13,6 +13,7 @@ import { INotification } from "../../../../../../backend/src/interfaces";
 import { createNotification } from "@/components/Notifications/CreateNotification";
 
 import { useEffect, useState } from "react";
+import { NotificationType } from "@/enums/NotificationType";
 
 interface IProjectPreviewBox {
   isMyProject: boolean;
@@ -133,7 +134,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
       "Request to join project",
       activeUser._id,
       project._id!,
-      "request"
+      NotificationType.REQUESTED
     );
 
     projectLead.notifications.push(notification);
@@ -200,6 +201,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
         <Else>
           <div className="flex items-center gap-2">
             <Button
+              className=""
               onClick={(e) => {
                 e.stopPropagation();
                 handleLeaveProject();
@@ -211,8 +213,9 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
             <When
               condition={
                 activeUser &&
-                project.projectLead &&
-                activeUser._id == project.projectLead._id
+                (activeUser.isAdmin ||
+                  (project.projectLead &&
+                    activeUser._id == project.projectLead._id))
               }
             >
               <Button

@@ -17,7 +17,7 @@ export interface INotification {
   isNew: boolean;
   date_created: Date;
   projectId: string;
-  type: string;
+  type: number;
 }
 
 export interface IProject extends Document {

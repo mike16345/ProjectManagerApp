@@ -1,11 +1,12 @@
 import { generateID } from "@/utils/utils";
 import { INotification } from "../../../../backend/src/interfaces";
+import { NotificationType } from "@/enums/NotificationType";
 
 export const createNotification = (
   title: string,
   from: string,
   projectId: string,
-  type: string
+  type: NotificationType
 ): INotification => {
   return {
     _id: generateID(),
