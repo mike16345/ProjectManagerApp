@@ -23,8 +23,8 @@ export const useProjectsStore = create<IProjectsStore>((set, get) => ({
     set({ activeProject: project });
   },
   async deleteProject(project) {
-    await userRequests.removeProjectFromUsers(project._id!);
-
+    const p = await userRequests.removeProjectFromUsers(project._id!);
+    console.log("p", p );
     project.users.forEach(async (user) => {
       await taskRequests.removeAssignedUserFromTasks(user._id, project._id!);
     });

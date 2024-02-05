@@ -49,7 +49,9 @@ class userController {
   };
 
   removeProjectFromUsers = async (req: Request, res: Response) => {
-    const users = await userServices.removeProjectFromUsers(req.body);
+    const projId = req.query.id;
+    const users = await userServices.removeProjectFromUsers(projId);
+    console.log("users", users);
     res.send(users);
   };
 

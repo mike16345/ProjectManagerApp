@@ -36,14 +36,14 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
 
   const renderNotification = (item: INotification, index: number) => {
     return (
-      <CommandItem className="flex items-center justify-between" key={index}>
+      <CommandItem key={index} className="flex items-center justify-between" >
         <span
           onClick={() => {
             setOpenNotification(true);
             setNotificationToView(item);
             item.isNew = false;
           }}
-          className="text-sm font-semibold  hover:underline cursor-pointer"
+          className="text-sm font-semibold hover:underline cursor-pointer"
         >
           {item.title}
         </span>

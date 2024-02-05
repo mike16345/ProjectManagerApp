@@ -108,7 +108,7 @@ export const Notification: React.FC<NotificationProps> = ({
     );
 
     user.notifications.push(newNotification);
-    
+
     await userRequests.editItemRequest(user);
     await deleteNotification(notification._id);
     await refreshData();
@@ -131,7 +131,7 @@ export const Notification: React.FC<NotificationProps> = ({
           <DialogHeader>
             <DialogTitle>Request to join project</DialogTitle>
             <DialogDescription>
-              {`${sender?.name} would like to join "${project?.name}"  project?`}
+              {`${sender?.name} would like to join "${project?.name}" project?`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className=" flex-center gap-1">
