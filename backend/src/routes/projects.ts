@@ -1,7 +1,4 @@
-import { removeUserFromTasks } from "./../services/taskService";
-import express, { Request, Response } from "express";
-import { Project, ProjectSchemaValidation } from "../models/projectModel";
-import { User } from "../models/userModel";
+import express from "express";
 import { ProjectController } from "../controllers/projectController";
 
 const router = express.Router();

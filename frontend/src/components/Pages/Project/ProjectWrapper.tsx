@@ -35,10 +35,15 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
 
   return (
     <div className=" flex flex-col gap-4 p-8 max-h-[85vh] overflow-hidden ">
-      <div className="flex justify-between  items-center">
-        <div className=" flex flex-col gap-2">
-          <div className=" text-4xl font-bold text-primary ">
-            {activeProject?.name || "No Name"}
+      <div className="flex justify-between items-start">
+        <div className=" flex flex-col gap-4 w-1/2">
+          <div className="flex flex-col  gap-1 ">
+            <div className=" text-4xl font-bold text-primary ">
+              {activeProject?.name || "No Name"}
+            </div>
+            <p className="ml-1 text-muted-foreground ">
+              {activeProject?.description}
+            </p>
           </div>
           <div className=" flex flex-col gap-1">
             <div className=" text-lg">Project Participants:</div>

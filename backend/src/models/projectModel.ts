@@ -13,7 +13,7 @@ export const ProjectSchemaValidation = Joi.object({
 
   deadline: Joi.object().optional().allow(null),
 
-  description: Joi.string().optional().allow(""),
+  description: Joi.string().optional(),
 
   users: Joi.array(),
 });
@@ -24,7 +24,7 @@ const projectSchema: Schema<IProject> = new Schema({
   projectType: String,
   users: Array,
   name: String,
-  description: { String, required: false },
+  description: { type: String, required: false },
   deadline: {
     startDate: { type: Date, required: false },
     endDate: { type: Date, required: false },

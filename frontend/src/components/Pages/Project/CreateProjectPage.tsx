@@ -132,6 +132,7 @@ export const CreateProjectPage = () => {
 
   const handleCreateProject = async (newProject: IProject) => {
     try {
+      console.log("new project", newProject);
       const project = await projectRequests.addItemRequest(newProject);
       console.log("project", project);
       setProjects([...projects, project]);

@@ -13,13 +13,12 @@ class projectController {
       projectType: req.body.projectType,
       description: req.body.description,
     };
-
     const { error, value } = ProjectSchemaValidation.validate(data);
-
     if (error) {
       res.send(error.message);
     } else {
       const project = await projectServices.createProject(value);
+
       res.status(201).send(project);
     }
   };
