@@ -1,5 +1,4 @@
 import { Project } from "../models/projectModel";
-import { User } from "../models/userModel";
 
 export class ProjectService {
   async createProject(data: any) {
