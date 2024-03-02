@@ -107,11 +107,11 @@ const ProjectOverview: React.FC = () => {
 
   const onDeleteUserFromProjHandler = async (userToDelete: IUser) => {
     if (!activeProject || (!activeUser?.isAdmin && !isProjectLead())) return;
-
-    await projectRequests.removeUserFromProject(
-      activeUser?._id!,
+    const updatedProject = await projectRequests.removeUserFromProject(
+      userToDelete?._id!,
       activeProject._id!
     );
+    console.log("updated project: ", updatedProject);
     await removeProjectFromUser(userToDelete.email);
     await removeUserFromTasks(userToDelete._id);
     await getTasksFromAPI();
@@ -167,16 +167,17 @@ const ProjectOverview: React.FC = () => {
     }
   };
 
-  const onCreateIssue = async (newTask: ITask) => {
+  const onCreateIssue = async (taskToAdd: ITask) => {
     try {
-      await taskRequests.addItemRequest(newTask);
+      await taskRequests.addItemRequest(taskToAdd);
       toast({
         title: "Task Created",
         description: "Successfully created task",
         duration: 2000,
         variant: "success",
       });
-      getTasksFromAPI();
+
+      await getTasksFromAPI();
     } catch (error) {
       toast({
         title: "Could not create task",
@@ -251,11 +252,6 @@ const ProjectOverview: React.FC = () => {
   useEffect(() => {
     getTasksFromAPI();
   }, []);
-
-  useMemo(() => {
-    if (!activeProject) return;
-    sessionStorage.setItem("active-project", JSON.stringify(activeProject));
-  }, [activeProject]);
 
   useMemo(() => {
     setAvailableUsers(filterUsers());
