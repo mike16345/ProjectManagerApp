@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useUsersStore } from "./store/usersStore";
 import { When } from "react-if";
@@ -20,12 +20,13 @@ import "./App.css";
 import { userRequests } from "./requests/UserRequests";
 import { HomePage } from "./components/Pages/Home/HomePage";
 import { projectRequests } from "./requests/ProjectRequests";
+import UserSettings from "./components/Pages/UserPage/UserPage";
 
 function App() {
   const { authed } = useAuth();
 
   const { activeUser, setActiveUser } = useUsersStore();
-  const { setActiveProject } = useProjectsStore();
+  const { activeProject, setActiveProject } = useProjectsStore();
 
   const initData = async () => {
     refreshData();
@@ -53,6 +54,11 @@ function App() {
   useEffect(() => {
     initData();
   }, []);
+
+  useMemo(() => {
+    if (!activeProject) return;
+    sessionStorage.setItem("active-project", JSON.stringify(activeProject));
+  }, [activeProject]);
 
   return (
     <>
@@ -109,6 +115,14 @@ function App() {
           element={
             <RequireAuth>
               <MyTasksPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <RequireAuth>
+              <UserSettings />
             </RequireAuth>
           }
         />

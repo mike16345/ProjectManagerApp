@@ -14,8 +14,10 @@ import { ModeToggle } from "@/theme/mode-toggle";
 import useAuth from "@/Authentication/useAuth";
 import { useToast } from "../ui/use-toast";
 import Notifications from "../Notifications/Notifications";
+import { useNavigate } from "react-router-dom";
 
 const ProfileModal: React.FC = () => {
+  const navigate = useNavigate();
   const { activeUser } = useUsersStore();
   const [openNotifications, setOpenNotifications] = useState(false);
   const [totalNotifications, setTotalNotifications] = useState(0);
@@ -56,7 +58,10 @@ const ProfileModal: React.FC = () => {
 
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem className=" cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => navigate("/user")}
+              className=" cursor-pointer"
+            >
               Profile
             </DropdownMenuItem>
             <DropdownMenuItem

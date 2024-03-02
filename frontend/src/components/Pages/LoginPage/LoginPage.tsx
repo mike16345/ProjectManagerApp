@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { Else, If, Then } from "react-if";
 import { IGoogleUser } from "../../../interfaces";
 import useAuth from "@/Authentication/useAuth";

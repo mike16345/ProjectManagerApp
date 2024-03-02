@@ -36,7 +36,7 @@ const Notifications: React.FC<INotifications> = ({ open, setOpen }) => {
 
   const renderNotification = (item: INotification, index: number) => {
     return (
-      <CommandItem key={index} className="flex items-center justify-between" >
+      <CommandItem key={index} className="flex items-center justify-between">
         <span
           onClick={() => {
             setOpenNotification(true);

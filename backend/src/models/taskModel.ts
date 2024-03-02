@@ -20,7 +20,7 @@ export const TaskSchemaValidation = Joi.object({
 
   assignee: Joi.object().optional().allow(null),
 
-  description: Joi.string().optional(),
+  description: Joi.string().optional().allow(""),
 
   priority: Joi.string().min(2).max(100).required(),
 

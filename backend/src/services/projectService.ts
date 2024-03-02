@@ -39,7 +39,8 @@ export class ProjectService {
       { $pull: { users: { _id: userId } } },
       { new: true }
     );
-    console.log(project);
+
+    console.log("removed user from project result:", project);
     return project;
   }
 

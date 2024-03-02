@@ -62,8 +62,7 @@ const AdminPage = () => {
     user.isAdmin = true;
     await userRequests.editItemRequest(user);
     handleAlert("User Updated", `${user.name} has been made admin.`, "success");
-
-    refreshData();
+    await refreshData();
   };
 
   const handleViewProjectUsers = (users: IUser[], project_id: string): void => {
@@ -104,10 +103,13 @@ const AdminPage = () => {
     user: IUser,
     project_id: string
   ) => {
+    console.log("user projects", user.projects);
     const updatedUserProjects = user.projects.filter((project: string) => {
       return project !== project_id;
     });
     user.projects = [...updatedUserProjects];
+    console.log("updated user projects", updatedUserProjects);
+
     const updatedProject = await projectRequests
       .getItemRequest(project_id)
       .then((project) => {
@@ -117,11 +119,11 @@ const AdminPage = () => {
 
     await projectRequests.editItemRequest(updatedProject);
     await userRequests.editItemRequest(user);
+    await refreshData();
 
     isProjects
       ? setDialogData(updatedProject.users)
       : setDialogData(user.projects);
-    refreshData();
   };
 
   const handleViewUser = (user: IUser) => {};
@@ -138,8 +140,12 @@ const AdminPage = () => {
   };
 
   const handleDeleteProjFromUser = async (proj: string) => {
-    const user = await userRequests.getItemRequest(currItemId);
-    handleDeleteUserFromProject(user, proj);
+    try {
+      const user = await userRequests.getItemRequest(currItemId);
+      handleDeleteUserFromProject(user, proj);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const renderUser = (item: IUser, index: number) => {

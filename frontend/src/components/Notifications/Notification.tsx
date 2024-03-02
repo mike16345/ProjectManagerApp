@@ -99,7 +99,6 @@ export const Notification: React.FC<NotificationProps> = ({
   const handleDeclineRequest = async () => {
     if (!notification) return;
     const user = await userRequests.getItemRequest(notification.from);
-    console.log("from", user);
     const newNotification = createNotification(
       "Request Declined",
       activeUser?._id!,

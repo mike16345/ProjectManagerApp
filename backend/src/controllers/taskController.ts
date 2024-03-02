@@ -17,7 +17,7 @@ class taskController {
     const { error, value } = TaskSchemaValidation.validate(data);
 
     if (error) {
-      res.send(error.message);
+      res.status(400).send(error.message);
     } else {
       const task = await taskServices.createTask(value);
       res.status(201).send(task);
