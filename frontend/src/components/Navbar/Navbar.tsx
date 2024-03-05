@@ -5,13 +5,12 @@ import SearchBar from "./SearchBar";
 import { When } from "react-if";
 import { useProjectsStore } from "../../store/projectsStore";
 import { useUsersStore } from "../../store/usersStore";
-import { useToast } from "../ui/use-toast";
+import { projectRequests } from "@/requests/ProjectRequests";
 
 const Navbar: React.FC = () => {
-  const { activeProject, projects, setActiveProject } = useProjectsStore();
+  const { activeProject, projects, setProjects } = useProjectsStore();
   const { activeUser } = useUsersStore();
 
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const onLogoClickHandler = () => {
@@ -21,20 +20,28 @@ const Navbar: React.FC = () => {
   };
 
   const onSearchHandler = async (inputValue: string) => {
-    const currentFound = projects.find(
-      (project) => project.name.toLowerCase() === inputValue.toLowerCase()
-    );
+    const filteredProjects = inputValue.length
+      ? projects.filter(
+          (project) =>
+            inputValue.length &&
+            project.name.toLowerCase().includes(inputValue.toLowerCase())
+        )
+      : [];
 
-    if (currentFound) {
-      setActiveProject(currentFound);
-      navigate("/project_overview");
-    } else {
-      toast({
-        title: "Project not found",
-        description: "Could not find project with that name",
-        variant: "destructive",
+    if (filteredProjects.length) setProjects(filteredProjects);
+    else await resetProjects();
+    if (!window.location.href.includes("allProjects")) navigate("/allProjects");
+  };
+
+  const resetProjects = async () => {
+    await projectRequests
+      .getItemsRequest()
+      .then((projects) => {
+        setProjects(projects);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    }
   };
 
   return (

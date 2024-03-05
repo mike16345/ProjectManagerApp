@@ -18,12 +18,16 @@ const AllProjectPage = () => {
   const fetchUsersProject = async () => {
     if (!activeUser) return;
 
-    const projects = await projectRequests.getItemsByRequest(
+    const myProjects = await projectRequests.getItemsByRequest(
       activeUser._id,
       BY_USER_ENDPOINT
     );
-    console.log("User projects", projects);
-    setMyProjects(projects);
+
+    const filteredProjects = myProjects.filter((project) =>
+      projects.some((proj) => proj._id === project._id)
+    );
+
+    setMyProjects(filteredProjects);
   };
 
   const handleAddNewProject = () => {

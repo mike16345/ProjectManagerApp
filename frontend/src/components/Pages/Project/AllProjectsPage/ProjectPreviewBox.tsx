@@ -156,18 +156,12 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
     await userRequests.editItemRequest(activeUser);
     await projectRequests.editItemRequest(project);
     await refreshData();
-    console.log(project);
-    console.log(activeUser);
   };
 
   const getButtonText = () => {
-    if (project.projectLead) {
-      console.log("requested to join", requestedToJoin);
-      if (requestedToJoin) return "Requested";
-      else return "Request to join";
-    }
+    if (!project.projectLead) return "Take ownership";
 
-    return "Take ownership";
+    return requestedToJoin ? "Requested" : "Request to join";
   };
 
   return (

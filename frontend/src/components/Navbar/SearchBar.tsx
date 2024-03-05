@@ -6,17 +6,16 @@ interface SearchBarProps {
   onInput: (input: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = (props) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onInput }) => {
   const [searchInput, setSearchInput] = useState<string>("");
 
   const searchInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setSearchInput(e.target.value);
+    onInput(e.target.value);
   };
 
-  const search = () => {
-    props.onInput(searchInput);
-  };
+  const search = () => {};
 
   return (
     <div className=" flex flex-col md:flex-row md:items-center md:justify-center">
