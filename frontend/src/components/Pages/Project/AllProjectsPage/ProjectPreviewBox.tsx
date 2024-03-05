@@ -38,12 +38,7 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
           notification.from === activeUser?._id &&
           notification.projectId === project._id
       );
-
-      if (foundRequest) {
-        setRequestedToJoin(true);
-      } else {
-        setRequestedToJoin(false);
-      }
+      setRequestedToJoin(foundRequest !== undefined);
     });
   };
 
@@ -201,7 +196,6 @@ const ProjectPreviewBox: React.FC<IProjectPreviewBox> = ({
         <Else>
           <div className="flex items-center gap-2">
             <Button
-              className=""
               onClick={(e) => {
                 e.stopPropagation();
                 handleLeaveProject();
