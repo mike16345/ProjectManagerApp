@@ -59,12 +59,6 @@ const ProfileModal: React.FC = () => {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() => navigate("/user")}
-              className=" cursor-pointer"
-            >
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem
               onClick={() => setOpenNotifications(true)}
               className="flex hover:bg-current items-center cursor-pointer justify-between "
             >

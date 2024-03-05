@@ -13,7 +13,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Priority } from "@/enums/Priority";
@@ -183,7 +182,7 @@ const MyTasksPage: React.FC = () => {
                     setProjectToDisplay(JSON.parse(value))
                   }
                 >
-                  <SelectTrigger className=" w-52 ring-0 focus:ring-0 focus:border-2">
+                  <SelectTrigger className=" w-52 ring-0 focus:ring-0 focus:border-2 font-medium">
                     Choose project to view
                   </SelectTrigger>
                   <SelectContent className="cursor-pointer">
