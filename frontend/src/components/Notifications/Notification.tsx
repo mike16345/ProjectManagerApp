@@ -36,7 +36,7 @@ export const Notification: React.FC<NotificationProps> = ({
   const [sender, setSender] = useState<IUser | null>(null);
   const [project, setProject] = useState<IProject | null>(null);
 
-  const { activeUser } = useUsersStore();
+  const { activeUser, setActiveUser } = useUsersStore();
   const { toast } = useToast();
 
   const getSender = async () => {
@@ -73,10 +73,10 @@ export const Notification: React.FC<NotificationProps> = ({
     }
 
     const newNotification = createNotification(
-      "Accepted to project",
+      `${activeUser?.name} has accepted your request to join ${project.name}`,
       activeUser?._id!,
       project._id!,
-      NotificationType.MESSAGE
+      NotificationType.ACCEPTED
     );
 
     user.notifications.push(newNotification);
@@ -87,10 +87,18 @@ export const Notification: React.FC<NotificationProps> = ({
     await userRequests.editItemRequest(user);
     await deleteNotification(notification._id);
     await refreshData();
+    await userRequests
+      .getItemRequest(activeUser?._id || "")
+      .then((user) => {
+        setActiveUser(user);
+      })
+      .catch((err) => {
+        console.log("error finding user", err);
+      });
 
     setOpenModal(false);
     toast({
-      title: `${user.name} added to ${project.name}`,
+      title: `Added ${user.name} to ${project.name}`,
       variant: "success",
       duration: 2000,
     });
@@ -99,11 +107,12 @@ export const Notification: React.FC<NotificationProps> = ({
   const handleDeclineRequest = async () => {
     if (!notification) return;
     const user = await userRequests.getItemRequest(notification.from);
+
     const newNotification = createNotification(
-      "Request Declined",
+      `Your request to join ${project?.name} has been declined.`,
       activeUser?._id!,
       project?._id!,
-      NotificationType.MESSAGE
+      NotificationType.DECLINED
     );
 
     user.notifications.push(newNotification);
@@ -111,12 +120,37 @@ export const Notification: React.FC<NotificationProps> = ({
     await userRequests.editItemRequest(user);
     await deleteNotification(notification._id);
     await refreshData();
+    await userRequests
+      .getItemRequest(activeUser?._id || "")
+      .then((user) => {
+        setActiveUser(user);
+      })
+      .catch((err) => {
+        console.log("error finding user", err);
+      });
     setOpenModal(false);
   };
 
   const initNotificationData = async () => {
     await getSender();
     await getProject();
+  };
+
+  const getNotificationDialog = () => {
+    if (!notification) return;
+
+    switch (notification.type) {
+      case NotificationType.MESSAGE:
+        return notification.title;
+      case NotificationType.REQUESTED:
+        return `${sender?.name} has requested to join "${project?.name}" project.`;
+      case NotificationType.INVITED:
+        return `${sender?.name} has invited you to join "${project?.name}"!`;
+      case NotificationType.ACCEPTED:
+        return `${sender?.name} has accepted your request to join "${project?.name}" project!`;
+      case NotificationType.DECLINED:
+        return `${sender?.name} has declined your request to join "${project?.name}" project!`;
+    }
   };
 
   useEffect(() => {
@@ -128,16 +162,22 @@ export const Notification: React.FC<NotificationProps> = ({
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Request to join project</DialogTitle>
-            <DialogDescription>
-              {`${sender?.name} would like to join "${project?.name}" project?`}
-            </DialogDescription>
+            <DialogTitle>{notification?.title}</DialogTitle>
+            <DialogDescription>{getNotificationDialog()}</DialogDescription>
           </DialogHeader>
           <DialogFooter className=" flex-center gap-1">
-            <Button variant={"destructive"} onClick={handleDeclineRequest}>
-              Decline
-            </Button>
-            <Button onClick={handleAcceptRequest}>Accept</Button>
+            <When
+              condition={
+                notification !== null &&
+                (notification.type == NotificationType.REQUESTED ||
+                  notification.type == NotificationType.INVITED)
+              }
+            >
+              <Button variant={"destructive"} onClick={handleDeclineRequest}>
+                Decline
+              </Button>
+              <Button onClick={handleAcceptRequest}>Accept</Button>
+            </When>
           </DialogFooter>
         </DialogContent>
       </Dialog>

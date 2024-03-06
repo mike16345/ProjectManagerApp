@@ -20,10 +20,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onInput }) => {
   return (
     <div className=" flex flex-col md:flex-row md:items-center md:justify-center">
       <div className="relative flex items-center ">
-        <SearchIcon
+        {/* <SearchIcon
           onClick={search}
           className="absolute right-2 top-1/2 h-4 w-4 cursor-pointer -translate-y-1/2 transform"
-        />
+        /> */}
         <Input
           type="text"
           placeholder="Search for project..."

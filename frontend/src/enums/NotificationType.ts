@@ -1,5 +1,7 @@
 export enum NotificationType {
-    MESSAGE,
-    INVITED,
-    REQUESTED,
+  MESSAGE,
+  ACCEPTED,
+  DECLINED,
+  INVITED,
+  REQUESTED,
 }
