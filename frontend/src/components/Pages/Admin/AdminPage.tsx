@@ -113,6 +113,7 @@ const AdminPage = () => {
     const updatedProject = await projectRequests
       .getItemRequest(project_id)
       .then((project) => {
+        console.log("project ", project);
         project.users = project.users.filter((u) => u._id !== user._id);
         return project;
       });
@@ -121,9 +122,22 @@ const AdminPage = () => {
     await userRequests.editItemRequest(user);
     await refreshData();
 
-    isProjects
-      ? setDialogData(updatedProject.users)
-      : setDialogData(user.projects);
+    if (isProjects) {
+      setDialogData(updatedProject.users);
+      console.log(
+        "setting dialog data to updated project users:",
+        updatedProject.users
+      );
+    } else {
+      await projectRequests
+        .getItemsByRequest(user._id, BY_USER_ENDPOINT)
+        .then((projects) => {
+          setDialogData(projects);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
 
   const handleViewUser = (user: IUser) => {};
@@ -149,6 +163,7 @@ const AdminPage = () => {
   };
 
   const renderUser = (item: IUser, index: number) => {
+    console.log("rendering user", item);
     return (
       <CommandItem className="flex items-center justify-between" key={index}>
         <span className="text-sm font-semibold  hover:underline cursor-pointer">
@@ -156,13 +171,15 @@ const AdminPage = () => {
         </span>
         <Trash2Icon
           className="cursor-pointer"
-          onClick={() => handleDeleteUserFromProject(item, item._id)}
+          onClick={() => handleDeleteUserFromProject(item, currItemId)}
         />
       </CommandItem>
     );
   };
 
   const renderProject = (item: IProject, index: number) => {
+    console.log("rendering project", item);
+
     return (
       <CommandItem className="flex items-center justify-between" key={index}>
         <span
