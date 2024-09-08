@@ -1,10 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import App from "./App.tsx";
+import { BrowserRouter } from "react-router-dom";
+import { createRoot } from "react-dom/client";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ThemeProvider } from "./theme/theme-provider.tsx";
+import { AuthProvider } from "./Authentication/useAuth.tsx";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const domNode = document.getElementById("root") as HTMLElement;
+const root = createRoot(domNode);
+
+root.render(
+  <BrowserRouter>
+    <GoogleOAuthProvider
+      clientId={import.meta.env.VITE_REACT_APP_GOOGLE_API_TOKEN || ""}
+    >
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
+  </BrowserRouter>
+);

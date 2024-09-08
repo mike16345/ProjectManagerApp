@@ -1,11 +1,16 @@
 import { create } from "zustand";
-import { Project } from "../interfaces";
+import { IProject } from "../interfaces";
+import { userRequests } from "@/requests/UserRequests";
+import { projectRequests } from "@/requests/ProjectRequests";
+import { taskRequests } from "@/requests/TaskRequests";
+import { refreshData } from "@/requests/dataRefresher";
 
 interface IProjectsStore {
-  activeProject: Project | null;
-  projects: Project[];
-  setProjects: (projects: Project[]) => void;
-  setActiveProject: (project: Project) => void;
+  activeProject: IProject | null;
+  projects: IProject[];
+  setProjects: (projects: IProject[]) => void;
+  setActiveProject: (project: IProject) => void;
+  deleteProject: (project: IProject) => Promise<void>;
 }
 
 export const useProjectsStore = create<IProjectsStore>((set, get) => ({
@@ -16,5 +21,16 @@ export const useProjectsStore = create<IProjectsStore>((set, get) => ({
   },
   setActiveProject: (project) => {
     set({ activeProject: project });
+  },
+  async deleteProject(project) {
+    const p = await userRequests.removeProjectFromUsers(project._id!);
+    console.log("p", p );
+    project.users.forEach(async (user) => {
+      await taskRequests.removeAssignedUserFromTasks(user._id, project._id!);
+    });
+
+    await taskRequests.deleteProjectTasks(project._id!);
+    await projectRequests.deleteItemRequest(project._id);
+    await refreshData();
   },
 }));

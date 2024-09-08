@@ -1,0 +1,95 @@
+import express, { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import { User, genToken } from "../models/userModel";
+import { authToken } from "../auth/authToken";
+import { Password } from "../models/passwordModel";
+import { UserController } from "../controllers/userController";
+
+const router = express.Router();
+
+// Get all users
+router.get("/getItems", UserController.getUsers);
+
+// Update user
+router.put("/edit", UserController.updateUser);
+
+// Update user
+router.put("/edit/bulk", UserController.updateManyUsers);
+
+// Get user by id
+router.get("/getItem/:id", UserController.getUser);
+
+// Delete project from users
+router.delete("/delete/projects/", UserController.removeProjectFromUsers);
+
+//Delete user
+router.delete("/delete", UserController.deleteUser);
+
+// Get user by email
+router.get("/byEmail/getItem/:email", UserController.getUserByEmail);
+
+router.post("/register", async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (user && user.type === "googleUser") {
+      const newToken = genToken(user._id.toString());
+
+      return res.json({
+        isNew: false,
+        status: "registered",
+        token: newToken,
+      });
+    } else if (user && user.type === "local") {
+      return res.send("User already exists!");
+    }
+
+    const newUser = await User.create(req.body);
+    if (newUser && newUser.type !== "googleUser") {
+      const password = await bcrypt.hash(req.body.password, 10);
+      await Password.create({
+        _id: newUser._id,
+        password: password,
+      });
+    }
+
+    const newToken = genToken(newUser._id.toString());
+
+    return res.json({ isNew: true, status: "registered", token: newToken });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "did not work" });
+  }
+});
+
+router.post("/login", async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).lean();
+  if (!user) {
+    return res.json({ status: "error", data: "Invalid Email!" });
+  }
+  const passwordObj = await Password.findOne({ _id: user._id });
+
+  if (!passwordObj) return;
+
+  if (await bcrypt.compare(password, passwordObj.password)) {
+    const newToken = genToken(user._id.toString());
+
+    return res.json({
+      status: "ok",
+      user: user,
+      token: newToken,
+      isNew: false,
+    });
+  } else {
+    return res.json({ status: "error", data: "Invalid password!" });
+  }
+});
+
+router.get("/tokenLogin", authToken, async (req: Request, res: Response) => {
+  const user = await User.findOne({ _id: req.tokenData.id }, { password: 0 });
+  return res.json(user);
+});
+
+export default router;

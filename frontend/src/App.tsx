@@ -1,113 +1,142 @@
-import { useEffect, useState, Fragment, useContext } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import {
-  verifyToken,
-  getAllEmails,
-  verifyTokenWithGoogle,
-} from "./API/UserAPIcalls";
-import AppContext from "./context/Context";
+import { useEffect, useMemo } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useUsersStore } from "./store/usersStore";
+import { When } from "react-if";
+import { CreateProjectPage } from "./components/Pages/Project/CreateProjectPage";
+import { useProjectsStore } from "./store/projectsStore";
+import { Toaster } from "./components/ui/toaster";
+import { refreshData } from "./requests/dataRefresher";
 
-import LoginPage from "./components/pages/loginPage/LoginPage";
-import Navbar from "./components/navbar/Navbar";
-import ProjectOverview from "./components/pages/projectOverview/ProjectOverview";
-
+import LoginPage from "./components/Pages/LoginPage/LoginPage";
+import Navbar from "./components/Navbar/Navbar";
+import ProjectOverview from "./components/Pages/Project/ProjectOverview";
+import MyTasksPage from "./components/Pages/MyTasksPage/MyTasksPage";
+import AllProjectPage from "./components/Pages/Project/AllProjectsPage/AllProjectsPage";
+import AdminPage from "./components/Pages/Admin/AdminPage";
+import RequireAuth from "./Authentication/RequireAuth";
+import useAuth from "./Authentication/useAuth";
+import secureLocalStorage from "react-secure-storage";
 import "./App.css";
-// import WelcomePage from "./components/pages/welcomePage/"
-import MyTasksPage from "./components/pages/myTasksPage/MyTasksPage";
-import AllProjectPage from "./components/pages/allProjectsPage/AllProjectsPage";
-import { gapi } from "gapi-script";
-
-let userInfo = {};
+import { userRequests } from "./requests/UserRequests";
+import { HomePage } from "./components/Pages/Home/HomePage";
+import { projectRequests } from "./requests/ProjectRequests";
+import UserSettings from "./components/Pages/UserPage/UserPage";
 
 function App() {
-  const navigate = useNavigate();
-  const context = useContext(AppContext);
-  const [isLoggedIn, setIsLoggenIn] = useState(false);
+  const { authed } = useAuth();
 
-  const clientId = process.env.REACT_APP_CLIENT_ID;
+  const { activeUser, setActiveUser } = useUsersStore();
+  const { activeProject, setActiveProject } = useProjectsStore();
 
-  const loginOnToken = async (isNew: boolean) => {
-    const token = localStorage.getItem("token-promger");
-    console.log("log in on token");
+  const initData = async () => {
+    refreshData();
+    const userToken = secureLocalStorage.getItem("user-token");
+    const activeProject = sessionStorage.getItem("active-project");
 
-    if (token) {
-      const response = await verifyToken(token);
+    if (userToken) {
+      const user = await userRequests.verifyToken(userToken as string);
+      setActiveUser(user);
+      if (!activeProject && user.projects.length > 0) {
+        await projectRequests
+          .getItemRequest(user.projects[0])
+          .then((project) => {
+            setActiveProject(project);
+          });
+        return;
+      }
+    }
 
-      userInfo = response.data;
-      userInfo.isNew = isNew;
-      setIsLoggenIn(true);
-      context.userLogged = userInfo;
-      navigate("welcome");
-      const timer = setTimeout(() => {
-        navigate("allProjects");
-      }, 800);
-      return () => clearTimeout(timer);
-    } else {
-      console.log("token not available");
+    if (activeProject) {
+      setActiveProject(JSON.parse(activeProject as string));
     }
   };
 
   useEffect(() => {
-    const initClient = () => {
-      gapi.auth2.init({ clientId: clientId });
-      gapi.load("client:auth2", initClient);
-    };
-    loginOnToken(false, "");
+    initData();
   }, []);
 
-  const onLogOutHandler = () => {
-    console.log("logging out");
-    localStorage.removeItem("token-promger");
-    setIsLoggenIn(false);
-    navigate("/");
-  };
-
-  const onLogInHandler = () => {
-    setIsLoggenIn(true);
-  };
-
-  const saveAllEmails = async () => {
-    context.userEmails = await getAllEmails();
-  };
-
-  if (isLoggedIn) {
-    saveAllEmails();
-  }
+  useMemo(() => {
+    if (!activeProject) return;
+    sessionStorage.setItem("active-project", JSON.stringify(activeProject));
+  }, [activeProject]);
 
   return (
-    <Fragment>
-      <AppContext.Provider value={context}>
-        <Navbar
-          logOut={onLogOutHandler}
-          userInfo={userInfo}
-          loggedIn={isLoggedIn}
+    <>
+      <Toaster />
+      <When condition={authed}>
+        <Navbar />
+      </When>
+      <Routes>
+        <Route
+          path="/"
+          element={authed ? <Navigate to={"/home"} /> : <LoginPage />}
         />
-        <Routes>
-          <Route
-            index
-            element={
-              <LoginPage
-                loginOnToken={loginOnToken}
-                isLoggedIn={isLoggedIn}
-                onLogin={onLogInHandler}
-              />
-            }
-          />
-          <Route
-            path="welcome"
-            element={
-              <WelcomePage name={userInfo.name} isNew={userInfo.isNew} />
-            }
-          />
-          <Route
-            path="project_overview"
-            element={isLoggedIn && <ProjectOverview />}
-          />
-          <Route path="myTasks" element={isLoggedIn && <MyTasksPage />} />
-          <Route path="allProjects" element={<AllProjectPage />} />
-        </Routes>
-      </AppContext.Provider>
-    </Fragment>
+
+        <Route
+          path="/home"
+          element={
+            <RequireAuth>
+              <HomePage />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth>
+              <When condition={activeUser?.isAdmin}>
+                <AdminPage />
+              </When>
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/createProject"
+          element={
+            <RequireAuth>
+              <CreateProjectPage />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/project_overview"
+          element={
+            <RequireAuth>
+              <ProjectOverview />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/myTasks"
+          element={
+            <RequireAuth>
+              <MyTasksPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <RequireAuth>
+              <UserSettings />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/allProjects"
+          element={
+            <RequireAuth>
+              <AllProjectPage />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

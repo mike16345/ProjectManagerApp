@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
+import path from "path";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 import svgr from "vite-plugin-svgr";
-import react from '@vitejs/plugin-react-swc'
-import tailwindcss from 'tailwindcss'
-
+import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "tailwindcss";
 
 export default defineConfig({
   plugins: [react(), svgr(), VitePWA()],
@@ -12,4 +12,9 @@ export default defineConfig({
       plugins: [tailwindcss],
     },
   },
-})
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
